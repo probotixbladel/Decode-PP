@@ -7,11 +7,19 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.HeadingInterpolator;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.function.Supplier;
 
@@ -19,8 +27,10 @@ import java.util.function.Supplier;
 @TeleOp
 public class PedroTeleop extends OpMode {
     private Follower follower;
-    public static Pose startingPose; //See ExampleAuto to understand how to use this
+    public static Pose startingPose = new Pose(85.0, 8, Math.toRadians(90)); //See ExampleAuto to understand how to use this
     private boolean automatedDrive;
+    public DcMotorEx intake;
+    private boolean robotcentric = true;
     private Supplier<PathChain> pathChain;
     private TelemetryManager telemetryM;
     private final PedroInputScaler scaler = new PedroInputScaler();
@@ -69,10 +79,11 @@ public class PedroTeleop extends OpMode {
         follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
+        intake = hardwareMap.get(DcMotorEx.class, "intake");
 
         pathChain = () -> follower.pathBuilder() //Lazy Curve Generation
-                .addPath(new Path(new BezierLine(follower::getPose, new Pose(45, 98))))
-                .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(45), 0.8))
+                .addPath(new Path(new BezierLine(follower::getPose, new Pose(60, 95))))
+                .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(135), 0.8))
                 .build();
     }
 
@@ -100,6 +111,9 @@ public class PedroTeleop extends OpMode {
         } else if (gamepad1.y) {
             scaler.gear = 3;
         }
+        if (gamepad1.dpadDownWasPressed()) {
+            robotcentric = !robotcentric;
+        }
 
         //Automated PathFollowing
         if (gamepad1.rightBumperWasPressed()) {
@@ -120,13 +134,23 @@ public class PedroTeleop extends OpMode {
                     -gamepad1.left_stick_y,
                     -gamepad1.right_stick_x
             );
-            follower.setTeleOpDrive(
-                    driveInputs[0],
-                    driveInputs[1],
-                    driveInputs[2],
-                    true // Robot Centric
-            );
+            if (robotcentric) {
+                follower.setTeleOpDrive(
+                        driveInputs[1],
+                        driveInputs[0],
+                        driveInputs[2],
+                        true // Robot Centric
+                );
+            } else {
+                follower.setTeleOpDrive(
+                        -driveInputs[1],
+                        -driveInputs[0],
+                        driveInputs[2],
+                        false // Robot Centric
+                );
+            }
         }
+        intake.setPower(gamepad1.right_trigger);
 
         telemetryM.debug("position", follower.getPose());
         telemetryM.debug("velocity", follower.getVelocity());
