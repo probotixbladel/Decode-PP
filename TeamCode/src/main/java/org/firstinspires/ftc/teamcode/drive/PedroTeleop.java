@@ -7,19 +7,12 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.HeadingInterpolator;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.teamcode.components.ComponentShell;
 
 import java.util.function.Supplier;
 
@@ -29,11 +22,11 @@ public class PedroTeleop extends OpMode {
     private Follower follower;
     public static Pose startingPose = new Pose(85.0, 8, Math.toRadians(90)); //See ExampleAuto to understand how to use this
     private boolean automatedDrive;
-    public DcMotorEx intake;
     private boolean robotcentric = true;
     private Supplier<PathChain> pathChain;
     private TelemetryManager telemetryM;
     private final PedroInputScaler scaler = new PedroInputScaler();
+    private ComponentShell Comps = new ComponentShell(hardwareMap, follower);
 
     static class PedroInputScaler {
         // TODO: Tune these values for your application
@@ -45,8 +38,8 @@ public class PedroTeleop extends OpMode {
 
 
         // Curves exponents
-        // higher: more control at slow, less control at speed
-        // lower : less control at slow, more control at speed
+        // higher: more control when slow, less control at speed
+        // lower : less control when slow, more control at speed
         // n < 1 or n > 3: not recommended
         // n = 1: linear
         // 1 < n < 3: recommended
@@ -79,7 +72,6 @@ public class PedroTeleop extends OpMode {
         follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
-        intake = hardwareMap.get(DcMotorEx.class, "intake");
 
         pathChain = () -> follower.pathBuilder() //Lazy Curve Generation
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(60, 95))))
@@ -150,7 +142,6 @@ public class PedroTeleop extends OpMode {
                 );
             }
         }
-        intake.setPower(gamepad1.right_trigger);
 
         telemetryM.debug("position", follower.getPose());
         telemetryM.debug("velocity", follower.getVelocity());

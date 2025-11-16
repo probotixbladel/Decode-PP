@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.vision;
 
+
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -18,7 +19,6 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class aprilTag implements Runnable {
     private final HardwareMap hardwareMap;
-
     private VisionPortal visionPortal;
     private AprilTagProcessor aprilTag;
 
@@ -27,12 +27,16 @@ public class aprilTag implements Runnable {
 
     private final AtomicReference<Pose> latestPose = new AtomicReference<>(null);
 
-    /** ✅ Pass hardwareMap in constructor and assign it */
+    /**
+     * ✅ Pass hardwareMap in constructor and assign it
+     */
     public aprilTag(HardwareMap hw) {
         this.hardwareMap = hw;
     }
 
-    /** Start camera + processing in a background thread */
+    /**
+     * Start camera + processing in a background thread
+     */
     public void start() {
         if (running) return;
         running = true;
@@ -52,7 +56,9 @@ public class aprilTag implements Runnable {
         workerThread.start();
     }
 
-    /** Stop background thread and close camera */
+    /**
+     * Stop background thread and close camera
+     */
     public void stop() {
         running = false;
         if (workerThread != null) {
@@ -87,7 +93,9 @@ public class aprilTag implements Runnable {
         }
     }
 
-    /** Get latest robot pose (or null if none) */
+    /**
+     * Get latest robot pose (or null if none)
+     */
     public Pose getPose() {
         return latestPose.get();
     }
