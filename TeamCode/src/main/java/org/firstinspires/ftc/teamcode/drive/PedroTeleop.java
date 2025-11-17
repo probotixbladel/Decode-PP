@@ -26,7 +26,7 @@ public class PedroTeleop extends OpMode {
     private Supplier<PathChain> pathChain;
     private TelemetryManager telemetryM;
     private final PedroInputScaler scaler = new PedroInputScaler();
-    private ComponentShell Comps = new ComponentShell(hardwareMap, follower);
+    private ComponentShell Comps = new ComponentShell(hardwareMap, follower, telemetryM);
 
     static class PedroInputScaler {
         // TODO: Tune these values for your application
@@ -146,5 +146,7 @@ public class PedroTeleop extends OpMode {
         telemetryM.debug("position", follower.getPose());
         telemetryM.debug("velocity", follower.getVelocity());
         telemetryM.debug("automatedDrive", automatedDrive);
+
+        Comps.update(gamepad1, gamepad2);
     }
 }

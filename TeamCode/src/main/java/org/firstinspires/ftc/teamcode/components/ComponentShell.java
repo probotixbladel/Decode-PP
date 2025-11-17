@@ -1,20 +1,27 @@
 package org.firstinspires.ftc.teamcode.components;
 
-
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.pedropathing.follower.Follower;
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 
-
+@Configurable
 public class ComponentShell {
     private final HardwareMap hardwareMap;
     private final Intake intake;
+    private final Shooter shooter;
     private Follower follower;
+    private TelemetryManager telemetryM;
 
-    public ComponentShell(HardwareMap hwm, Follower flw) {
+
+    public ComponentShell(HardwareMap hwm, Follower flw, TelemetryManager Tm) {
         this.hardwareMap = hwm;
         this.intake = new Intake(hardwareMap);
+        this.shooter = new Shooter(hardwareMap);
         this.follower = flw;
+        this.telemetryM = Tm;
 
     }
 
@@ -25,6 +32,11 @@ public class ComponentShell {
 
 
         intake.update();
+        shooter.update();
+
+        telemetryM.debug("Vel: ", shooter.CurrentVel);
+        telemetryM.debug("shooter state: ", shooter.state);
+        telemetryM.debug("intake state: ", intake.state);
     }
 
 
