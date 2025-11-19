@@ -69,10 +69,10 @@ public class PedroTeleop extends OpMode {
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
-        Comps = new ComponentShell(hardwareMap, follower, telemetryM);
         follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
+        Comps = new ComponentShell(hardwareMap, follower, telemetryM);
 
         pathChain = () -> follower.pathBuilder() //Lazy Curve Generation
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(60, 95))))
