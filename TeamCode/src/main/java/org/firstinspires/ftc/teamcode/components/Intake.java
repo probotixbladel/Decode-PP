@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 @Configurable
 public class Intake {
-    private final HardwareMap hardwareMap;
+    private HardwareMap hardwareMap;
     public DcMotorEx intake;
     public DcMotorEx Through;
     private static double intake_power = 1.0;

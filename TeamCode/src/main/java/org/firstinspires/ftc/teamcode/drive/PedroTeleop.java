@@ -26,7 +26,7 @@ public class PedroTeleop extends OpMode {
     private Supplier<PathChain> pathChain;
     private TelemetryManager telemetryM;
     private final PedroInputScaler scaler = new PedroInputScaler();
-    private ComponentShell Comps = new ComponentShell(hardwareMap, follower, telemetryM);
+    private ComponentShell Comps;
 
     static class PedroInputScaler {
         // TODO: Tune these values for your application
@@ -69,6 +69,7 @@ public class PedroTeleop extends OpMode {
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
+        Comps = new ComponentShell(hardwareMap, follower, telemetryM);
         follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();

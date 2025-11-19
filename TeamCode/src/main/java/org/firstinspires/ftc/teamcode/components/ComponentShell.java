@@ -9,7 +9,7 @@ import com.bylazar.telemetry.TelemetryManager;
 
 @Configurable
 public class ComponentShell {
-    private final HardwareMap hardwareMap;
+    private HardwareMap hardwareMap;
     private final Intake intake;
     private final Shooter shooter;
     private Follower follower;
