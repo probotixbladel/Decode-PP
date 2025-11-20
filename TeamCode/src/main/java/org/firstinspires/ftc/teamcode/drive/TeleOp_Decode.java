@@ -28,7 +28,15 @@
  */
 
 package org.firstinspires.ftc.teamcode.drive;
-
+import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierLine;
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.HeadingInterpolator;
+import com.pedropathing.paths.Path;
+import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -67,7 +75,7 @@ import org.firstinspires.ftc.robotcore.internal.camera.delegating.DelegatingCapt
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
-
+@Configurable
 @TeleOp(name="TeleOpt_Decode", group="Linear OpMode")
 public class TeleOp_Decode extends LinearOpMode {
 
@@ -129,7 +137,7 @@ public class TeleOp_Decode extends LinearOpMode {
         shooterRight.setDirection(DcMotor.Direction.FORWARD);
 
 
-        shooterServo.setPosition(0.5);
+        shooterServo.setPosition(servoPosDown);
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
