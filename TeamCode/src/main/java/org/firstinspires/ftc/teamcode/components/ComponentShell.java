@@ -37,9 +37,9 @@ public class ComponentShell {
         telemetryM.debug("Vel: ", shooter.CurrentVel);
         telemetryM.debug("shooter state: ", shooter.state);
         telemetryM.debug("intake state: ", intake.state);
-        if (intake.swith){
-            telemetryM.debug("-----------------------");
-        }
+        telemetryM.debug("power", intake.intake.getPower(), intake.Through.getPower());
+        telemetryM.debug("swith", intake.swith);
+
     }
 
 

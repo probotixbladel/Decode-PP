@@ -30,8 +30,8 @@ public class Shooter {
         ShooterRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ShooterLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         ShooterRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        ShooterLeft.setVelocityPIDFCoefficients( 0.1, 0, 0, 0.4);
-        ShooterRight.setVelocityPIDFCoefficients(0.1, 0, 0, 0.4);
+        //ShooterLeft.setVelocityPIDFCoefficients( 0.1, 0, 0, 0.4);
+        //ShooterRight.setVelocityPIDFCoefficients(0.1, 0, 0, 0.4);
         ShooterLeft.setVelocity(TargetVel);
         ShooterRight.setVelocity(TargetVel);
     }

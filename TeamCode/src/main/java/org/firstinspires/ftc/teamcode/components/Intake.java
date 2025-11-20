@@ -30,22 +30,22 @@ public class Intake {
     }
 
     public void update() {
-        switch (state) {
-            case INTAKE:
-                intake.setPower(intake_power);
-                Through.setPower(intake_power);
-            case OUTTAKE:
-                intake.setPower(outtake_power);
-                Through.setPower(outtake_power);
-            case OFF:
-                intake.setPower(static_power);
-                Through.setPower(static_power);
+        swith = state != last_state;
+
+        if (swith) {
+            switch (state) {
+                case INTAKE:
+                    intake.setPower(intake_power);
+                    Through.setPower(intake_power);
+                case OUTTAKE:
+                    intake.setPower(outtake_power);
+                    Through.setPower(outtake_power);
+                case OFF:
+                    intake.setPower(static_power);
+                    Through.setPower(static_power);
+            }
         }
-        if (state != last_state) {
-            swith = true;
-        } else {
-            swith = false;
-        }
+
         last_state = state;
 
     }
