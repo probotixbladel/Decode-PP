@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.components;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 @Configurable
@@ -11,9 +12,11 @@ public class Intake {
     public DcMotorEx intake;
     public DcMotorEx Through;
     private static double intake_power = 1.0;
-    private static double outtake_power = -0.4;
-    private static double static_power = 0.1;
+    private static double outtake_power = -0.6;
+    private static double static_power = 0.3;
     public IntakeState state = IntakeState.OFF;
+    public IntakeState last_state;
+    public boolean swith = false;
     public enum IntakeState {
         INTAKE,
         OUTTAKE,
@@ -23,9 +26,10 @@ public class Intake {
         this.hardwareMap = hwm;
         intake = hardwareMap.get(DcMotorEx.class, "intake");
         Through = hardwareMap.get(DcMotorEx.class, "Through");
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
-    public void update(){
+    public void update() {
         switch (state) {
             case INTAKE:
                 intake.setPower(intake_power);
@@ -37,6 +41,13 @@ public class Intake {
                 intake.setPower(static_power);
                 Through.setPower(static_power);
         }
+        if (state != last_state) {
+            swith = true;
+        } else {
+            swith = false;
+        }
+        last_state = state;
+
     }
 
 }
