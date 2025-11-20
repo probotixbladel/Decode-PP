@@ -26,12 +26,10 @@ public class ComponentShell {
     }
 
     public void update(Gamepad gamepad1, Gamepad gamepad2) {
-        if      (gamepad2.right_trigger > 0.2) {intake.state = Intake.IntakeState.INTAKE; }
-        else if (gamepad2.left_trigger  > 0.2) {intake.state = Intake.IntakeState.OUTTAKE;}
-        else                                   {intake.state = Intake.IntakeState.OFF;    }
 
 
-        intake.update();
+
+        intake.update(gamepad2);
         shooter.update();
 
         telemetryM.debug("Vel: ", shooter.CurrentVel);

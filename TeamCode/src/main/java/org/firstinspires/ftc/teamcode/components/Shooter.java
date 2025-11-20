@@ -32,11 +32,12 @@ public class Shooter {
         ShooterRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //ShooterLeft.setVelocityPIDFCoefficients( 0.1, 0, 0, 0.4);
         //ShooterRight.setVelocityPIDFCoefficients(0.1, 0, 0, 0.4);
-        ShooterLeft.setVelocity(TargetVel);
-        ShooterRight.setVelocity(TargetVel);
+
     }
 
     public void update(){
+        ShooterLeft.setVelocity(TargetVel);
+        ShooterRight.setVelocity(TargetVel);
         CurrentVel = ShooterLeft.getVelocity();
         if (CurrentVel < TargetVel - MaxDeviation) {
             state = ShooterState.LOW;
