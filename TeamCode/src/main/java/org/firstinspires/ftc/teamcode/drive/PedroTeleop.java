@@ -144,9 +144,9 @@ public class PedroTeleop extends OpMode {
             }
         }
 
-        telemetryM.debug("position", follower.getPose());
-        telemetryM.debug("velocity", follower.getVelocity());
-        telemetryM.debug("automatedDrive", automatedDrive);
+        //telemetryM.debug("position", follower.getPose());
+        //telemetryM.debug("velocity", follower.getVelocity());
+        //telemetryM.debug("automatedDrive", automatedDrive);
 
         Comps.update(gamepad1, gamepad2);
     }
