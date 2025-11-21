@@ -23,7 +23,8 @@ public class PedroTeleop extends OpMode {
     public static Pose startingPose = new Pose(85.0, 8, Math.toRadians(90)); //See ExampleAuto to understand how to use this
     private boolean automatedDrive;
     private boolean robotcentric = true;
-    private Supplier<PathChain> pathChain;
+    private Supplier<PathChain> pathChainClose;
+    private Supplier<PathChain> pathChainFar;
     private TelemetryManager telemetryM;
     private final PedroInputScaler scaler = new PedroInputScaler();
     private ComponentShell Comps;
@@ -74,7 +75,12 @@ public class PedroTeleop extends OpMode {
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         Comps = new ComponentShell(hardwareMap, follower, telemetryM);
 
-        pathChain = () -> follower.pathBuilder() //Lazy Curve Generation
+        pathChainClose = () -> follower.pathBuilder() //Lazy Curve Generation
+                .addPath(new Path(new BezierLine(follower::getPose, new Pose(45, 110))))
+                .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(135), 0.8))
+                .build();
+
+        pathChainFar = () -> follower.pathBuilder() //Lazy Curve Generation
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(60, 95))))
                 .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(135), 0.8))
                 .build();
@@ -108,16 +114,18 @@ public class PedroTeleop extends OpMode {
             robotcentric = !robotcentric;
         }
 
-        //Automated PathFollowing
-        if (gamepad1.rightBumperWasPressed()) {
-            follower.followPath(pathChain.get());
-            automatedDrive = true;
-        }
+
 
         //Stop automated following if the follower is done
-        if (automatedDrive && (gamepad1.leftBumperWasPressed() || !follower.isBusy())) {
+        if (automatedDrive && (gamepad1.leftBumperWasPressed() || gamepad1.rightBumperWasPressed() || !follower.isBusy())) {
             follower.startTeleopDrive();
             automatedDrive = false;
+        } else if (gamepad1.rightBumperWasPressed()) {
+            follower.followPath(pathChainFar.get());
+            automatedDrive = true;
+        } else if (gamepad1.leftBumperWasPressed()) {
+            follower.followPath(pathChainClose.get());
+            automatedDrive = true;
         }
 
         if (!automatedDrive) {

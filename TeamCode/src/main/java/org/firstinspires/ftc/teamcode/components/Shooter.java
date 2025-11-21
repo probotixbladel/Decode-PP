@@ -4,6 +4,7 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 @Configurable
@@ -12,8 +13,10 @@ public class Shooter {
     public DcMotorEx ShooterLeft;
     public DcMotorEx ShooterRight;
     public ShooterState state = ShooterState.LOW;
-    public static double TargetVel = 1800;
-    public static double MaxDeviation = 150;
+    public static double TargetVel = 1250;
+    public static double CloseVel = 1100;
+    public static double FarVel = 1250;
+    public static double MaxDeviation = 100;
     public double CurrentVel = 0;
 
     public static double P = 5.0;
@@ -45,13 +48,21 @@ public class Shooter {
 
     }
 
-    public void update(){
+    public void update(Gamepad gamepad2){
         if (P != lP | D != lD | F != lF){
             ShooterLeft.setVelocityPIDFCoefficients( P, 0, D, F);
             ShooterRight.setVelocityPIDFCoefficients(P, 0, D, F);
             lP = P;
             lD = D;
             lF = F;
+        }
+
+        if (gamepad2.b) {
+            if (TargetVel == CloseVel) {
+                TargetVel = FarVel;
+            } else {
+                TargetVel = CloseVel;
+            }
         }
 
         ShooterLeft.setVelocity(TargetVel);
