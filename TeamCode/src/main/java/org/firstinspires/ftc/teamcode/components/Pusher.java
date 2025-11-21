@@ -12,8 +12,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Pusher {
     private HardwareMap hardwareMap;
     public Servo Pusher;
-    public static double Wait = 0.36;
-    public static double Push = 0.6;
+    public static double Wait = 0.47;
+    public static double Push = 0.67;
     public ElapsedTime LastShot = new ElapsedTime();
     public PushState state = PushState.RETURNING;
     public double ShootTime = 0.5;
