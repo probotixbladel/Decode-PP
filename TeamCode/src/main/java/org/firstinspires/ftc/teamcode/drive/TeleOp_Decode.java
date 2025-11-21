@@ -96,10 +96,10 @@ public class TeleOp_Decode extends LinearOpMode {
     private double staticShoot = 500;
     private double middleShoot = 1250;
     private double closeShoot = 1100;
-    private boolean isClose = false;
-    private boolean isCLose;
-    private static double servoPosDown = 0.5;
-    private static double servoPosUp = 1;
+    private static double servoPosDown = 0.47;
+    private static double servoPosUp = 0.66;
+    private double gearMult = 0.4;
+
 
 
     @Override
@@ -133,11 +133,11 @@ public class TeleOp_Decode extends LinearOpMode {
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
         intake.setDirection(DcMotor.Direction.REVERSE);
         through.setDirection(DcMotor.Direction.FORWARD);
-        shooterLeft.setDirection(DcMotor.Direction.REVERSE);
-        shooterRight.setDirection(DcMotor.Direction.FORWARD);
+        shooterLeft.setDirection(DcMotor.Direction.FORWARD);
+        shooterRight.setDirection(DcMotor.Direction.REVERSE);
 
 
-        shooterServo.setPosition(servoPosDown);
+
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
@@ -155,12 +155,29 @@ public class TeleOp_Decode extends LinearOpMode {
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
 
+
+            if(gamepad1.a)
+            {
+                gearMult = 0.4;
+            }
+            else if(gamepad1.b)
+            {
+                gearMult = 0.6;
+            }
+            else if(gamepad1.x)
+            {
+                gearMult = 0.8;
+            }
+            else if(gamepad1.y)
+            {
+                gearMult = 1;
+            }
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
-            double frontLeftPower  = axial + lateral + yaw;
-            double frontRightPower = axial - lateral - yaw;
-            double backLeftPower   = axial - lateral + yaw;
-            double backRightPower  = axial + lateral - yaw;
+            double frontLeftPower  = (axial + lateral + yaw) * gearMult;
+            double frontRightPower = (axial - lateral - yaw) * gearMult;
+            double backLeftPower   = (axial - lateral + yaw) * gearMult;
+            double backRightPower  = (axial + lateral - yaw) * gearMult;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -174,6 +191,10 @@ public class TeleOp_Decode extends LinearOpMode {
                 backLeftPower   /= max;
                 backRightPower  /= max;
             }
+
+            shooterLeft.setVelocity(staticShoot);
+            shooterRight.setVelocity(staticShoot);
+
             if (gamepad2.right_trigger > 0.2)
             {
                 intake.setPower(intakePower);
@@ -197,19 +218,28 @@ public class TeleOp_Decode extends LinearOpMode {
                 {
                     through.setPower(staticPower);
                 }
+                else
+                {
+                    through.setPower(0);
+                }
             }
             if(gamepad2.dpad_up)
             {
-                isClose = false;
+                shooterLeft.setVelocity(middleShoot);
+                shooterRight.setVelocity(middleShoot);
+                sleep(2000);
+                shooterServo.setPosition(servoPosUp);
             }
-            if(gamepad2.dpad_down)
+            else if(gamepad2.dpad_down)
             {
-                isCLose = true;
+                shooterLeft.setVelocity(closeShoot);
+                shooterRight.setVelocity(closeShoot);
+                sleep(2000);
+                shooterServo.setPosition(servoPosUp);
             }
-
-            if(gamepad2.b)
+            else
             {
-
+                shooterServo.setPosition(servoPosDown);
             }
             // Send calculated power to wheels
             frontLeftDrive.setPower(frontLeftPower);
