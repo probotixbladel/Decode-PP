@@ -76,7 +76,7 @@ import org.firstinspires.ftc.robotcore.internal.camera.delegating.DelegatingCapt
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 @Configurable
-@TeleOp(name="TeleOpt_Decode", group="Linear OpMode")
+@TeleOp(name="TeleOp_Decode", group="Linear OpMode")
 public class TeleOp_Decode extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.

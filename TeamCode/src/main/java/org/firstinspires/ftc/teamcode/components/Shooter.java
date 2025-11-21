@@ -21,7 +21,7 @@ public class Shooter {
 
     public static double P = 5.0;
     public static double D = 0.0;
-    public static double F = 0.0;
+    public static double F = 15.0;
     private double lP = P;
     private double lD = D;
     private double lF = F;
@@ -70,7 +70,7 @@ public class Shooter {
         CurrentVel = ShooterLeft.getVelocity();
         if (CurrentVel < TargetVel - MaxDeviation) {
             state = ShooterState.LOW;
-        } else if (CurrentVel > TargetVel - MaxDeviation) {
+        } else if (CurrentVel > TargetVel + MaxDeviation) {
             state = ShooterState.HIGH;
         } else {
             state = ShooterState.READY;
