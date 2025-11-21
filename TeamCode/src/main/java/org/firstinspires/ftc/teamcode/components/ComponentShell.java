@@ -29,7 +29,7 @@ public class ComponentShell {
 
     public void update(Gamepad gamepad1, Gamepad gamepad2) {
         intake.update(gamepad2);
-        shooter.update();
+        shooter.update(gamepad2);
         pusher.update(gamepad2, this);
         through.update(gamepad2, this);
 
