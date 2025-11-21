@@ -9,11 +9,13 @@ import com.bylazar.telemetry.TelemetryManager;
 
 @Configurable
 public class ComponentShell {
-    private HardwareMap hardwareMap;
-    private final Intake intake;
-    private final Shooter shooter;
-    private Follower follower;
-    private TelemetryManager telemetryM;
+    public HardwareMap hardwareMap;
+    public final Intake intake;
+    public final Shooter shooter;
+    public Pusher pusher;
+    public Through through;
+    public Follower follower;
+    public TelemetryManager telemetryM;
 
 
     public ComponentShell(HardwareMap hwm, Follower flw, TelemetryManager Tm) {
@@ -26,16 +28,15 @@ public class ComponentShell {
     }
 
     public void update(Gamepad gamepad1, Gamepad gamepad2) {
-
-
-
         intake.update(gamepad2);
-        shooter.update();
+        shooter.update(gamepad2);
+        pusher.update(gamepad2, this);
+        through.update(gamepad2, this);
 
         telemetryM.debug("Vel: ", shooter.CurrentVel);
         telemetryM.debug("shooter state: ", shooter.state);
         telemetryM.debug("intake state: ", intake.state);
-        telemetryM.debug("power", intake.intake.getPower(), intake.Through.getPower());
+        telemetryM.debug("power", intake.intake.getPower(), through.Through.getPower());
         telemetryM.debug("swith", intake.swith);
 
     }
