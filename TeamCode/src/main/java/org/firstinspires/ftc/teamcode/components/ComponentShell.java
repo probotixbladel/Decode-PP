@@ -4,7 +4,6 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.pedropathing.follower.Follower;
-import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 
 @Configurable
@@ -22,6 +21,8 @@ public class ComponentShell {
         this.hardwareMap = hwm;
         this.intake = new Intake(hardwareMap);
         this.shooter = new Shooter(hardwareMap);
+        this.pusher = new Pusher(hardwareMap);
+        this.through = new Through(hardwareMap);
         this.follower = flw;
         this.telemetryM = Tm;
 
@@ -37,9 +38,5 @@ public class ComponentShell {
         telemetryM.debug("shooter state: ", shooter.state);
         telemetryM.debug("intake state: ", intake.state);
         telemetryM.debug("power", intake.intake.getPower(), through.Through.getPower());
-        telemetryM.debug("swith", intake.swith);
-
     }
-
-
 }

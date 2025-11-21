@@ -15,8 +15,6 @@ public class Intake {
     private static double outtake_power = -0.6;
     private static double static_power = 0.3;
     public IntakeState state = IntakeState.OFF;
-    public IntakeState last_state;
-    public boolean swith = false;
     public enum IntakeState {
         INTAKE,
         OUTTAKE,
@@ -41,9 +39,6 @@ public class Intake {
             state = Intake.IntakeState.OFF;
             intake.setPower(static_power);
         }
-        swith = state != last_state;
-        last_state = state;
-
     }
 
 }

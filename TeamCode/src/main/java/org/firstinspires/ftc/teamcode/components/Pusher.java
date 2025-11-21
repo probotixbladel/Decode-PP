@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Configurable
 public class Pusher {
-    private HardwareMap hardwareMap;
+    private final HardwareMap hardwareMap;
     public Servo Pusher;
     public static double Wait = 0.47;
     public static double Push = 0.67;
