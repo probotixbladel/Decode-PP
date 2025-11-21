@@ -15,11 +15,20 @@ public class Shooter {
     public static double TargetVel = 1800;
     public static double MaxDeviation = 150;
     public double CurrentVel = 0;
+
+    public static double P = 5.0;
+    public static double D = 0.0;
+    public static double F = 0.0;
+    private double lP = P;
+    private double lD = D;
+    private double lF = F;
+
     public enum ShooterState {
         READY,
         HIGH,
         LOW,
     }
+
     public Shooter(HardwareMap hwm) {
         this.hardwareMap = hwm;
         ShooterLeft = hardwareMap.get(DcMotorEx.class, "shooterLeft");
@@ -30,12 +39,21 @@ public class Shooter {
         ShooterRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ShooterLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         ShooterRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //ShooterLeft.setVelocityPIDFCoefficients( 0.1, 0, 0, 0.4);
-        //ShooterRight.setVelocityPIDFCoefficients(0.1, 0, 0, 0.4);
+        ShooterLeft.setVelocityPIDFCoefficients( P, 0, D, F);
+        ShooterRight.setVelocityPIDFCoefficients(P, 0, D, F);
+
 
     }
 
     public void update(){
+        if (P != lP | D != lD | F != lF){
+            ShooterLeft.setVelocityPIDFCoefficients( P, 0, D, F);
+            ShooterRight.setVelocityPIDFCoefficients(P, 0, D, F);
+            lP = P;
+            lD = D;
+            lF = F;
+        }
+
         ShooterLeft.setVelocity(TargetVel);
         ShooterRight.setVelocity(TargetVel);
         CurrentVel = ShooterLeft.getVelocity();

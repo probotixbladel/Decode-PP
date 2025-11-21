@@ -9,11 +9,11 @@ import com.bylazar.telemetry.TelemetryManager;
 
 @Configurable
 public class ComponentShell {
-    private HardwareMap hardwareMap;
-    private final Intake intake;
-    private final Shooter shooter;
-    private Follower follower;
-    private TelemetryManager telemetryM;
+    public HardwareMap hardwareMap;
+    public final Intake intake;
+    public final Shooter shooter;
+    public Follower follower;
+    public TelemetryManager telemetryM;
 
 
     public ComponentShell(HardwareMap hwm, Follower flw, TelemetryManager Tm) {
