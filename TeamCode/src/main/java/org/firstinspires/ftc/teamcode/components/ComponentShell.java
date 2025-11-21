@@ -12,6 +12,8 @@ public class ComponentShell {
     public HardwareMap hardwareMap;
     public final Intake intake;
     public final Shooter shooter;
+    public Pusher pusher;
+    public Through through;
     public Follower follower;
     public TelemetryManager telemetryM;
 
@@ -26,16 +28,15 @@ public class ComponentShell {
     }
 
     public void update(Gamepad gamepad1, Gamepad gamepad2) {
-
-
-
         intake.update(gamepad2);
         shooter.update();
+        pusher.update(gamepad2, this);
+        through.update(gamepad2, this);
 
         telemetryM.debug("Vel: ", shooter.CurrentVel);
         telemetryM.debug("shooter state: ", shooter.state);
         telemetryM.debug("intake state: ", intake.state);
-        telemetryM.debug("power", intake.intake.getPower(), intake.Through.getPower());
+        telemetryM.debug("power", intake.intake.getPower(), through.Through.getPower());
         telemetryM.debug("swith", intake.swith);
 
     }
