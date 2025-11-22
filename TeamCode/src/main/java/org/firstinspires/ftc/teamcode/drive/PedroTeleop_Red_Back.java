@@ -11,16 +11,17 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
 import org.firstinspires.ftc.teamcode.components.ComponentShell;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.function.Supplier;
 
 @Configurable
-@TeleOp
-public class PedroTeleop extends OpMode {
+@TeleOp(name="TeleOp Red Back", group="Linear OpMode")
+public class PedroTeleop_Red_Back extends OpMode {
     private Follower follower;
-    public static Pose startingPose = new Pose(85.0, 8, Math.toRadians(90)); //See ExampleAuto to understand how to use this
+    public static Pose startingPose = new Pose(87.0, 9, Math.toRadians(90)); //See ExampleAuto to understand how to use this
     private boolean automatedDrive;
     private boolean robotcentric = true;
     private Supplier<PathChain> pathChainClose;
@@ -76,12 +77,12 @@ public class PedroTeleop extends OpMode {
         Comps = new ComponentShell(hardwareMap, follower, telemetryM);
 
         pathChainClose = () -> follower.pathBuilder() //Lazy Curve Generation
-                .addPath(new Path(new BezierLine(follower::getPose, new Pose(45, 110))))
+                .addPath(new Path(new BezierLine(follower::getPose, new Pose(104, 110))))
                 .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(135), 0.8))
                 .build();
 
         pathChainFar = () -> follower.pathBuilder() //Lazy Curve Generation
-                .addPath(new Path(new BezierLine(follower::getPose, new Pose(60, 95))))
+                .addPath(new Path(new BezierLine(follower::getPose, new Pose(86, 95))))
                 .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(135), 0.8))
                 .build();
     }

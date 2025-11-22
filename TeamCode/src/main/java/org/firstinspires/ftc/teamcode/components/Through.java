@@ -23,7 +23,7 @@ public class Through {
     }
 
     public void update(Gamepad gamepad2, ComponentShell Comps) {
-        if (Comps.intake.state == Intake.IntakeState.OUTTAKE) {
+        if (Comps.intake.state == Intake.IntakeState.OUTTAKE || gamepad2.y) {
             Through.setPower(in_power);
         }
         else if (Comps.pusher.state == Pusher.PushState.WAITING) {
