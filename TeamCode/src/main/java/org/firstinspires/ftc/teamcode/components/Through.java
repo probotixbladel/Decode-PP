@@ -27,13 +27,15 @@ public class Through {
             Through.setPower(in_power);
         }
         else if (Comps.pusher.state == Pusher.PushState.WAITING) {
-            if(gamepad2.x)
-            {
+            if (gamepad2.x) {
                 Through.setPower(out_power);
+            } else {
+                Through.setPower(static_power);
             }
-        else {
-            Through.setPower(static_power);
-        }
+            if (gamepad2.left_bumper)
+            {
+                Through.setPower(in_power);
+            }
     }
 
 }}

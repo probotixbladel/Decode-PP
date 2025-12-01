@@ -17,6 +17,7 @@ public class Shooter {
     public static double CloseVel = 1100;
     public static double FarVel = 1250;
     public static double MaxDeviation = 100;
+    public static double MinDeviation = 200;
     public double CurrentVel = 0;
 
     public static double P = 5.0;
@@ -68,7 +69,7 @@ public class Shooter {
         ShooterLeft.setVelocity(TargetVel);
         ShooterRight.setVelocity(TargetVel);
         CurrentVel = ShooterLeft.getVelocity();
-        if (CurrentVel < TargetVel - MaxDeviation) {
+        if (CurrentVel < TargetVel - MinDeviation) {
             state = ShooterState.LOW;
         } else if (CurrentVel > TargetVel + MaxDeviation) {
             state = ShooterState.HIGH;
