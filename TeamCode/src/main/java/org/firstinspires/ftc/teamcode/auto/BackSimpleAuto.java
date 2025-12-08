@@ -10,26 +10,26 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.components.Shooter;
+import org.firstinspires.ftc.teamcode.components.ComponentShell;
 
 @Autonomous(name = "Score Preload Auto", group = "Examples")
 public class BackSimpleAuto extends OpMode {
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
-
-    private Shooter shoot;
     private Shooter.ShooterState state;
 
     private int pathState;
     //private final Pose startPose = new Pose(28.5, 128, Math.toRadians(180)); // Start Pose of our robot.
-    private final Pose startPose = new Pose(118, 123, Math.toRadians(39)); //See ExampleAuto to understand how to use this
-    private final Pose scorePose = new Pose(60, 85, Math.toRadians(135)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
+    private final Pose startPose = new Pose(121, 126, Math.toRadians(39)); //See ExampleAuto to understand how to use this
+    private final Pose scorePose = new Pose(86, 90, Math.toRadians(45)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
     private final Pose pickup1Pose = new Pose(37, 121, Math.toRadians(0)); // Highest (First Set) of Artifacts from the Spike Mark.
     private final Pose pickup2Pose = new Pose(43, 130, Math.toRadians(0)); // Middle (Second Set) of Artifacts from the Spike Mark.
     private final Pose pickup3Pose = new Pose(49, 135, Math.toRadians(0)); // Lowest (Third Set) of Artifacts from the Spike Mark.
 
     public PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
     public Path scorePreload;
+    public ComponentShell ComponentShell;
 
 
 
@@ -79,20 +79,22 @@ public class BackSimpleAuto extends OpMode {
     }
 
     public void autonomousPathUpdate() {
+        ComponentShell.shooter.ShooterLeft.setVelocity(Shooter.TargetVel);
+        ComponentShell.shooter.ShooterRight.setVelocity(Shooter.TargetVel);
+        ComponentShell.shooter.CurrentVel = ComponentShell.shooter.ShooterLeft.getVelocity();
+        if (ComponentShell.shooter.CurrentVel < Shooter.TargetVel - Shooter.MinDeviation) {
+            state = Shooter.ShooterState.LOW;
+        } else if (ComponentShell.shooter.CurrentVel > Shooter.TargetVel + Shooter.MaxDeviation) {
+            state = Shooter.ShooterState.HIGH;
+        } else {
+            state = Shooter.ShooterState.READY;
+        }
         switch (pathState) {
             case 0:
                 follower.followPath(scorePreload);
+
                 //setPathState(1);
-                shoot.ShooterLeft.setVelocity(Shooter.TargetVel);
-                shoot.ShooterRight.setVelocity(Shooter.TargetVel);
-                shoot.CurrentVel = shoot.ShooterLeft.getVelocity();
-                if (shoot.CurrentVel < Shooter.TargetVel - Shooter.MinDeviation) {
-                    state = Shooter.ShooterState.LOW;
-                } else if (shoot.CurrentVel > Shooter.TargetVel + Shooter.MaxDeviation) {
-                    state = Shooter.ShooterState.HIGH;
-                } else {
-                    state = Shooter.ShooterState.READY;
-                }break;
+                break;
             case 1:
 
             /* You could check for
