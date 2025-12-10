@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
+
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
@@ -8,21 +11,21 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
+import org.firstinspires.ftc.teamcode.components.Pusher;
 import org.firstinspires.ftc.teamcode.components.Shooter;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.components.ComponentShell;
 
-@Autonomous(name = "Score Preload Auto", group = "Examples")
-public class BackSimpleAuto extends OpMode {
-
+@Autonomous(name = "Red Goal Auto", group = "Examples")
+public class RedGoalAuto extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
-    private Shooter.ShooterState state;
 
     private int pathState;
     //private final Pose startPose = new Pose(28.5, 128, Math.toRadians(180)); // Start Pose of our robot.
-    private final Pose startPose = new Pose(121, 126, Math.toRadians(39)); //See ExampleAuto to understand how to use this
-    private final Pose scorePose = new Pose(86, 90, Math.toRadians(45)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
+    private final Pose startPose = new Pose(117, 130, Math.toRadians(36)); //See ExampleAuto to understand how to use this
+    private final Pose scorePose = new Pose(85, 85, Math.toRadians(45)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
     private final Pose pickup1Pose = new Pose(37, 121, Math.toRadians(0)); // Highest (First Set) of Artifacts from the Spike Mark.
     private final Pose pickup2Pose = new Pose(43, 130, Math.toRadians(0)); // Middle (Second Set) of Artifacts from the Spike Mark.
     private final Pose pickup3Pose = new Pose(49, 135, Math.toRadians(0)); // Lowest (Third Set) of Artifacts from the Spike Mark.
@@ -30,6 +33,8 @@ public class BackSimpleAuto extends OpMode {
     public PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
     public Path scorePreload;
     public ComponentShell ComponentShell;
+    public Shooter shooter;
+    public Pusher pusher;
 
 
 
@@ -79,33 +84,37 @@ public class BackSimpleAuto extends OpMode {
     }
 
     public void autonomousPathUpdate() {
-        ComponentShell.shooter.ShooterLeft.setVelocity(Shooter.TargetVel);
-        ComponentShell.shooter.ShooterRight.setVelocity(Shooter.TargetVel);
-        ComponentShell.shooter.CurrentVel = ComponentShell.shooter.ShooterLeft.getVelocity();
-        if (ComponentShell.shooter.CurrentVel < Shooter.TargetVel - Shooter.MinDeviation) {
-            state = Shooter.ShooterState.LOW;
-        } else if (ComponentShell.shooter.CurrentVel > Shooter.TargetVel + Shooter.MaxDeviation) {
-            state = Shooter.ShooterState.HIGH;
+
+
+        /*shooter.TargetVel = shooter.FarVel;
+        shooter.ShooterLeft.setVelocity(shooter.TargetVel);
+        shooter.ShooterRight.setVelocity(shooter.TargetVel);
+        shooter.CurrentVel = shooter.ShooterLeft.getVelocity();
+        if (shooter.CurrentVel < shooter.TargetVel - shooter.MinDeviation) {
+            shooter.state = Shooter.ShooterState.LOW;
+        } else if (shooter.CurrentVel > shooter.TargetVel + shooter.MaxDeviation) {
+            shooter.state = Shooter.ShooterState.HIGH;
         } else {
-            state = Shooter.ShooterState.READY;
-        }
+            shooter.state = Shooter.ShooterState.READY;
+        }*/
+
         switch (pathState) {
             case 0:
                 follower.followPath(scorePreload);
-
                 //setPathState(1);
                 break;
             case 1:
 
-            /* You could check for
-            - Follower State: "if(!follower.isBusy()) {}"
-            - Time: "if(pathTimer.getElapsedTimeSeconds() > 1) {}"
-            - Robot Position: "if(follower.getPose().getX() > 36) {}"
-            */
+                /* You could check for
+                - Follower State: "if(!follower.isBusy()) {}"
+                - Time: "if(pathTimer.getElapsedTimeSeconds() > 1) {}"
+                - Robot Position: "if(follower.getPose().getX() > 36) {}"
+                */
 
                 // This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position
                 if (!follower.isBusy()) {
                     /* Score Preload */
+
 
                     // Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample
                     follower.followPath(grabPickup1, true);
