@@ -32,7 +32,7 @@ public class RedGoalAuto extends OpMode {
 
     public PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
     public Path scorePreload;
-    public ComponentShell ComponentShell;
+    public ComponentShell robot;
     public Shooter shooter;
     public Pusher pusher;
 
@@ -85,8 +85,8 @@ public class RedGoalAuto extends OpMode {
 
     public void autonomousPathUpdate() {
 
-
-        /*shooter.TargetVel = shooter.FarVel;
+/*
+        shooter.TargetVel = shooter.FarVel;
         shooter.ShooterLeft.setVelocity(shooter.TargetVel);
         shooter.ShooterRight.setVelocity(shooter.TargetVel);
         shooter.CurrentVel = shooter.ShooterLeft.getVelocity();
@@ -96,12 +96,13 @@ public class RedGoalAuto extends OpMode {
             shooter.state = Shooter.ShooterState.HIGH;
         } else {
             shooter.state = Shooter.ShooterState.READY;
-        }*/
-
+        }
+*/
         switch (pathState) {
             case 0:
+
                 follower.followPath(scorePreload);
-                //setPathState(1);
+                setPathState(1);
                 break;
             case 1:
 
