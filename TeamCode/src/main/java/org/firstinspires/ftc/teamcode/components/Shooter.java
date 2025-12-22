@@ -37,7 +37,7 @@ public class Shooter {
         this.hardwareMap = hwm;
         ShooterLeft = hardwareMap.get(DcMotorEx.class, "shooterLeft");
         ShooterRight = hardwareMap.get(DcMotorEx.class, "shooterRight");
-        ShooterRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        ShooterRight.setDirection(DcMotorSimple.Direction.FORWARD);
         ShooterLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         ShooterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ShooterRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

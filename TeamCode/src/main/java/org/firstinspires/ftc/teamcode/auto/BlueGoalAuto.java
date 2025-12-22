@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
+import static java.lang.Thread.sleep;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
@@ -17,22 +16,25 @@ import org.firstinspires.ftc.teamcode.components.Shooter;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.components.ComponentShell;
 
-@Autonomous(name = "Red Goal Auto", group = "Examples")
-public class RedGoalAuto extends OpMode {
+@Autonomous(name = "Blue Goal Auto", group = "Examples")
+public class BlueGoalAuto extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
 
     private int pathState;
     //private final Pose startPose = new Pose(28.5, 128, Math.toRadians(180)); // Start Pose of our robot.
-    private final Pose startPose = new Pose(117, 130, Math.toRadians(36)); //See ExampleAuto to understand how to use this
-    private final Pose scorePose = new Pose(85, 85, Math.toRadians(45)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
-    private final Pose pickup1Pose = new Pose(37, 121, Math.toRadians(0)); // Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose pickup2Pose = new Pose(43, 130, Math.toRadians(0)); // Middle (Second Set) of Artifacts from the Spike Mark.
-    private final Pose pickup3Pose = new Pose(49, 135, Math.toRadians(0)); // Lowest (Third Set) of Artifacts from the Spike Mark.
+    private final Pose startPose = new Pose(25, 131, Math.toRadians(-36)); //See ExampleAuto to understand how to use this
+    private final Pose scorePose = new Pose(59, 85, Math.toRadians(-48)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
+    private final Pose pickup1Setup = new Pose(50, 85, Math.toRadians(180)); // Setup to pickup the highest set of balls
+    private final Pose pickup1Pose = new Pose(19, 85, Math.toRadians(180));// Highest (First Set) of Artifacts from the Spike Mark.
+    private final Pose pickup2Setup = new Pose(50, 60, Math.toRadians(180)); // Setup to pickup the middle set of balls
+    private final Pose pickup2Pose = new Pose(19, 60, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark.
+    private final Pose pickup3Setup = new Pose(50, 36, Math.toRadians(180)); // Setup to pickup the lowest set of balls
+    private final Pose pickup3Pose = new Pose(19, 36, Math.toRadians(180)); // Lowest (Third Set) of Artifacts from the Spike Mark.
 
     public PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
     public Path scorePreload;
-    public ComponentShell robot;
+    public ComponentShell comps;
     public Shooter shooter;
     public Pusher pusher;
 
@@ -48,8 +50,10 @@ public class RedGoalAuto extends OpMode {
 
         /* This is our grabPickup1 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         grabPickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose, pickup1Pose))
+                .addPath(new BezierLine(scorePose, pickup1Setup))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Pose.getHeading())
+                .addPath(new BezierLine(pickup1Setup, pickup1Pose))
+                .setLinearHeadingInterpolation(pickup1Setup.getHeading(), pickup1Pose.getHeading())
                 .build();
 
         /* This is our scorePickup1 PathChain. We are using a single path with a BezierLine, which is a straight line. */
@@ -60,8 +64,10 @@ public class RedGoalAuto extends OpMode {
 
         /* This is our grabPickup2 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         grabPickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose, pickup2Pose))
+                .addPath(new BezierLine(scorePose, pickup2Setup))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), pickup2Pose.getHeading())
+                .addPath(new BezierLine(pickup2Setup, pickup2Pose))
+                .setLinearHeadingInterpolation(pickup2Setup.getHeading(), pickup2Pose.getHeading())
                 .build();
 
         /* This is our scorePickup2 PathChain. We are using a single path with a BezierLine, which is a straight line. */
@@ -72,8 +78,10 @@ public class RedGoalAuto extends OpMode {
 
         /* This is our grabPickup3 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         grabPickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose, pickup3Pose))
+                .addPath(new BezierLine(scorePose, pickup3Setup))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), pickup3Pose.getHeading())
+                .addPath(new BezierLine(pickup3Setup, pickup3Pose))
+                .setLinearHeadingInterpolation(pickup3Setup.getHeading(), pickup3Pose.getHeading())
                 .build();
 
         /* This is our scorePickup3 PathChain. We are using a single path with a BezierLine, which is a straight line. */
@@ -82,10 +90,31 @@ public class RedGoalAuto extends OpMode {
                 .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose.getHeading())
                 .build();
     }
-
+    private void Shoot(int numShots){
+        for (int i = 0; i < numShots; i++) {
+            if(shooter.state != Shooter.ShooterState.READY){
+                try {
+                    Thread.sleep(20);
+                } catch (InterruptedException e) {
+                    return; // Exit if interrupted
+                }
+            }
+            pusher.Pusher.setPosition(pusher.Push);
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                return; // Exit if interrupted
+            }
+            pusher.Pusher.setPosition(pusher.Wait);
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                return; // Exit if interrupted
+            }
+        }
+    }
     public void autonomousPathUpdate() {
 
-/*
         shooter.TargetVel = shooter.FarVel;
         shooter.ShooterLeft.setVelocity(shooter.TargetVel);
         shooter.ShooterRight.setVelocity(shooter.TargetVel);
@@ -97,11 +126,8 @@ public class RedGoalAuto extends OpMode {
         } else {
             shooter.state = Shooter.ShooterState.READY;
         }
-*/
         switch (pathState) {
             case 0:
-
-                follower.followPath(scorePreload);
                 setPathState(1);
                 break;
             case 1:
@@ -111,11 +137,11 @@ public class RedGoalAuto extends OpMode {
                 - Time: "if(pathTimer.getElapsedTimeSeconds() > 1) {}"
                 - Robot Position: "if(follower.getPose().getX() > 36) {}"
                 */
-
                 // This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position
                 if (!follower.isBusy()) {
                     /* Score Preload */
 
+                    Shoot(3);
 
                     // Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample
                     follower.followPath(grabPickup1, true);
