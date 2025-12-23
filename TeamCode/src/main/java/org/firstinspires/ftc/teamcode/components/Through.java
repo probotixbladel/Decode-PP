@@ -11,9 +11,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Through {
     private HardwareMap hardwareMap;
     public DcMotorEx Through;
-    private static double in_power = 1.0;
-    private static double out_power = -1;
-    private static double static_power = 0;
+    public static double in_power = 1.0;
+    public static double out_power = -1;
+    public static double static_power = 0;
 
     public Through(HardwareMap hwm) {
         this.hardwareMap = hwm;
@@ -36,6 +36,7 @@ public class Through {
             {
                 Through.setPower(in_power);
             }
-    }
+        }
 
-}}
+    }
+}

@@ -10,11 +10,14 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.components.ComponentShell;
+import org.firstinspires.ftc.teamcode.components.Intake;
 import org.firstinspires.ftc.teamcode.components.Pusher;
 import org.firstinspires.ftc.teamcode.components.Shooter;
+import org.firstinspires.ftc.teamcode.components.Through;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.components.ComponentShell;
 
 @Autonomous(name = "Blue Goal Auto", group = "Examples")
 public class BlueGoalAuto extends OpMode {
@@ -34,9 +37,15 @@ public class BlueGoalAuto extends OpMode {
 
     public PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
     public Path scorePreload;
-    public ComponentShell comps;
     public Shooter shooter;
     public Pusher pusher;
+    public Intake intake;
+    public Through through;
+    public ComponentShell comps;
+    // for shoot pdf
+    private double lP = shooter.P;
+    private double lD = shooter.D;
+    private double lF = shooter.F;
 
 
 
@@ -92,7 +101,7 @@ public class BlueGoalAuto extends OpMode {
     }
     private void Shoot(int numShots){
         for (int i = 0; i < numShots; i++) {
-            if(shooter.state != Shooter.ShooterState.READY){
+            if(comps.shooter.state != Shooter.ShooterState.READY){
                 try {
                     Thread.sleep(20);
                 } catch (InterruptedException e) {
@@ -101,33 +110,57 @@ public class BlueGoalAuto extends OpMode {
             }
             pusher.Pusher.setPosition(pusher.Push);
             try {
-                Thread.sleep(100);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 return; // Exit if interrupted
             }
             pusher.Pusher.setPosition(pusher.Wait);
             try {
-                Thread.sleep(100);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 return; // Exit if interrupted
             }
+            through.Through.setPower(through.in_power);
+            intake.intake.setPower(intake.intake_power);
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                return; // Exit if interrupted
+            }
+            through.Through.setPower(through.static_power);
+            intake.intake.setPower(intake.static_power);
         }
     }
     public void autonomousPathUpdate() {
 
-        shooter.TargetVel = shooter.FarVel;
-        shooter.ShooterLeft.setVelocity(shooter.TargetVel);
-        shooter.ShooterRight.setVelocity(shooter.TargetVel);
-        shooter.CurrentVel = shooter.ShooterLeft.getVelocity();
-        if (shooter.CurrentVel < shooter.TargetVel - shooter.MinDeviation) {
-            shooter.state = Shooter.ShooterState.LOW;
-        } else if (shooter.CurrentVel > shooter.TargetVel + shooter.MaxDeviation) {
-            shooter.state = Shooter.ShooterState.HIGH;
-        } else {
-            shooter.state = Shooter.ShooterState.READY;
+        /* SHOOTER TO SHOOT BALLS */
+
+        if (shooter.P != lP | shooter.D != lD | shooter.F != lF){
+            shooter.ShooterLeft.setVelocityPIDFCoefficients( shooter.P, 0, shooter.D, shooter.F);
+            shooter.ShooterRight.setVelocityPIDFCoefficients(shooter.P, 0, shooter.D, shooter.F);
+            lP = shooter.P;
+            lD = shooter.D;
+            lF = shooter.F;
+
+            shooter.ShooterLeft.setVelocity(shooter.TargetVel);
+            shooter.ShooterRight.setVelocity(shooter.TargetVel);
+            shooter.CurrentVel = shooter.ShooterLeft.getVelocity();
+            if (shooter.CurrentVel < shooter.TargetVel - shooter.MinDeviation) {
+                shooter.state = Shooter.ShooterState.LOW;
+            } else if (shooter.CurrentVel > shooter.TargetVel + shooter.MaxDeviation) {
+                shooter.state = Shooter.ShooterState.HIGH;
+            } else {
+                shooter.state = Shooter.ShooterState.READY;
+            }
         }
+
         switch (pathState) {
             case 0:
+                follower.followPath(scorePreload);
+
+                /* SHOOT PRELOAD */
+                Shoot(3);
+
                 setPathState(1);
                 break;
             case 1:
@@ -139,9 +172,10 @@ public class BlueGoalAuto extends OpMode {
                 */
                 // This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position
                 if (!follower.isBusy()) {
-                    /* Score Preload */
 
-                    Shoot(3);
+                    /* GRAB PICKUP1 */
+                    intake.intake.setPower(intake.intake_power);
+                    through.Through.setPower(through.in_power);
 
                     // Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample
                     follower.followPath(grabPickup1, true);
@@ -151,17 +185,26 @@ public class BlueGoalAuto extends OpMode {
             case 2:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
                 if (!follower.isBusy()) {
-                    /* Grab Sample */
+
+                    /* STOP GRABBING BALLS */
+                    intake.intake.setPower(intake.static_power);
+                    through.Through.setPower(through.static_power);
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                     follower.followPath(scorePickup1, true);
+
+                    /* SHOOT 1 */
+                    Shoot(3);
                     setPathState(3);
                 }
                 break;
             case 3:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if (!follower.isBusy()) {
-                    /* Score Sample */
+
+                    /* GRAB PICKUP2 */
+                    intake.intake.setPower(intake.intake_power);
+                    through.Through.setPower(through.in_power);
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     follower.followPath(grabPickup2, true);
@@ -171,17 +214,24 @@ public class BlueGoalAuto extends OpMode {
             case 4:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup2Pose's position */
                 if (!follower.isBusy()) {
-                    /* Grab Sample */
+                    /* STOP GRABBING BALLS */
+                    intake.intake.setPower(intake.static_power);
+                    through.Through.setPower(through.static_power);
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                     follower.followPath(scorePickup2, true);
+
+                    /* SHOOT 2 */
+                    Shoot(3);
                     setPathState(5);
                 }
                 break;
             case 5:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if (!follower.isBusy()) {
-                    /* Score Sample */
+                    /* GRAB PICKUP3 */
+                    intake.intake.setPower(intake.intake_power);
+                    through.Through.setPower(through.in_power);
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     follower.followPath(grabPickup3, true);
@@ -191,10 +241,15 @@ public class BlueGoalAuto extends OpMode {
             case 6:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup3Pose's position */
                 if (!follower.isBusy()) {
-                    /* Grab Sample */
+                    /* STOP GRABBING BALLS */
+                    intake.intake.setPower(intake.static_power);
+                    through.Through.setPower(through.static_power);
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                     follower.followPath(scorePickup3, true);
+
+                    /* SHOOT 2 */
+                    Shoot(3);
                     setPathState(7);
                 }
                 break;
