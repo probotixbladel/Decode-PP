@@ -18,14 +18,12 @@ public class Through {
     public Through(HardwareMap hwm) {
         this.hardwareMap = hwm;
         Through = hardwareMap.get(DcMotorEx.class, "Through");
-        Through.setDirection(DcMotor.Direction.REVERSE);
+        Through.setDirection(DcMotor.Direction.FORWARD);
         Through.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void OutThrough(ComponentShellTeleop Comps) {
-        if (Comps.intake.state == Intake.IntakeState.OUTTAKE) {
-            Through.setPower(out_power);
-        }
+        Through.setPower(out_power);
     }
     public void InThrough(ComponentShellTeleop Comps) {
         if (Comps.pusher.state == Pusher.PushState.WAITING) {
