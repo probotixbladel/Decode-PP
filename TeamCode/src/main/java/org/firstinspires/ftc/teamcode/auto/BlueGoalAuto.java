@@ -137,13 +137,13 @@ public class BlueGoalAuto extends OpMode {
 
         if (shooter.P != lP | shooter.D != lD | shooter.F != lF){
             shooter.ShooterLeft.setVelocityPIDFCoefficients( shooter.P, 0, shooter.D, shooter.F);
-            shooter.ShooterRight.setVelocityPIDFCoefficients(shooter.P, 0, shooter.D, shooter.F);
+           // shooter.ShooterRight.setVelocityPIDFCoefficients(shooter.P, 0, shooter.D, shooter.F);
             lP = shooter.P;
             lD = shooter.D;
             lF = shooter.F;
 
             shooter.ShooterLeft.setVelocity(shooter.TargetVel);
-            shooter.ShooterRight.setVelocity(shooter.TargetVel);
+           // shooter.ShooterRight.setVelocity(shooter.TargetVel);
             shooter.CurrentVel = shooter.ShooterLeft.getVelocity();
             if (shooter.CurrentVel < shooter.TargetVel - shooter.MinDeviation) {
                 shooter.state = Shooter.ShooterState.LOW;

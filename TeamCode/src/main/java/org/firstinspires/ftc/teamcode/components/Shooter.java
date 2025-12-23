@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Shooter {
     private HardwareMap hardwareMap;
     public DcMotorEx ShooterLeft;
-    public DcMotorEx ShooterRight;
+    //public DcMotorEx ShooterRight;
     public ShooterState state = ShooterState.LOW;
     public static double TargetVel = 1250;
     public static double CloseVel = 1100;
@@ -36,15 +36,15 @@ public class Shooter {
     public Shooter(HardwareMap hwm) {
         this.hardwareMap = hwm;
         ShooterLeft = hardwareMap.get(DcMotorEx.class, "shooterLeft");
-        ShooterRight = hardwareMap.get(DcMotorEx.class, "shooterRight");
-        ShooterRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        ShooterLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        // ShooterRight = hardwareMap.get(DcMotorEx.class, "shooterRight");
+      //  ShooterRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        ShooterLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         ShooterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        ShooterRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+      //  ShooterRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ShooterLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        ShooterRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+      //  ShooterRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         ShooterLeft.setVelocityPIDFCoefficients( P, 0, D, F);
-        ShooterRight.setVelocityPIDFCoefficients(P, 0, D, F);
+      //  ShooterRight.setVelocityPIDFCoefficients(P, 0, D, F);
 
 
     }
@@ -60,7 +60,7 @@ public class Shooter {
     public void update(){
         if (P != lP | D != lD | F != lF){
             ShooterLeft.setVelocityPIDFCoefficients( P, 0, D, F);
-            ShooterRight.setVelocityPIDFCoefficients(P, 0, D, F);
+            //ShooterRight.setVelocityPIDFCoefficients(P, 0, D, F);
             lP = P;
             lD = D;
             lF = F;
@@ -68,7 +68,7 @@ public class Shooter {
 
 
         ShooterLeft.setVelocity(TargetVel);
-        ShooterRight.setVelocity(TargetVel);
+        //ShooterRight.setVelocity(TargetVel);
         CurrentVel = ShooterLeft.getVelocity();
         if (CurrentVel < TargetVel - MinDeviation) {
             state = ShooterState.LOW;

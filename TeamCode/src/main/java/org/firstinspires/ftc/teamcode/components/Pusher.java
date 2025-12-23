@@ -13,11 +13,11 @@ public class Pusher {
     private final HardwareMap hardwareMap;
     public Servo Pusher;
     public static double Wait = 0.0;
-    public static double Push = 0.3;
+    public static double Push = 0.25;
     public ElapsedTime LastShot = new ElapsedTime();
     public PushState state = PushState.RETURNING;
-    public static double ShootTime = 0.5;
-    public static double ReturnTime = 0.5;
+    public static double ShootTime = 0.3;
+    public static double ReturnTime = 0.3;
     public enum PushState {
         WAITING,
         SHOOTING,
