@@ -29,9 +29,13 @@ public class ComponentShell {
     }
 
     public void update(Gamepad gamepad1, Gamepad gamepad2) {
+        if (gamepad2.a) {
+            pusher.AttemptShoot(this);
+        }
+
         intake.update(gamepad2);
         shooter.update(gamepad2);
-        pusher.update(gamepad2, this);
+        pusher.update(this);
         through.update(gamepad2, this);
 
         telemetryM.debug("Vel: ", shooter.CurrentVel);

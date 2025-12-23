@@ -30,14 +30,15 @@ public class Pusher {
 
     }
 
-    public void update(Gamepad gamepad2, ComponentShell Comps) {
+    public void AttemptShoot(ComponentShell Comps) {
+        if (state == PushState.SHOOTING & Comps.shooter.state == Shooter.ShooterState.READY) {
+            Pusher.setPosition(Push);
+            state = PushState.SHOOTING;
+            LastShot.reset();
+        }
+    }
+    public void update(ComponentShell Comps) {
         switch (state) {
-            case WAITING:
-                if (gamepad2.a & Comps.shooter.state == Shooter.ShooterState.READY) {
-                    Pusher.setPosition(Push);
-                    state = PushState.SHOOTING;
-                    LastShot.reset();
-                }
             case SHOOTING:
                 if (LastShot.seconds() > ShootTime) {
                     Pusher.setPosition(Wait);
@@ -47,10 +48,7 @@ public class Pusher {
                 if (LastShot.seconds() > ShootTime + ReturnTime) {
                     state = PushState.WAITING;
                 }
-
         }
-
-
     }
 
 }
