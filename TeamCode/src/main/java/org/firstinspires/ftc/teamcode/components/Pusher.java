@@ -30,14 +30,14 @@ public class Pusher {
 
     }
 
-    public void AttemptShoot(ComponentShell Comps) {
-        if (state == PushState.SHOOTING & Comps.shooter.state == Shooter.ShooterState.READY) {
+    public void AttemptPush(ComponentShellTeleop Comps) {
+        if (state == PushState.WAITING & Comps.shooter.state == Shooter.ShooterState.READY) {
             Pusher.setPosition(Push);
             state = PushState.SHOOTING;
             LastShot.reset();
         }
     }
-    public void update(ComponentShell Comps) {
+    public void update(ComponentShellTeleop Comps) {
         switch (state) {
             case SHOOTING:
                 if (LastShot.seconds() > ShootTime) {

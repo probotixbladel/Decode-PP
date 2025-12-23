@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.components.ComponentShell;
+import org.firstinspires.ftc.teamcode.components.ComponentShellTeleop;
 import org.firstinspires.ftc.teamcode.components.Intake;
 import org.firstinspires.ftc.teamcode.components.Pusher;
 import org.firstinspires.ftc.teamcode.components.Shooter;
@@ -41,7 +41,7 @@ public class BlueGoalAuto extends OpMode {
     public Pusher pusher;
     public Intake intake;
     public Through through;
-    public ComponentShell comps;
+    public ComponentShellTeleop comps;
     // for shoot pdf
     private double lP = shooter.P;
     private double lD = shooter.D;

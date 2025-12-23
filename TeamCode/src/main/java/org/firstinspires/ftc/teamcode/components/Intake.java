@@ -26,19 +26,18 @@ public class Intake {
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
-    public void update(Gamepad gamepad2) {
-        if (gamepad2.right_trigger > 0.2) {
-            state = IntakeState.INTAKE;
-            intake.setPower(intake_power);
-        }
-        else if (gamepad2.left_trigger  > 0.2) {
-            state = Intake.IntakeState.OUTTAKE;
-            intake.setPower(outtake_power);
-        }
-        else {
-            state = Intake.IntakeState.OFF;
-            intake.setPower(static_power);
-        }
+    public void TakeIn() {
+        state = IntakeState.INTAKE;
+        intake.setPower(intake_power);
     }
+    public void TakeOut() {
+        state = Intake.IntakeState.OUTTAKE;
+        intake.setPower(outtake_power);
+    }
+    public void StaticIntake() {
+        state = Intake.IntakeState.OFF;
+        intake.setPower(static_power);
+    }
+
 
 }

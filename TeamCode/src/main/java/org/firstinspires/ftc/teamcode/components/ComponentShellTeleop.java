@@ -7,7 +7,7 @@ import com.pedropathing.follower.Follower;
 import com.bylazar.telemetry.TelemetryManager;
 
 @Configurable
-public class ComponentShell {
+public class ComponentShellTeleop {
     public HardwareMap hardwareMap;
     public final Intake intake;
     public final Shooter shooter;
@@ -17,7 +17,7 @@ public class ComponentShell {
     public TelemetryManager telemetryM;
 
 
-    public ComponentShell(HardwareMap hwm, Follower flw, TelemetryManager Tm) {
+    public ComponentShellTeleop(HardwareMap hwm, Follower flw, TelemetryManager Tm) {
         this.hardwareMap = hwm;
         this.intake = new Intake(hardwareMap);
         this.shooter = new Shooter(hardwareMap);
@@ -30,13 +30,31 @@ public class ComponentShell {
 
     public void update(Gamepad gamepad1, Gamepad gamepad2) {
         if (gamepad2.a) {
-            pusher.AttemptShoot(this);
+            pusher.AttemptPush(this);
         }
-
-        intake.update(gamepad2);
-        shooter.update(gamepad2);
+        if (gamepad2.right_trigger > 0.2) {
+            intake.TakeIn();
+        }
+        else if (gamepad2.left_trigger > 0.2) {
+            intake.TakeOut();
+        }
+        else {
+            intake.StaticIntake();
+        }
+        shooter.update();
+        if(gamepad2.b) {
+            shooter.ChangeShooterSpeed();
+        }
         pusher.update(this);
-        through.update(gamepad2, this);
+        if (gamepad2.x) {
+            through.InThrough(this);
+        }
+        else if (gamepad2.left_bumper) {
+            through.OutThrough(this);
+        }
+        else {
+            through.StaticThrough(this);
+        }
 
         telemetryM.debug("Vel: ", shooter.CurrentVel);
         telemetryM.debug("shooter state: ", shooter.state);

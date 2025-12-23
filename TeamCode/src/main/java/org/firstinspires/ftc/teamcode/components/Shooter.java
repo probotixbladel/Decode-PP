@@ -49,7 +49,15 @@ public class Shooter {
 
     }
 
-    public void update(Gamepad gamepad2){
+    public void ChangeShooterSpeed() {
+        if (TargetVel == CloseVel) {
+            TargetVel = FarVel;
+        } else {
+            TargetVel = CloseVel;
+        }
+    }
+
+    public void update(){
         if (P != lP | D != lD | F != lF){
             ShooterLeft.setVelocityPIDFCoefficients( P, 0, D, F);
             ShooterRight.setVelocityPIDFCoefficients(P, 0, D, F);
@@ -58,13 +66,6 @@ public class Shooter {
             lF = F;
         }
 
-        if (gamepad2.bWasPressed()) {
-            if (TargetVel == CloseVel) {
-                TargetVel = FarVel;
-            } else {
-                TargetVel = CloseVel;
-            }
-        }
 
         ShooterLeft.setVelocity(TargetVel);
         ShooterRight.setVelocity(TargetVel);

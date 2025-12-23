@@ -22,21 +22,21 @@ public class Through {
         Through.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void update(Gamepad gamepad2, ComponentShell Comps) {
-        if (Comps.intake.state == Intake.IntakeState.OUTTAKE || gamepad2.y) {
+    public void OutThrough(ComponentShellTeleop Comps) {
+        if (Comps.intake.state == Intake.IntakeState.OUTTAKE) {
+            Through.setPower(out_power);
+        }
+    }
+    public void InThrough(ComponentShellTeleop Comps) {
+        if (Comps.pusher.state == Pusher.PushState.WAITING) {
             Through.setPower(in_power);
         }
-        else if (Comps.pusher.state == Pusher.PushState.WAITING) {
-            if (gamepad2.x) {
-                Through.setPower(out_power);
-            } else {
-                Through.setPower(static_power);
-            }
-            if (gamepad2.left_bumper)
-            {
-                Through.setPower(in_power);
-            }
-        }
-
     }
+    public void StaticThrough(ComponentShellTeleop Comps) {
+        if (Comps.pusher.state == Pusher.PushState.WAITING) {
+            Through.setPower(static_power);
+        }
+    }
+
+    //p
 }
