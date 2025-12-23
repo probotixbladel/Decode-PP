@@ -157,6 +157,6 @@ public class PedroTeleop_Blue_Goal extends OpMode {
         //telemetryM.debug("velocity", follower.getVelocity());
         //telemetryM.debug("automatedDrive", automatedDrive);
 
-        Comps.update(gamepad1, gamepad2);
+        Comps.updateTeleop(gamepad1, gamepad2);
     }
 }

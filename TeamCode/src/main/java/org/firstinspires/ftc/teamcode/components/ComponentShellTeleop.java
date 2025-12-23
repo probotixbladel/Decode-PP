@@ -15,6 +15,7 @@ public class ComponentShellTeleop {
     public Through through;
     public Follower follower;
     public TelemetryManager telemetryM;
+    public boolean RunningAuto;
 
 
     public ComponentShellTeleop(HardwareMap hwm, Follower flw, TelemetryManager Tm) {
@@ -25,10 +26,13 @@ public class ComponentShellTeleop {
         this.through = new Through(hardwareMap);
         this.follower = flw;
         this.telemetryM = Tm;
-
     }
 
-    public void update(Gamepad gamepad1, Gamepad gamepad2) {
+    public void update() {
+        pusher.update(this);
+        shooter.update();
+    }
+    public void updateTeleop(Gamepad gamepad1, Gamepad gamepad2) {
         if (gamepad2.a) {
             pusher.AttemptPush(this);
         }
@@ -41,11 +45,11 @@ public class ComponentShellTeleop {
         else {
             intake.StaticIntake();
         }
-        shooter.update();
+
         if(gamepad2.b) {
             shooter.ChangeShooterSpeed();
         }
-        pusher.update(this);
+
         if (gamepad2.x) {
             through.InThrough(this);
         }
@@ -55,6 +59,8 @@ public class ComponentShellTeleop {
         else {
             through.StaticThrough(this);
         }
+
+        this.update();
 
         telemetryM.debug("Vel: ", shooter.CurrentVel);
         telemetryM.debug("shooter state: ", shooter.state);
