@@ -58,7 +58,7 @@ public class Shooter {
             lF = F;
         }
 
-        if (gamepad2.b) {
+        if (gamepad2.bWasPressed()) {
             if (TargetVel == CloseVel) {
                 TargetVel = FarVel;
             } else {
