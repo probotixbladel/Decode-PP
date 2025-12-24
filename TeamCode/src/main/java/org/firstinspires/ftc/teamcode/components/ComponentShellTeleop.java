@@ -61,7 +61,7 @@ public class ComponentShellTeleop {
         }
 
         this.update();
-
+        telemetryM.debug("Pusher angle:", pusher.PusherAngle);
         telemetryM.debug("Vel: ", shooter.CurrentVel);
         telemetryM.debug("shooter state: ", shooter.state);
         telemetryM.debug("intake state: ", intake.state);

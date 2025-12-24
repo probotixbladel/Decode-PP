@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 
 @Configurable
 public class Pusher {
@@ -15,9 +16,14 @@ public class Pusher {
     public static double Wait = 0.0;
     public static double Push = 0.25;
     public ElapsedTime LastShot = new ElapsedTime();
+
     public PushState state = PushState.RETURNING;
     public static double ShootTime = 0.3;
     public static double ReturnTime = 0.3;
+    public double PusherAngle = 0;
+    public static double RestAngle = 0;
+    public static double AriveAngle = 0;
+    AnalogInput PusherEnc;
     public enum PushState {
         WAITING,
         SHOOTING,
@@ -27,6 +33,7 @@ public class Pusher {
     public Pusher(HardwareMap hwm) {
         this.hardwareMap = hwm;
         Pusher = hardwareMap.get(Servo.class, "Pusher");
+        PusherEnc = hardwareMap.get(AnalogInput.class, "PusherEnc");
 
     }
 
@@ -38,6 +45,7 @@ public class Pusher {
         }
     }
     public void update(ComponentShellTeleop Comps) {
+        PusherAngle = PusherEnc.getVoltage() / 3.3 * 360;
         switch (state) {
             case SHOOTING:
                 if (LastShot.seconds() > ShootTime) {

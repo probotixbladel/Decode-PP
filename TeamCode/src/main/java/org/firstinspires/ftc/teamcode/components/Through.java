@@ -28,6 +28,8 @@ public class Through {
     public void InThrough(ComponentShellTeleop Comps) {
         if (Comps.pusher.state == Pusher.PushState.WAITING) {
             Through.setPower(in_power);
+        } else {
+            this.StaticThrough(Comps);
         }
     }
     public void StaticThrough(ComponentShellTeleop Comps) {
