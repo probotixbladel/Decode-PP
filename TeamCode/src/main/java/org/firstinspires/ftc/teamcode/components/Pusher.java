@@ -18,11 +18,11 @@ public class Pusher {
     public ElapsedTime LastShot = new ElapsedTime();
 
     public PushState state = PushState.RETURNING;
-    public static double ShootTime = 0.3;
-    public static double ReturnTime = 0.3;
+    public static double ShootTime = 0.5;
+    public static double ReturnTime = 0.5;
     public double PusherAngle = 0;
-    public static double RestAngle = 0;
-    public static double AriveAngle = 0;
+    public static double RestAngle = 330;
+    public static double AriveAngle = 270;
     AnalogInput PusherEnc;
     public enum PushState {
         WAITING,
@@ -48,12 +48,12 @@ public class Pusher {
         PusherAngle = PusherEnc.getVoltage() / 3.3 * 360;
         switch (state) {
             case SHOOTING:
-                if (LastShot.seconds() > ShootTime) {
+                if (LastShot.seconds() > ShootTime || PusherAngle < AriveAngle) {
                     Pusher.setPosition(Wait);
                     state = PushState.RETURNING;
                 }
             case RETURNING:
-                if (LastShot.seconds() > ShootTime + ReturnTime) {
+                if (LastShot.seconds() > ShootTime + ReturnTime || PusherAngle > RestAngle) {
                     state = PushState.WAITING;
                 }
         }
