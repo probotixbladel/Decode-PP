@@ -12,7 +12,7 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.components.ComponentShellTeleop;
+import org.firstinspires.ftc.teamcode.components.ComponentShell;
 
 import java.util.function.Supplier;
 
@@ -27,7 +27,7 @@ public class PedroTeleop_Blue_Back extends OpMode {
     private Supplier<PathChain> pathChainFar;
     private TelemetryManager telemetryM;
     private final PedroInputScaler scaler = new PedroInputScaler();
-    private ComponentShellTeleop Comps;
+    private ComponentShell Comps;
 
     static class PedroInputScaler {
         // TODO: Tune these values for your application
@@ -73,7 +73,7 @@ public class PedroTeleop_Blue_Back extends OpMode {
         follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
-        Comps = new ComponentShellTeleop(hardwareMap, follower, telemetryM);
+        Comps = new ComponentShell(hardwareMap, follower, telemetryM);
 
         pathChainClose = () -> follower.pathBuilder() //Lazy Curve Generation
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(40, 110))))

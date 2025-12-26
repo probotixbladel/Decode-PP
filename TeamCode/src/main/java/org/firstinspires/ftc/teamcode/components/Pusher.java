@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode.components;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -19,7 +16,7 @@ public class Pusher {
 
     public PushState state = PushState.RETURNING;
     public static double ShootTime = 0.5;
-    public static double ReturnTime = 0.5;
+    public static double ReturnTime = 0.25;
     public double PusherAngle = 0;
     public static double RestAngle = 330;
     public static double AriveAngle = 270;
@@ -37,14 +34,14 @@ public class Pusher {
 
     }
 
-    public void AttemptPush(ComponentShellTeleop Comps) {
+    public void AttemptPush(ComponentShell Comps) {
         if (state == PushState.WAITING & Comps.shooter.state == Shooter.ShooterState.READY) {
             Pusher.setPosition(Push);
             state = PushState.SHOOTING;
             LastShot.reset();
         }
     }
-    public void update(ComponentShellTeleop Comps) {
+    public void update(ComponentShell Comps) {
         PusherAngle = PusherEnc.getVoltage() / 3.3 * 360;
         switch (state) {
             case SHOOTING:
@@ -53,7 +50,7 @@ public class Pusher {
                     state = PushState.RETURNING;
                 }
             case RETURNING:
-                if (LastShot.seconds() > ShootTime + ReturnTime || PusherAngle > RestAngle) {
+                if (LastShot.seconds() > ShootTime + ReturnTime) {
                     state = PushState.WAITING;
                 }
         }

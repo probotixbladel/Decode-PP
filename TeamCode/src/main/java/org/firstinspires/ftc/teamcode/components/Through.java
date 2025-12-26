@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.components;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 @Configurable
@@ -22,17 +20,17 @@ public class Through {
         Through.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void OutThrough(ComponentShellTeleop Comps) {
+    public void OutThrough(ComponentShell Comps) {
         Through.setPower(out_power);
     }
-    public void InThrough(ComponentShellTeleop Comps) {
-        if (Comps.pusher.state == Pusher.PushState.WAITING) {
+    public void InThrough(ComponentShell Comps) {
+        if (Comps.pusher.state != Pusher.PushState.SHOOTING) {
             Through.setPower(in_power);
         } else {
             this.StaticThrough(Comps);
         }
     }
-    public void StaticThrough(ComponentShellTeleop Comps) {
+    public void StaticThrough(ComponentShell Comps) {
         if (Comps.pusher.state == Pusher.PushState.WAITING) {
             Through.setPower(static_power);
         }

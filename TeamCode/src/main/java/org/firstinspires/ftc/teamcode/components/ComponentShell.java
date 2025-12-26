@@ -7,7 +7,7 @@ import com.pedropathing.follower.Follower;
 import com.bylazar.telemetry.TelemetryManager;
 
 @Configurable
-public class ComponentShellTeleop {
+public class ComponentShell {
     public HardwareMap hardwareMap;
     public final Intake intake;
     public final Shooter shooter;
@@ -15,24 +15,35 @@ public class ComponentShellTeleop {
     public Through through;
     public Follower follower;
     public TelemetryManager telemetryM;
+    public LimeLight limeLight;
     public boolean RunningAuto;
 
 
-    public ComponentShellTeleop(HardwareMap hwm, Follower flw, TelemetryManager Tm) {
+    public ComponentShell(HardwareMap hwm, Follower flw, TelemetryManager Tm) {
         this.hardwareMap = hwm;
         this.intake = new Intake(hardwareMap);
         this.shooter = new Shooter(hardwareMap);
         this.pusher = new Pusher(hardwareMap);
         this.through = new Through(hardwareMap);
+        this.limeLight = new LimeLight(hardwareMap);
         this.follower = flw;
         this.telemetryM = Tm;
     }
 
     public void update() {
-        pusher.update(this);
+        limeLight.update(this, telemetryM, follower.getHeading());
         shooter.update();
+        pusher.update(this);
+
+        telemetryM.debug("folower pos: ", follower.getPose());
+        telemetryM.debug("Pusher angle:", pusher.PusherAngle);
+        telemetryM.debug("Vel: ", shooter.CurrentVel);
+        telemetryM.debug("shooter state: ", shooter.state);
+        telemetryM.debug("intake state: ", intake.state);
+        telemetryM.debug("power", intake.intake.getPower(), through.Through.getPower());
     }
     public void updateTeleop(Gamepad gamepad1, Gamepad gamepad2) {
+        this.update();
         if (gamepad2.a) {
             pusher.AttemptPush(this);
         }
@@ -46,10 +57,6 @@ public class ComponentShellTeleop {
             intake.StaticIntake();
         }
 
-        if(gamepad2.b) {
-            shooter.ChangeShooterSpeed();
-        }
-
         if (gamepad2.x) {
             through.InThrough(this);
         }
@@ -60,11 +67,6 @@ public class ComponentShellTeleop {
             through.StaticThrough(this);
         }
 
-        this.update();
-        telemetryM.debug("Pusher angle:", pusher.PusherAngle);
-        telemetryM.debug("Vel: ", shooter.CurrentVel);
-        telemetryM.debug("shooter state: ", shooter.state);
-        telemetryM.debug("intake state: ", intake.state);
-        telemetryM.debug("power", intake.intake.getPower(), through.Through.getPower());
+
     }
 }
