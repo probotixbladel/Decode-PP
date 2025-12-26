@@ -20,6 +20,7 @@ public class ComponentShell {
     public Pose3D limePos = null;
     public Alliance aliance;
     public boolean RunningAuto;
+    public boolean SinglePlayer;
 
     public enum Alliance {
         BLUE,
@@ -27,7 +28,7 @@ public class ComponentShell {
     }
 
 
-    public ComponentShell(HardwareMap hwm, Follower flw, TelemetryManager Tm, Alliance al) {
+    public ComponentShell(HardwareMap hwm, Follower flw, TelemetryManager Tm, Alliance al, boolean single) {
         this.aliance = al;
         this.hardwareMap = hwm;
         this.intake = new Intake(hardwareMap);
@@ -37,6 +38,7 @@ public class ComponentShell {
         this.limeLight = new LimeLight(hardwareMap, aliance);
         this.follower = flw;
         this.telemetryM = Tm;
+        this.SinglePlayer = single;
     }
 
     public void update() {
@@ -58,27 +60,45 @@ public class ComponentShell {
     }
     public void updateTeleop(Gamepad gamepad1, Gamepad gamepad2) {
         this.update();
-        if (gamepad2.a) {
-            pusher.AttemptPush(this);
-        }
-        if (gamepad2.right_trigger > 0.2) {
-            intake.TakeIn();
-        }
-        else if (gamepad2.left_trigger > 0.2) {
-            intake.TakeOut();
-        }
-        else {
-            intake.StaticIntake();
-        }
+        if (!SinglePlayer){
+            if (gamepad1.a) {
+                pusher.AttemptPush(this);
+            }
+            if (gamepad1.right_trigger > 0.2) {
+                intake.TakeIn();
+            } else if (gamepad1.left_trigger > 0.2) {
+                intake.TakeOut();
+            } else {
+                intake.StaticIntake();
+            }
 
-        if (gamepad2.x) {
-            through.InThrough(this);
-        }
-        else if (gamepad2.left_bumper) {
-            through.OutThrough(this);
-        }
-        else {
-            through.StaticThrough(this);
+            if (gamepad1.x) {
+                through.InThrough(this);
+            } else if (gamepad1.left_bumper) {
+                through.OutThrough(this);
+            } else {
+                through.StaticThrough(this);
+            }
+
+        } else {
+            if (gamepad2.a) {
+                pusher.AttemptPush(this);
+            }
+            if (gamepad2.right_trigger > 0.2) {
+                intake.TakeIn();
+            } else if (gamepad2.left_trigger > 0.2) {
+                intake.TakeOut();
+            } else {
+                intake.StaticIntake();
+            }
+
+            if (gamepad2.x) {
+                through.InThrough(this);
+            } else if (gamepad2.left_bumper) {
+                through.OutThrough(this);
+            } else {
+                through.StaticThrough(this);
+            }
         }
 
 

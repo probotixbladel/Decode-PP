@@ -21,6 +21,7 @@ import java.util.function.Supplier;
 @TeleOp(name="TeleOp Red Back", group="Linear OpMode")
 public class PedroTeleop_Red_Back extends OpMode {
     private Follower follower;
+    public static boolean SinglePlayer = true;
     public static Pose startingPose = new Pose(87.0, 9, Math.toRadians(90)); //See ExampleAuto to understand how to use this
     private boolean automatedDrive;
     private boolean robotcentric = true;
@@ -74,7 +75,7 @@ public class PedroTeleop_Red_Back extends OpMode {
         follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
-        Comps = new ComponentShell(hardwareMap, follower, telemetryM, ComponentShell.Alliance.RED);
+        Comps = new ComponentShell(hardwareMap, follower, telemetryM, ComponentShell.Alliance.BLUE, SinglePlayer);
         pathChainClose = () -> follower.pathBuilder() //Lazy Curve Generation
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(104, 110))))
                 .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(225), 0.8))
@@ -101,14 +102,22 @@ public class PedroTeleop_Red_Back extends OpMode {
         telemetryM.update();
 
         // switch gears
-        if (gamepad1.a) {
-            scaler.gear = 0;
-        } else if (gamepad1.b) {
-            scaler.gear = 1;
-        } else if (gamepad1.x) {
-            scaler.gear = 2;
-        } else if (gamepad1.y) {
-            scaler.gear = 3;
+        if (SinglePlayer) {
+            if (gamepad1.left_stick_button) {
+                scaler.gear = 1;
+            } else {
+                scaler.gear = 3;
+            }
+        } else {
+            if (gamepad1.a) {
+                scaler.gear = 0;
+            } else if (gamepad1.b) {
+                scaler.gear = 1;
+            } else if (gamepad1.x) {
+                scaler.gear = 2;
+            } else if (gamepad1.y) {
+                scaler.gear = 3;
+            }
         }
         if (gamepad1.dpadDownWasPressed()) {
             robotcentric = !robotcentric;
