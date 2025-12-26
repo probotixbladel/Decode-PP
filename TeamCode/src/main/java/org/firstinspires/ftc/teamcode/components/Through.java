@@ -22,17 +22,17 @@ public class Through {
         Through.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void OutThrough(ComponentShellTeleop Comps) {
+    public void OutThrough(ComponentShell Comps) {
         Through.setPower(out_power);
     }
-    public void InThrough(ComponentShellTeleop Comps) {
+    public void InThrough(ComponentShell Comps) {
         if (Comps.pusher.state == Pusher.PushState.WAITING) {
             Through.setPower(in_power);
         } else {
             this.StaticThrough(Comps);
         }
     }
-    public void StaticThrough(ComponentShellTeleop Comps) {
+    public void StaticThrough(ComponentShell Comps) {
         if (Comps.pusher.state == Pusher.PushState.WAITING) {
             Through.setPower(static_power);
         }

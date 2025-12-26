@@ -37,14 +37,14 @@ public class Pusher {
 
     }
 
-    public void AttemptPush(ComponentShellTeleop Comps) {
+    public void AttemptPush(ComponentShell Comps) {
         if (state == PushState.WAITING & Comps.shooter.state == Shooter.ShooterState.READY) {
             Pusher.setPosition(Push);
             state = PushState.SHOOTING;
             LastShot.reset();
         }
     }
-    public void update(ComponentShellTeleop Comps) {
+    public void update(ComponentShell Comps) {
         PusherAngle = PusherEnc.getVoltage() / 3.3 * 360;
         switch (state) {
             case SHOOTING:
