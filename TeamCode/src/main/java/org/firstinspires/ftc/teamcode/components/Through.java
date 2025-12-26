@@ -37,6 +37,4 @@ public class Through {
             Through.setPower(static_power);
         }
     }
-
-    //p
 }

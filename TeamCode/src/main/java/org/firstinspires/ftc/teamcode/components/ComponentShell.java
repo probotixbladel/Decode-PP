@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.pedropathing.follower.Follower;
 import com.bylazar.telemetry.TelemetryManager;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 @Configurable
 public class ComponentShell {
@@ -16,25 +17,38 @@ public class ComponentShell {
     public Follower follower;
     public TelemetryManager telemetryM;
     public LimeLight limeLight;
+    public Pose3D limePos = null;
+    public Alliance aliance;
     public boolean RunningAuto;
 
+    public enum Alliance {
+        BLUE,
+        RED
+    }
 
-    public ComponentShell(HardwareMap hwm, Follower flw, TelemetryManager Tm) {
+
+    public ComponentShell(HardwareMap hwm, Follower flw, TelemetryManager Tm, Alliance al) {
+        this.aliance = al;
         this.hardwareMap = hwm;
         this.intake = new Intake(hardwareMap);
-        this.shooter = new Shooter(hardwareMap);
+        this.shooter = new Shooter(hardwareMap, aliance);
         this.pusher = new Pusher(hardwareMap);
         this.through = new Through(hardwareMap);
-        this.limeLight = new LimeLight(hardwareMap);
+        this.limeLight = new LimeLight(hardwareMap, aliance);
         this.follower = flw;
         this.telemetryM = Tm;
     }
 
     public void update() {
-        limeLight.update(this, telemetryM, follower.getHeading());
+        Pose3D pos = limeLight.update(this, telemetryM, follower.getHeading());
         shooter.update();
         pusher.update(this);
+        shooter.setSpeeds(follower.getPose());
 
+        if (pos != null) {
+            limePos = pos;
+        }
+        telemetryM.debug("lime pos: ", limePos);
         telemetryM.debug("folower pos: ", follower.getPose());
         telemetryM.debug("Pusher angle:", pusher.PusherAngle);
         telemetryM.debug("Vel: ", shooter.CurrentVel);

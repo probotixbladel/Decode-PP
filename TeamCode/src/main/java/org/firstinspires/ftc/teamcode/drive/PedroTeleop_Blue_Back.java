@@ -73,7 +73,7 @@ public class PedroTeleop_Blue_Back extends OpMode {
         follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
-        Comps = new ComponentShell(hardwareMap, follower, telemetryM);
+        Comps = new ComponentShell(hardwareMap, follower, telemetryM, ComponentShell.Alliance.BLUE);
 
         pathChainClose = () -> follower.pathBuilder() //Lazy Curve Generation
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(40, 110))))

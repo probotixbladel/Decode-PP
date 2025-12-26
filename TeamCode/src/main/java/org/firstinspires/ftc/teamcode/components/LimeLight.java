@@ -12,12 +12,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 public class LimeLight {
     private HardwareMap hardwareMap;
     public Limelight3A limelight;
-    public LimeLight(HardwareMap hwm) {
+    public LimeLight(HardwareMap hwm, ComponentShell.Alliance al) {
         this.hardwareMap = hwm;
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.pipelineSwitch(0);
+        switch (al){
+            case BLUE:
+                limelight.pipelineSwitch(0);
+            case RED:
+                limelight.pipelineSwitch(1);
+        }
         limelight.start();
-
     }
 
     public Pose3D update(ComponentShell Comps, TelemetryManager telemetryM, double robotYaw) {
