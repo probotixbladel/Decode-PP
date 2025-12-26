@@ -140,7 +140,7 @@ public class BlueGoalAuto extends OpMode {
             lP = shooter.P;
             lD = shooter.D;
             lF = shooter.F;
-
+            /*
             shooter.ShooterLeft.setVelocity(shooter.TargetVel);
            // shooter.ShooterRight.setVelocity(shooter.TargetVel);
             shooter.CurrentVel = shooter.ShooterLeft.getVelocity();
@@ -151,6 +151,7 @@ public class BlueGoalAuto extends OpMode {
             } else {
                 shooter.state = Shooter.ShooterState.READY;
             }
+            */
         }
 
         switch (pathState) {
