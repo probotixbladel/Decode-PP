@@ -20,7 +20,7 @@ public class Shooter {
     public static double MinDeviation = 75;
     public double CurrentVel = 0;
 
-    public static double P = 100;
+    public static double P = 1000;
     public static double D = 0.0;
     public static double F = 14.0;
     private double lP = P;
