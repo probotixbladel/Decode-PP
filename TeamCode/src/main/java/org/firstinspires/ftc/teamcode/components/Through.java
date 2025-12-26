@@ -26,10 +26,10 @@ public class Through {
         Through.setPower(out_power);
     }
     public void InThrough(ComponentShellTeleop Comps) {
-        if (Comps.pusher.state == Pusher.PushState.WAITING) {
+        if (Comps.pusher.state != Pusher.PushState.SHOOTING) {
             Through.setPower(in_power);
         } else {
-            this.StaticThrough(Comps);
+            Through.setPower(-0.05);
         }
     }
     public void StaticThrough(ComponentShellTeleop Comps) {

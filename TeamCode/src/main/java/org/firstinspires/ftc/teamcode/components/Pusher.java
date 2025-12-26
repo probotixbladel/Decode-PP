@@ -19,7 +19,7 @@ public class Pusher {
 
     public PushState state = PushState.RETURNING;
     public static double ShootTime = 0.5;
-    public static double ReturnTime = 0.5;
+    public static double ReturnTime = 0.1;
     public double PusherAngle = 0;
     public static double RestAngle = 330;
     public static double AriveAngle = 270;
@@ -53,7 +53,7 @@ public class Pusher {
                     state = PushState.RETURNING;
                 }
             case RETURNING:
-                if (LastShot.seconds() > ShootTime + ReturnTime || PusherAngle > RestAngle) {
+                if (LastShot.seconds() > ShootTime + ReturnTime) {
                     state = PushState.WAITING;
                 }
         }
