@@ -21,7 +21,7 @@ import java.util.function.Supplier;
 public class PedroTeleop_Blue_Back extends OpMode {
     public static boolean SinglePlayer = true;
     private Follower follower;
-    public static Pose startingPose = new Pose(57, 9, Math.toRadians(90)); //See ExampleAuto to understand how to use this
+    public static Pose startingPose = new Pose(57, 9, Math.toRadians(270)); //See ExampleAuto to understand how to use this
     private boolean automatedDrive;
     private boolean robotcentric = true;
     private Supplier<PathChain> pathChainClose;
@@ -122,8 +122,6 @@ public class PedroTeleop_Blue_Back extends OpMode {
         if (gamepad1.dpadDownWasPressed()) {
             robotcentric = !robotcentric;
         }
-
-
 
         //Stop automated following if the follower is done
         if (automatedDrive && (gamepad1.leftBumperWasPressed() || gamepad1.rightBumperWasPressed() || !follower.isBusy())) {

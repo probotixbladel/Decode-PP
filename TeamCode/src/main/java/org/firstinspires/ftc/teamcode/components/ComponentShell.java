@@ -19,6 +19,7 @@ public class ComponentShell {
     public final Shooter shooter;
     public Pusher pusher;
     public Through through;
+    public ArtifactDetector detector;
     public Follower follower;
     public TelemetryManager telemetryM;
     public LimeLight limeLight;
@@ -26,7 +27,6 @@ public class ComponentShell {
     public Alliance alliance;
     public boolean RunningAuto;
     public boolean SinglePlayer;
-
     public enum Alliance {
         BLUE,
         RED
@@ -36,6 +36,7 @@ public class ComponentShell {
     public ComponentShell(HardwareMap hwm, Follower flw, TelemetryManager Tm, Alliance al, boolean single) {
         this.alliance = al;
         this.hardwareMap = hwm;
+        this.detector = new ArtifactDetector(hardwareMap);
         this.intake = new Intake(hardwareMap);
         this.shooter = new Shooter(hardwareMap, alliance);
         this.pusher = new Pusher(hardwareMap);
@@ -51,17 +52,17 @@ public class ComponentShell {
         shooter.update();
         pusher.update(this);
         shooter.setSpeeds(follower.getPose());
+        detector.update();
 
         if (pos != null) {
             limePos = pos;
         }
+        telemetryM.debug("detector dist", detector.distance);
         telemetryM.debug("lime pos: ", limePos);
         telemetryM.debug("folower pos: ", follower.getPose());
         telemetryM.debug("Pusher angle:", pusher.PusherAngle);
         telemetryM.debug("Vel: ", shooter.CurrentVel);
         telemetryM.debug("shooter state: ", shooter.state);
-        telemetryM.debug("intake state: ", intake.state);
-        telemetryM.debug("power", intake.intake.getPower(), through.Through.getPower());
     }
     public void updateTeleop(Gamepad gamepad1, Gamepad gamepad2) {
         this.update();

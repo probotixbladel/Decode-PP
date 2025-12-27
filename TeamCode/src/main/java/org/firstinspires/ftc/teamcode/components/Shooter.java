@@ -55,9 +55,6 @@ public class Shooter {
             {190, 1270},
             {200, 1300}
     };
-
-
-
     public static double P = 100.0;
     public static double D = 0.0;
     public static double F = 14.0;

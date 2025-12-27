@@ -26,9 +26,9 @@ public class LimeLight {
 
     public Pose3D update(ComponentShell Comps, TelemetryManager telemetryM, double robotYaw) {
         LLStatus status = limelight.getStatus();
-        telemetryM.debug("Name", status.getName());
-        telemetryM.debug("LL", "Temp: ", status.getTemp(), ", CPU: ", status.getCpu(), ", FPS: ", (int)status.getFps());
-        telemetryM.debug("Pipeline", "Index: ", status.getPipelineIndex(), ", Type: ", status.getPipelineType());
+        telemetryM.debug("Name ", status.getName());
+        telemetryM.debug("LL ", "Temp: ", status.getTemp(), ", CPU: ", status.getCpu(), ", FPS: ", (int)status.getFps());
+        telemetryM.debug("Pipeline ", "Index: ", status.getPipelineIndex(), ", Type: ", status.getPipelineType());
 
         Pose3D BotposeMt2 = null;
 
