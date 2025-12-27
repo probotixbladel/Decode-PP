@@ -14,9 +14,9 @@ public class Shooter {
     public DcMotorEx ShooterLeft;
     //public DcMotorEx ShooterRight;
     public ShooterState state = ShooterState.LOW;
-    public static double TargetVel = 1250;
-    public static double MaxSpeed = 75;
-    public static double MinSpeed = 75;
+    public double TargetVel = 1250;
+    public double MaxSpeed = 1300;
+    public double MinSpeed = 1200;
     public double CurrentVel = 0;
     public static double[][] MinPoints = {
             {50,  1020},
@@ -106,11 +106,12 @@ public class Shooter {
         return y0 + (x - x0) * (y1 - y0) / (x1 - x0);
     }
 
-    public void setSpeeds(Pose RobotPos) {
+    public double setSpeeds(Pose RobotPos) {
         double distance = (Math.sqrt(Math.pow(RobotPos.getY() - ShootTo.getY(), 2) + Math.pow(RobotPos.getX() - ShootTo.getX(), 2)) - 8) * 2.54;
         MaxSpeed = interpolate(MaxPoints, distance)-5;
         MinSpeed = interpolate(MinPoints, distance)+5;
         TargetVel = MinSpeed + (MaxSpeed - MinSpeed) * MinToMax;
+        return distance;
     }
 
     public void update(){

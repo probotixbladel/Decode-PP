@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 public class PedroTeleop_Red_Back extends OpMode {
     private Follower follower;
     public static boolean SinglePlayer = true;
-    public static Pose startingPose = new Pose(87.0, 9, Math.toRadians(90)); //See ExampleAuto to understand how to use this
+    public static Pose startingPose = new Pose(87.0, 9, Math.toRadians(270)); //See ExampleAuto to understand how to use this
     private boolean automatedDrive;
     private boolean robotcentric = true;
     private Supplier<PathChain> pathChainClose;

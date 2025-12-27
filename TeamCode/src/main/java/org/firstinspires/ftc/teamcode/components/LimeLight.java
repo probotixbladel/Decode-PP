@@ -19,16 +19,16 @@ public class LimeLight {
             case BLUE:
                 limelight.pipelineSwitch(0);
             case RED:
-                limelight.pipelineSwitch(1);
+                limelight.pipelineSwitch(0);
         }
         limelight.start();
     }
 
     public Pose3D update(ComponentShell Comps, TelemetryManager telemetryM, double robotYaw) {
         LLStatus status = limelight.getStatus();
-        telemetryM.debug("Name ", status.getName());
-        telemetryM.debug("LL ", "Temp: ", status.getTemp(), ", CPU: ", status.getCpu(), ", FPS: ", (int)status.getFps());
-        telemetryM.debug("Pipeline ", "Index: ", status.getPipelineIndex(), ", Type: ", status.getPipelineType());
+        //telemetryM.debug("Name ", status.getName());
+        //telemetryM.debug("LL ", "Temp: ", status.getTemp(), ", CPU: ", status.getCpu(), ", FPS: ", (int)status.getFps());
+        telemetryM.debug("P Index: ", status.getPipelineIndex(), "P Type: ", status.getPipelineType());
 
         Pose3D BotposeMt2 = null;
 

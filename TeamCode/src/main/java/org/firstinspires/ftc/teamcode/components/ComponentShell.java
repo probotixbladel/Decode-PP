@@ -61,12 +61,13 @@ public class ComponentShell {
         telemetryM.debug("lime pos: ", limePos);
         telemetryM.debug("folower pos: ", follower.getPose());
         telemetryM.debug("Pusher angle:", pusher.PusherAngle);
-        telemetryM.debug("Vel: ", shooter.CurrentVel);
+        telemetryM.debug("Vel: ", shooter.CurrentVel, shooter.TargetVel, "dist", shooter.setSpeeds(follower.getPose()));
         telemetryM.debug("shooter state: ", shooter.state);
     }
+
     public void updateTeleop(Gamepad gamepad1, Gamepad gamepad2) {
         this.update();
-        if (!SinglePlayer){
+        if (SinglePlayer){
             if (gamepad1.a) {
                 pusher.AttemptPush(this);
             }
