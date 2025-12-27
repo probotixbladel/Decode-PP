@@ -6,6 +6,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.pedropathing.follower.Follower;
 import com.bylazar.telemetry.TelemetryManager;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @Configurable
 public class ComponentShell {
@@ -17,7 +22,7 @@ public class ComponentShell {
     public Follower follower;
     public TelemetryManager telemetryM;
     public LimeLight limeLight;
-    public Pose3D limePos = null;
+    public Pose3D limePos = new Pose3D(new Position(), new YawPitchRollAngles(AngleUnit.DEGREES,0,0,0 ,0) );
     public Alliance alliance;
     public boolean RunningAuto;
     public boolean SinglePlayer;
