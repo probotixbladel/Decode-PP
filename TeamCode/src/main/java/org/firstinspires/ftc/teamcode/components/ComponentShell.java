@@ -18,7 +18,7 @@ public class ComponentShell {
     public TelemetryManager telemetryM;
     public LimeLight limeLight;
     public Pose3D limePos = null;
-    public Alliance aliance;
+    public Alliance alliance;
     public boolean RunningAuto;
     public boolean SinglePlayer;
 
@@ -29,13 +29,13 @@ public class ComponentShell {
 
 
     public ComponentShell(HardwareMap hwm, Follower flw, TelemetryManager Tm, Alliance al, boolean single) {
-        this.aliance = al;
+        this.alliance = al;
         this.hardwareMap = hwm;
         this.intake = new Intake(hardwareMap);
-        this.shooter = new Shooter(hardwareMap, aliance);
+        this.shooter = new Shooter(hardwareMap, alliance);
         this.pusher = new Pusher(hardwareMap);
         this.through = new Through(hardwareMap);
-        this.limeLight = new LimeLight(hardwareMap, aliance);
+        this.limeLight = new LimeLight(hardwareMap, alliance);
         this.follower = flw;
         this.telemetryM = Tm;
         this.SinglePlayer = single;
