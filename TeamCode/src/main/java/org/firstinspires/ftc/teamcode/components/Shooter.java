@@ -34,7 +34,7 @@ public class Shooter {
             {170, 1110},
             {180, 1130},
             {190, 1130},
-            {200, 1170}
+            {200, 1171}
 
     };
     public static double[][] MaxPoints = {
