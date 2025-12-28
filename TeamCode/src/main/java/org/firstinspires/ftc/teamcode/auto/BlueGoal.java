@@ -85,6 +85,8 @@ public class BlueGoal extends OpMode {
         telemetryM.update();
         follower.update();
         autonomousPathUpdate();
+        telemetry.addData("Shots", Shots);
+
         comps.update();
 
         telemetry.addData("path state", pathState);
