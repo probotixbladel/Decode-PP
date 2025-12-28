@@ -154,7 +154,6 @@ public class PedroTeleop extends OpMode {
                 );
             }
         }
-
         Comps.updateTeleop(gamepad1, gamepad2);
     }
 
@@ -210,17 +209,20 @@ public class PedroTeleop extends OpMode {
     }
 
     public Pose ClosePoint(Pose p, Pose s, Pose e, Pose g) {
-        double t, x, y;
-
         double abX = e.getX() - s.getX();
-        double abY = e.getX() - s.getY();
+        double abY = e.getY() - s.getY();
 
-        t = ((p.getX() - s.getX()) * abX + (p.getY() - s.getY()) * abY) / (abX * abX + abY * abY);
+        double t = ((p.getX() - s.getX()) * abX +
+                (p.getY() - s.getY()) * abY)
+                / (abX * abX + abY * abY);
+
         t = Math.max(0, Math.min(1, t));
 
-        x = s.getX() + t * abX;
-        y = s.getY() + t * abY;
+        double x = s.getX() + t * abX;
+        double y = s.getY() + t * abY;
 
-        return new Pose(x, y, Math.atan2(g.getY() - y, g.getX() - x) + Math.PI);
+        double heading = Math.atan2(g.getY() - y, g.getX() - x);
+
+        return new Pose(x, y, heading);
     }
 }

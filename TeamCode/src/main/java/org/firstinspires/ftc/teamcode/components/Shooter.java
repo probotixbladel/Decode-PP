@@ -108,7 +108,7 @@ public class Shooter {
     }
 
     public double setSpeeds(Pose RobotPos) {
-        if (PreTargeting) {
+        if (!PreTargeting) {
             double distance = (Math.sqrt(Math.pow(RobotPos.getY() - ShootTo.getY(), 2) + Math.pow(RobotPos.getX() - ShootTo.getX(), 2)) - 8) * 2.54;
             MaxSpeed = interpolate(MaxPoints, distance) - 5;
             MinSpeed = interpolate(MinPoints, distance) + 5;

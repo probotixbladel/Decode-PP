@@ -29,7 +29,6 @@ public class ComponentShell {
     public LimeLight limeLight;
     public Pose limePos = new Pose();
     public Alliance alliance;
-    public boolean RunningAuto;
     public boolean SinglePlayer;
 
     public enum Alliance {

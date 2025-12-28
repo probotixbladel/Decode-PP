@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
@@ -23,6 +25,7 @@ public class BlueGoal extends OpMode {
     public Path scorePreload;
     public ComponentShell comps;
     public double Shots = 0;
+    private TelemetryManager telemetryM;
 
     public void buildPaths() {
         /* This is our scorePreload path. We are using a BezierLine, which is a straight line. */
@@ -58,9 +61,6 @@ public class BlueGoal extends OpMode {
         }
     }
 
-
-
-
     @Override
     public void init() {
         pathTimer = new Timer();
@@ -70,6 +70,8 @@ public class BlueGoal extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
         follower.setStartingPose(startPose);
+        telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
+        comps = new ComponentShell(hardwareMap, follower, telemetryM, ComponentShell.Alliance.BLUE, true);
     }
 
     public void setPathState(int pState) {
@@ -79,12 +81,13 @@ public class BlueGoal extends OpMode {
 
     @Override
     public void loop() {
+        telemetryM.update();
         follower.update();
         autonomousPathUpdate();
         comps.update();
 
         telemetry.addData("path state", pathState);
-    telemetry.addData("x", follower.getPose().getX());
+        telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", follower.getPose().getHeading());
         telemetry.update();
