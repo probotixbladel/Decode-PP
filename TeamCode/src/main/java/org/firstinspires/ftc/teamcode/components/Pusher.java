@@ -14,7 +14,7 @@ public class Pusher {
     private final HardwareMap hardwareMap;
     public Servo Pusher;
     public static double Wait = 0.0;
-    public static double Push = 0.25;
+    public static double Push = 0.28;
     public ElapsedTime LastShot = new ElapsedTime();
 
     public PushState state = PushState.RETURNING;
@@ -22,7 +22,7 @@ public class Pusher {
     public static double ReturnTime = 0.25;
     public double PusherAngle = 0;
     public static double RestAngle = 340;
-    public static double AriveAngle = 280;
+    public static double AriveAngle = 270;
     AnalogInput PusherEnc;
     public enum PushState {
         WAITING,
