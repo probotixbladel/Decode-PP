@@ -45,11 +45,12 @@ public class BlueGoal extends OpMode {
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if (!follower.isBusy()) {
                     setPathState(2);
+                    Shots = 3;
+                    comps.intake.TakeIn();
+                    comps.shooter.Arived();
+                    break;
                 }
-                Shots = 3;
-                comps.intake.TakeIn();
-                comps.shooter.Arived();
-                break;
+
             case 2:
                 if (comps.pusher.AttemptPush(comps)) {
                     Shots -= 1;

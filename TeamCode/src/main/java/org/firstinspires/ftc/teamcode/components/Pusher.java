@@ -19,7 +19,7 @@ public class Pusher {
 
     public PushState state = PushState.RETURNING;
     public static double ShootTime = 0.5;
-    public static double ReturnTime = 0.1;
+    public static double ReturnTime = 0.25;
     public double PusherAngle = 0;
     public static double RestAngle = 340;
     public static double AriveAngle = 280;
@@ -34,7 +34,6 @@ public class Pusher {
         this.hardwareMap = hwm;
         Pusher = hardwareMap.get(Servo.class, "Pusher");
         PusherEnc = hardwareMap.get(AnalogInput.class, "PusherEnc");
-
     }
 
     public boolean AttemptPush(ComponentShell Comps) {
@@ -63,5 +62,4 @@ public class Pusher {
                 }
         }
     }
-
 }
