@@ -42,8 +42,8 @@ public class LimeLight {
             if (result.getStaleness() < 100) {
                 BotposeMt2 = result.getBotpose_MT2();
                 if (BotposeMt2 != null) {
-                    pos = pos.withX(BotposeMt2.getPosition().x * 39.37007874);
-                    pos = pos.withY(BotposeMt2.getPosition().y * 39.37007874);
+                    pos = pos.withX(BotposeMt2.getPosition().x);
+                    pos = pos.withY(BotposeMt2.getPosition().y);
                 }
             }
         }

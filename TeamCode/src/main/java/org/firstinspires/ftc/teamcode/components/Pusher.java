@@ -21,8 +21,8 @@ public class Pusher {
     public static double ShootTime = 0.5;
     public static double ReturnTime = 0.5;
     public double PusherAngle = 0;
-    public static double RestAngle = 330;
-    public static double AriveAngle = 270;
+    public static double RestAngle = 340;
+    public static double AriveAngle = 280;
     AnalogInput PusherEnc;
     public enum PushState {
         WAITING,
@@ -52,12 +52,12 @@ public class Pusher {
         PusherAngle = PusherEnc.getVoltage() / 3.3 * 360;
         switch (state) {
             case SHOOTING:
-                if (LastShot.seconds() > ShootTime || PusherAngle < AriveAngle) {
+                if (LastShot.seconds() > ShootTime || (PusherAngle < AriveAngle && PusherAngle > 20)) {
                     Pusher.setPosition(Wait);
                     state = PushState.RETURNING;
                 }
             case RETURNING:
-                if (LastShot.seconds() > ShootTime + ReturnTime || PusherAngle > RestAngle) {
+                if (LastShot.seconds() > ShootTime + ReturnTime || (PusherAngle > RestAngle && PusherAngle > 20)) {
                     state = PushState.WAITING;
                 }
         }

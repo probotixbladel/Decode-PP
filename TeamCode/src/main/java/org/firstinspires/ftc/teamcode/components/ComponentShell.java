@@ -61,10 +61,11 @@ public class ComponentShell {
         if (pos != null) {
             limePos = pos;
         }
+        telemetryM.debug("Pusher angle:", pusher.PusherAngle);
+        telemetryM.debug("Pusher state:", pusher.state);
         telemetryM.debug("detector dist", detector.distance);
         telemetryM.debug("lime pos: ", limePos);
         telemetryM.debug("folower pos: ", follower.getPose());
-        telemetryM.debug("Pusher angle:", pusher.PusherAngle);
         telemetryM.debug("Vel: ", shooter.CurrentVel, shooter.TargetVel, "dist", shooter.setSpeeds(follower.getPose()));
         telemetryM.debug("shooter state: ", shooter.state);
     }
