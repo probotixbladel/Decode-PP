@@ -8,6 +8,8 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
+import org.firstinspires.ftc.teamcode.components.ComponentShell;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous(name = "Example Auto", group = "Examples")
@@ -220,5 +222,7 @@ public class ExampleAuto extends OpMode {
      **/
     @Override
     public void stop() {
+        Carry.pos = follower.getPose();
+        Carry.alliance = ComponentShell.Alliance.BLUE;
     }
 }

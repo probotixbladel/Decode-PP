@@ -9,7 +9,7 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.components.ComponentShell;
 import org.firstinspires.ftc.teamcode.components.Intake;
@@ -22,7 +22,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 public class BlueGoalAuto extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
-
     private int pathState;
     //private final Pose startPose = new Pose(28.5, 128, Math.toRadians(180)); // Start Pose of our robot.
     private final Pose startPose = new Pose(25, 131, Math.toRadians(-36)); //See ExampleAuto to understand how to use this
@@ -130,6 +129,7 @@ public class BlueGoalAuto extends OpMode {
             intake.intake.setPower(intake.static_power);
         }
     }
+
     public void autonomousPathUpdate() {
 
         /* SHOOTER TO SHOOT BALLS */

@@ -4,10 +4,14 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.CoordinateSystem;
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.geometry.PedroCoordinates;
+import com.pedropathing.ftc.PoseConverter;
 import com.bylazar.telemetry.TelemetryManager;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
@@ -23,10 +27,11 @@ public class ComponentShell {
     public Follower follower;
     public TelemetryManager telemetryM;
     public LimeLight limeLight;
-    public Pose3D limePos = new Pose3D(new Position(), new YawPitchRollAngles(AngleUnit.DEGREES,0,0,0 ,0) );
+    public Pose limePos = new Pose();
     public Alliance alliance;
     public boolean RunningAuto;
     public boolean SinglePlayer;
+
     public enum Alliance {
         BLUE,
         RED
@@ -48,7 +53,7 @@ public class ComponentShell {
     }
 
     public void update() {
-        Pose3D pos = limeLight.update(this, telemetryM, follower.getHeading());
+        Pose pos = limeLight.update(this, telemetryM, follower.getHeading());
         shooter.update();
         pusher.update(this);
         shooter.setSpeeds(follower.getPose());

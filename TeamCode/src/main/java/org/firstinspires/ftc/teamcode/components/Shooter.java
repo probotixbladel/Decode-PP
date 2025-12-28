@@ -18,6 +18,7 @@ public class Shooter {
     public double MaxSpeed = 1300;
     public double MinSpeed = 1200;
     public double CurrentVel = 0;
+    public boolean PreTargeting = false;
     public static double[][] MinPoints = {
             {50,  1020},
             {60,  980},
@@ -34,8 +35,8 @@ public class Shooter {
             {170, 1110},
             {180, 1130},
             {190, 1130},
-            {200, 1171}
-
+            {200, 1170},
+            {400, 1620}
     };
     public static double[][] MaxPoints = {
             {50,  1050},
@@ -53,7 +54,9 @@ public class Shooter {
             {170, 1240},
             {180, 1270},
             {190, 1270},
-            {200, 1300}
+            {200, 1300},
+            {400, 1750}
+
     };
     public static double P = 100.0;
     public static double D = 0.0;
@@ -70,7 +73,6 @@ public class Shooter {
         LOW,
     }
 
-
     public Shooter(HardwareMap hwm, ComponentShell.Alliance al) {
         this.hardwareMap = hwm;
         ShooterLeft = hardwareMap.get(DcMotorEx.class, "shooterLeft");
@@ -84,7 +86,6 @@ public class Shooter {
             case BLUE:
                 ShootTo = new Pose(11,135);
         }
-
     }
 
     public static double interpolate(double[][] p, double x) {
@@ -107,11 +108,23 @@ public class Shooter {
     }
 
     public double setSpeeds(Pose RobotPos) {
-        double distance = (Math.sqrt(Math.pow(RobotPos.getY() - ShootTo.getY(), 2) + Math.pow(RobotPos.getX() - ShootTo.getX(), 2)) - 8) * 2.54;
-        MaxSpeed = interpolate(MaxPoints, distance)-5;
-        MinSpeed = interpolate(MinPoints, distance)+5;
-        TargetVel = MinSpeed + (MaxSpeed - MinSpeed) * MinToMax;
-        return distance;
+        if (PreTargeting) {
+            double distance = (Math.sqrt(Math.pow(RobotPos.getY() - ShootTo.getY(), 2) + Math.pow(RobotPos.getX() - ShootTo.getX(), 2)) - 8) * 2.54;
+            MaxSpeed = interpolate(MaxPoints, distance) - 5;
+            MinSpeed = interpolate(MinPoints, distance) + 5;
+            TargetVel = MinSpeed + (MaxSpeed - MinSpeed) * MinToMax;
+            return distance;
+        }
+        return 0;
+    }
+
+    public void PreTargetTo(Pose RobotPos) {
+        PreTargeting = true;
+        setSpeeds(RobotPos);
+    }
+
+    public void Arived() {
+        PreTargeting = false;
     }
 
     public void update(){
@@ -121,7 +134,6 @@ public class Shooter {
             lD = D;
             lF = F;
         }
-
 
         ShooterLeft.setVelocity(TargetVel);
         CurrentVel = ShooterLeft.getVelocity();

@@ -29,7 +29,7 @@ public class Through {
         if (Comps.pusher.state == Pusher.PushState.WAITING) {
             Through.setPower(in_power);
         } else {
-            this.StaticThrough(Comps);
+            Through.setPower(-0.1);
         }
     }
     public void StaticThrough(ComponentShell Comps) {

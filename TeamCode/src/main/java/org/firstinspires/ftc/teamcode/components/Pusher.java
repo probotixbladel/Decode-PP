@@ -37,12 +37,16 @@ public class Pusher {
 
     }
 
-    public void AttemptPush(ComponentShell Comps) {
-        if (state == PushState.WAITING & Comps.shooter.state == Shooter.ShooterState.READY) {
-            Pusher.setPosition(Push);
-            state = PushState.SHOOTING;
-            LastShot.reset();
+    public boolean AttemptPush(ComponentShell Comps) {
+        if (!Comps.shooter.PreTargeting & Comps.follower.getAngularVelocity() < 0.314 & Comps.follower.getVelocity().getMagnitude() < 5) {
+            if (state == PushState.WAITING & Comps.shooter.state == Shooter.ShooterState.READY) {
+                Pusher.setPosition(Push);
+                state = PushState.SHOOTING;
+                LastShot.reset();
+                return true;
+            }
         }
+        return false;
     }
     public void update(ComponentShell Comps) {
         PusherAngle = PusherEnc.getVoltage() / 3.3 * 360;
