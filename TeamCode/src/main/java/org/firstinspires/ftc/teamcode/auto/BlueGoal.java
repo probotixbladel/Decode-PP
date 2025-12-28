@@ -48,6 +48,7 @@ public class BlueGoal extends OpMode {
                 }
                 Shots = 3;
                 comps.intake.TakeIn();
+                comps.shooter.Arived();
                 break;
             case 2:
                 if (comps.pusher.AttemptPush(comps)) {

@@ -119,8 +119,8 @@ public class Shooter {
     }
 
     public void PreTargetTo(Pose RobotPos) {
-        PreTargeting = true;
         setSpeeds(RobotPos);
+        PreTargeting = true;
     }
 
     public void Arived() {
