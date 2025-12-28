@@ -56,10 +56,12 @@ public class Pusher {
                     state = PushState.RETURNING;
                     LastShot.reset();
                 }
+                break;
             case RETURNING:
                 if (LastShot.seconds() > ReturnTime) {
                     state = PushState.WAITING;
                 }
+                break;
         }
     }
 }

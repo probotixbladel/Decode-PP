@@ -24,7 +24,7 @@ public class BlueGoal extends OpMode {
     private final Pose scorePose = new Pose(59, 85, Math.toRadians(-48)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
     public Path scorePreload;
     public ComponentShell comps;
-    public double Shots = 0;
+    public int Shots = 0;
     private TelemetryManager telemetryM;
 
     public void buildPaths() {
@@ -53,12 +53,11 @@ public class BlueGoal extends OpMode {
                 break;
 
             case 2:
-                if (actionTimer.getElapsedTimeSeconds() > 0.5) {
-                    if (comps.pusher.AttemptPush(comps)) {
-                        Shots -= 1;
-                        actionTimer.resetTimer();
-                    }
+                if (comps.pusher.AttemptPush(comps)) {
+                    Shots -= 1;
+                    actionTimer.resetTimer();
                 }
+
                 comps.through.InThrough(comps);
                 if (Shots <= 0) {
                     setPathState(-1);

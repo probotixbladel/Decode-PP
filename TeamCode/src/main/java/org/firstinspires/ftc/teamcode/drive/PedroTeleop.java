@@ -208,20 +208,20 @@ public class PedroTeleop extends OpMode {
         return ShootPos;
     }
 
-    public Pose ClosePoint(Pose p, Pose s, Pose e, Pose g) {
-        double abX = e.getX() - s.getX();
-        double abY = e.getY() - s.getY();
+    public Pose ClosePoint(Pose point, Pose startLine, Pose endLine, Pose goal) {
+        double abX = endLine.getX() - startLine.getX();
+        double abY = endLine.getY() - startLine.getY();
 
-        double t = ((p.getX() - s.getX()) * abX +
-                (p.getY() - s.getY()) * abY)
+        double t = ((point.getX() - startLine.getX()) * abX +
+                (point.getY() - startLine.getY()) * abY)
                 / (abX * abX + abY * abY);
 
         t = Math.max(0, Math.min(1, t));
 
-        double x = s.getX() + t * abX;
-        double y = s.getY() + t * abY;
+        double x = startLine.getX() + t * abX;
+        double y = startLine.getY() + t * abY;
 
-        double heading = Math.atan2(g.getY() - y, g.getX() - x);
+        double heading = Math.atan2(goal.getY() - y, goal.getX() - x);
 
         return new Pose(x, y, heading);
     }
