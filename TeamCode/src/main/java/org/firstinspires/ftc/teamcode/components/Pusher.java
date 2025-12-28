@@ -55,6 +55,7 @@ public class Pusher {
                 if (LastShot.seconds() > ShootTime || (PusherAngle < AriveAngle && PusherAngle > 20)) {
                     Pusher.setPosition(Wait);
                     state = PushState.RETURNING;
+                    LastShot.reset();
                 }
             case RETURNING:
                 if (LastShot.seconds() > ReturnTime) {
