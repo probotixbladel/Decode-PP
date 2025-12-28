@@ -48,12 +48,16 @@ public class BlueGoal extends OpMode {
                     Shots = 3;
                     comps.intake.TakeIn();
                     comps.shooter.Arived();
-                    break;
+                    actionTimer.resetTimer();
                 }
+                break;
 
             case 2:
-                if (comps.pusher.AttemptPush(comps)) {
-                    Shots -= 1;
+                if (actionTimer.getElapsedTimeSeconds() > 0.5) {
+                    if (comps.pusher.AttemptPush(comps)) {
+                        Shots -= 1;
+                        actionTimer.resetTimer();
+                    }
                 }
                 comps.through.InThrough(comps);
                 if (Shots <= 0) {
@@ -66,6 +70,7 @@ public class BlueGoal extends OpMode {
     @Override
     public void init() {
         pathTimer = new Timer();
+        actionTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
 
