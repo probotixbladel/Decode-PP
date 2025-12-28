@@ -82,18 +82,17 @@ public class BlueGoal extends OpMode {
 
     @Override
     public void loop() {
-        telemetryM.update();
         follower.update();
         autonomousPathUpdate();
-        telemetry.addData("Shots", Shots);
+        telemetryM.debug("Shots", Shots);
 
         comps.update();
 
-        telemetry.addData("path state", pathState);
-        telemetry.addData("x", follower.getPose().getX());
-        telemetry.addData("y", follower.getPose().getY());
-        telemetry.addData("heading", follower.getPose().getHeading());
-        telemetry.update();
+        telemetryM.debug("path state", pathState);
+        telemetryM.debug("x", follower.getPose().getX());
+        telemetryM.debug("y", follower.getPose().getY());
+        telemetryM.debug("heading", follower.getPose().getHeading());
+        telemetryM.update();
     }
 
     @Override
