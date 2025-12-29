@@ -19,7 +19,7 @@ public class Shooter {
     public double MinSpeed = 1200;
     public double CurrentVel = 0;
     public boolean PreTargeting = false;
-    public static double[][] MinPoints = {
+    public static double[][] MinPoints = {  //data min snelheid
             {50,  1020},
             {60,  980},
             {70,  950},
@@ -38,7 +38,7 @@ public class Shooter {
             {200, 1170},
             {400, 1620}
     };
-    public static double[][] MaxPoints = {
+    public static double[][] MaxPoints = {  //data max snelheid
             {50,  1050},
             {60,  1050},
             {70,  1060},
@@ -64,7 +64,7 @@ public class Shooter {
     private double lP = P;
     private double lD = D;
     private double lF = F;
-    public static double MinToMax = 0.7;
+    public static double MinToMax = 0.15; //percentage min-max (hoek naar voren is 0.15, hoek naar achter is ???)
     private Pose ShootTo;
 
     public enum ShooterState {
@@ -137,7 +137,7 @@ public class Shooter {
 
         ShooterLeft.setVelocity(TargetVel);
         CurrentVel = ShooterLeft.getVelocity();
-        if (CurrentVel < MinSpeed) {
+        if (CurrentVel < MinSpeed-20) {
             state = ShooterState.LOW;
         } else if (CurrentVel > MaxSpeed) {
             state = ShooterState.HIGH;

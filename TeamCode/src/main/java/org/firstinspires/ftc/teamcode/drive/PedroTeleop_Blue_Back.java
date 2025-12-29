@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 @Configurable
 @TeleOp(name="TeleOp Blue Back", group="Linear OpMode")
 public class PedroTeleop_Blue_Back extends OpMode {
-    public static boolean SinglePlayer = true;
+    public static boolean SinglePlayer = false;
     private Follower follower;
     public static Pose startingPose = new Pose(57, 9, Math.toRadians(270)); //See ExampleAuto to understand how to use this
     private boolean automatedDrive;
