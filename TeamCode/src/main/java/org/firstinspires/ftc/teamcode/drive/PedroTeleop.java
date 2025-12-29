@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import java.util.function.Supplier;
 
 @Configurable
-@TeleOp(name="TeleOp Blue Back", group="Linear OpMode")
+@TeleOp(name="PedroTeleOp", group="Linear OpMode")
 public class PedroTeleop extends OpMode {
     public static boolean SinglePlayer = true;
     private Follower follower;
