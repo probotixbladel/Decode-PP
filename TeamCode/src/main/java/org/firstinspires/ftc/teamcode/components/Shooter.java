@@ -14,11 +14,11 @@ public class Shooter {
     public DcMotorEx ShooterLeft;
     //public DcMotorEx ShooterRight;
     public ShooterState state = ShooterState.LOW;
-    public double TargetVel = 1250;
+    public static double TargetVel = 1250;
     public double MaxSpeed = 1300;
     public double MinSpeed = 1200;
     public double CurrentVel = 0;
-    public boolean PreTargeting = false;
+    public static boolean PreTargeting = false;
     public static double[][] MinPoints = {  //data min snelheid
             {50,  1020},
             {60,  980},

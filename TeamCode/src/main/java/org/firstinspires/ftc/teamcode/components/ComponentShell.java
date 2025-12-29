@@ -52,7 +52,7 @@ public class ComponentShell {
     }
 
     public void update() {
-        Pose pos = limeLight.update(this, telemetryM, follower.getHeading()-(Math.PI/2));
+        Pose pos = limeLight.update(this, telemetryM, Math.toDegrees(follower.getHeading()));
         shooter.update();
         pusher.update(this);
         shooter.setSpeeds(follower.getPose());
