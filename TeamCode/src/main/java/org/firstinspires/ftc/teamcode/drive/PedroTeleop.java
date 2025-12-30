@@ -179,10 +179,10 @@ public class PedroTeleop extends OpMode {
             return pos.withHeading(Math.atan2(Goal.getY() - pos.getY(), Goal.getX()) - pos.getX() + Math.PI);
         }
         if (pos.getY() > 130 & pos.getX() < 96 & pos.getX() > 48) {
-            return new Pose(pos.getX(), 130,Math.atan2(Goal.getY() - 130, Goal.getX()) - pos.getX() + Math.PI);
+            return new Pose(pos.getX(), 130,Math.atan2(Goal.getY() - 130, Goal.getX() - pos.getX()) + Math.PI);
         }
         if (pos.getY() < 14 & pos.getX() < 86 & pos.getX() > 58) {
-            return new Pose(pos.getX(), 14,Math.atan2(Goal.getY() - 14, Goal.getX()) - pos.getX() + Math.PI);
+            return new Pose(pos.getX(), 14,Math.atan2(Goal.getY() - 14, Goal.getX() - pos.getX()) + Math.PI);
         }
 
         Pose near  = ClosePoint(pos, new Pose(72,72), new Pose(29 ,113), Goal);
