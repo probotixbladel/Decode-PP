@@ -29,21 +29,30 @@ public class Through {
     }
 
     public void OutThrough(ComponentShell Comps) {
-        Through.setPower(out_power);
         state = ThroughState.OUTTHROUGH;
     }
     public void InThrough(ComponentShell Comps) {
-        if (Comps.pusher.state == Pusher.PushState.WAITING) {
-            Through.setPower(in_power);
-            state = ThroughState.INTHROUGH;
-        } else {
-            Through.setPower(-0.2);
-            state = ThroughState.OUTTHROUGH;
+        state = ThroughState.INTHROUGH;
+    }
+    public void update(ComponentShell Comps) {
+        switch (state) {
+            case INTHROUGH:
+                if (Comps.pusher.state == Pusher.PushState.WAITING) {
+                    Through.setPower(in_power);
+                } else {
+                    Through.setPower(-0.2);
+                }
+                break;
+            case OUTTHROUGH:
+                Through.setPower(out_power);
+                break;
+            case OFF:
+                Through.setPower(static_power);
         }
     }
+
     public void StaticThrough(ComponentShell Comps) {
         if (Comps.pusher.state == Pusher.PushState.WAITING) {
-            Through.setPower(static_power);
             state = ThroughState.OFF;
         }
     }

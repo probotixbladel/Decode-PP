@@ -58,6 +58,7 @@ public class ComponentShell {
         pusher.update(this);
         shooter.setSpeeds(follower.getPose());
         detector.update();
+        through.update(this);
 
         if (pos != null) {
             limePos = pos;

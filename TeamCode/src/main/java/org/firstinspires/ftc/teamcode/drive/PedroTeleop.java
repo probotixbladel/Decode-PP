@@ -114,7 +114,7 @@ public class PedroTeleop extends OpMode {
         }
 
         //Stop automated following if the follower is done
-        if (automatedDrive && (gamepad1.leftBumperWasPressed() || !follower.isBusy())) {
+        if (automatedDrive && (gamepad1.rightBumperWasReleased() || !follower.isBusy())) {
             follower.startTeleopDrive();
             automatedDrive = false;
             Comps.shooter.Arived();
@@ -179,7 +179,7 @@ public class PedroTeleop extends OpMode {
             return pos.withHeading(Math.atan2(Goal.getY() - pos.getY(), Goal.getX()) - pos.getX());
         }
         if (pos.getY() > 130 & pos.getX() < 96 & pos.getX() > 48) {
-            return new Pose(pos.getX(), 130,Math.atan2(Goal.getY() - 14, Goal.getX()) - pos.getX() + Math.PI);
+            return new Pose(pos.getX(), 130,Math.atan2(Goal.getY() - 130, Goal.getX()) - pos.getX() + Math.PI);
         }
         if (pos.getY() < 14 & pos.getX() < 86 & pos.getX() > 58) {
             return new Pose(pos.getX(), 14,Math.atan2(Goal.getY() - 14, Goal.getX()) - pos.getX() + Math.PI);
@@ -190,7 +190,7 @@ public class PedroTeleop extends OpMode {
         Pose near1 = ClosePoint(pos, new Pose(72,72), new Pose(115,113), Goal);
         Pose far1  = ClosePoint(pos, new Pose(72,24), new Pose(81 ,15 ), Goal);
 
-        double MinDist = near.distSquared(pos);
+        double MinDist = near.distanceFrom(pos);
         ShootPos = near;
         if (far.distanceFrom(pos) < MinDist) {
             MinDist = far.distanceFrom(pos);
