@@ -15,8 +15,8 @@ public class Shooter {
     //public DcMotorEx ShooterRight;
     public ShooterState state = ShooterState.LOW;
     public static double TargetVel = 1250;
-    public double MaxSpeed = 1300;
-    public double MinSpeed = 1200;
+    public static double MaxSpeed = 1300;
+    public static double MinSpeed = 1200;
     public double CurrentVel = 0;
     public static boolean PreTargeting = false;
     public static double[][] MinPoints = {  //data min snelheid
@@ -137,7 +137,7 @@ public class Shooter {
 
         ShooterLeft.setVelocity(TargetVel);
         CurrentVel = ShooterLeft.getVelocity();
-        if (CurrentVel < MinSpeed-20) {
+        if (CurrentVel < MinSpeed-60) {
             state = ShooterState.LOW;
         } else if (CurrentVel > MaxSpeed) {
             state = ShooterState.HIGH;
