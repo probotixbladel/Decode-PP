@@ -55,7 +55,7 @@ public class Shooter {
             {380,1530}
     };
 
-    public static double[][] MaxPoints = {
+    public static double[][] MaxPoints = { // data max snelheid
             {60,1060},
             {70,1070},
             {80,1080},
