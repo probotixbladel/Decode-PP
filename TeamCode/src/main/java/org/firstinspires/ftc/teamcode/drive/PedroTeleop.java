@@ -90,6 +90,7 @@ public class PedroTeleop extends OpMode {
         //Call this once per loop
         follower.update();
         telemetryM.update();
+        telemetryM.debug("goto: ", TargetPose);
 
         // switch gears
         if (SinglePlayer) {
@@ -120,11 +121,15 @@ public class PedroTeleop extends OpMode {
             Comps.shooter.Arived();
         } else if (gamepad1.rightBumperWasPressed()) {
             TargetPose = NearestShot(follower.getPose());
-
-            follower.followPath(follower.pathBuilder() //Lazy Curve Generation
-                    .addPath(new Path(new BezierLine(follower::getPose, TargetPose)))
-                    .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, TargetPose.getHeading(), 0.8))
-                    .build());
+            if (TargetPose.roughlyEquals(follower.getPose().withHeading(TargetPose.getHeading()), 0.1)) {
+                follower.turnTo(TargetPose.getHeading());
+            } else {
+                follower.pathBuilder().addPath(new Path( ));
+                follower.followPath(follower.pathBuilder() //Lazy Curve Generation
+                        .addPath(new Path(new BezierLine(follower::getPose, TargetPose)))
+                        .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, TargetPose.getHeading(), 0.8))
+                        .build());
+            }
             automatedDrive = true;
             Comps.shooter.PreTargetTo(TargetPose);
         }
