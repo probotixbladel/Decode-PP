@@ -51,7 +51,7 @@ public class Pusher {
         PusherAngle = PusherEnc.getVoltage() / 3.3 * 360;
         switch (state) {
             case SHOOTING:
-                if (LastShot.seconds() > ShootTime /*|| (PusherAngle < AriveAngle && PusherAngle > 20)*/) {
+                if (LastShot.seconds() > ShootTime || (PusherAngle < AriveAngle && PusherAngle > 20)) {
                     Pusher.setPosition(Wait);
                     state = PushState.RETURNING;
                     LastShot.reset();
