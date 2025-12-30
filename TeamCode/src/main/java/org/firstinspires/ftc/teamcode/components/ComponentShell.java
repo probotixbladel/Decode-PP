@@ -30,6 +30,7 @@ public class ComponentShell {
     public Pose limePos = new Pose();
     public Alliance alliance;
     public boolean SinglePlayer;
+    public int shootNum;
 
     public enum Alliance {
         BLUE,
@@ -65,7 +66,9 @@ public class ComponentShell {
         telemetryM.debug("Pusher state:", pusher.state);
         telemetryM.debug("detector dist", detector.distance);
         telemetryM.debug("lime pos: ", limePos);
+        telemetryM.debug("Number of shots left", shootNum);
         telemetryM.debug("folower pos: ", follower.getPose());
+        telemetryM.debug("through state: ", through.state);
         telemetryM.debug("Vel: ", shooter.CurrentVel, shooter.TargetVel, "dist", shooter.setSpeeds(follower.getPose()));
         telemetryM.debug("shooter state: ", shooter.state);
     }
@@ -112,7 +115,23 @@ public class ComponentShell {
                 through.StaticThrough(this);
             }
         }
-
-
     }
+    public void ResetShootNum(){shootNum = 0;}
+    public void AutoShooterStart(){
+        if(pusher.AttemptPush(this)){
+            shootNum += 1;
+        }
+        intake.TakeIn();
+        through.InThrough(this);
+    }
+    public boolean FinishedShooting(int num){
+        if(shootNum >= num + 1){
+            shootNum = 0;
+            intake.StaticIntake();
+            return true;
+        }
+        return false;
+    }
+
+
 }

@@ -14,6 +14,12 @@ public class Through {
     public static double in_power = 1.0;
     public static double out_power = -1;
     public static double static_power = 0;
+    public ThroughState state = ThroughState.OFF;
+    public enum ThroughState {
+        INTHROUGH,
+        OUTTHROUGH,
+        OFF
+    }
 
     public Through(HardwareMap hwm) {
         this.hardwareMap = hwm;
@@ -24,17 +30,21 @@ public class Through {
 
     public void OutThrough(ComponentShell Comps) {
         Through.setPower(out_power);
+        state = ThroughState.OUTTHROUGH;
     }
     public void InThrough(ComponentShell Comps) {
         if (Comps.pusher.state == Pusher.PushState.WAITING) {
             Through.setPower(in_power);
+            state = ThroughState.INTHROUGH;
         } else {
             Through.setPower(-0.2);
+            state = ThroughState.OUTTHROUGH;
         }
     }
     public void StaticThrough(ComponentShell Comps) {
         if (Comps.pusher.state == Pusher.PushState.WAITING) {
             Through.setPower(static_power);
+            state = ThroughState.OFF;
         }
     }
 }

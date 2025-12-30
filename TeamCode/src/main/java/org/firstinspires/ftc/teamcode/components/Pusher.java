@@ -40,8 +40,8 @@ public class Pusher {
         //if (!Comps.shooter.PreTargeting & Comps.follower.getAngularVelocity() < 0.314 & Comps.follower.getVelocity().getMagnitude() < 5) {
             if (state == PushState.WAITING & Comps.shooter.state == Shooter.ShooterState.READY) {
                 Pusher.setPosition(Push);
-                state = PushState.SHOOTING;
                 LastShot.reset();
+                state = PushState.SHOOTING;
                 return true;
             }
         //}
@@ -51,7 +51,7 @@ public class Pusher {
         PusherAngle = PusherEnc.getVoltage() / 3.3 * 360;
         switch (state) {
             case SHOOTING:
-                if (LastShot.seconds() > ShootTime || (PusherAngle < AriveAngle && PusherAngle > 20)) {
+                if (LastShot.seconds() > ShootTime /*|| (PusherAngle < AriveAngle && PusherAngle > 20)*/) {
                     Pusher.setPosition(Wait);
                     state = PushState.RETURNING;
                     LastShot.reset();

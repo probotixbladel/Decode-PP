@@ -64,7 +64,7 @@ public class Shooter {
     private double lP = P;
     private double lD = D;
     private double lF = F;
-    public static double MinToMax = 0.15; //percentage min-max (hoek naar voren is 0.15, hoek naar achter is ???)
+    public static double MinToMax = 0.7; //percentage min-max
     private Pose ShootTo;
 
     public enum ShooterState {
@@ -137,7 +137,7 @@ public class Shooter {
 
         ShooterLeft.setVelocity(TargetVel);
         CurrentVel = ShooterLeft.getVelocity();
-        if (CurrentVel < MinSpeed-60) {
+        if (CurrentVel < MinSpeed) {
             state = ShooterState.LOW;
         } else if (CurrentVel > MaxSpeed) {
             state = ShooterState.HIGH;

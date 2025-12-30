@@ -22,6 +22,12 @@ public class BlueGoal extends OpMode {
     private int pathState;
     private final Pose startPose = new Pose(25, 131, Math.toRadians(-36)); //See ExampleAuto to understand how to use this
     private final Pose scorePose = new Pose(59, 85, Math.toRadians(-48)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
+    private final Pose pickup1Setup = new Pose(50, 85, Math.toRadians(180)); // Setup to pickup the highest set of balls
+    private final Pose pickup1Pose = new Pose(19, 85, Math.toRadians(180));// Highest (First Set) of Artifacts from the Spike Mark.
+    private final Pose pickup2Setup = new Pose(50, 60, Math.toRadians(180)); // Setup to pickup the middle set of balls
+    private final Pose pickup2Pose = new Pose(19, 60, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark.
+    private final Pose pickup3Setup = new Pose(50, 36, Math.toRadians(180)); // Setup to pickup the lowest set of balls
+    private final Pose pickup3Pose = new Pose(19, 36, Math.toRadians(180)); // Lowest (Third Set) of Artifacts from the Spike Mark.
     public Path scorePreload;
     public ComponentShell comps;
     public int Shots = 0;
@@ -38,26 +44,22 @@ public class BlueGoal extends OpMode {
         switch (pathState) {
             case 0:
                 follower.followPath(scorePreload);
-                setPathState(1);
                 comps.shooter.PreTargetTo(scorePose);
+                setPathState(1);
                 break;
             case 1:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if (!follower.isBusy()) {
-                    setPathState(2);
-                    Shots = 3;
-                    comps.intake.TakeIn();
+                    comps.ResetShootNum();
                     comps.shooter.Arived();
+                    setPathState(2);
                 }
                 break;
 
             case 2:
-                if (comps.pusher.AttemptPush(comps)) {
-                    Shots -= 1;
-                }
-
-                comps.through.InThrough(comps);
-                if (Shots <= 0) {
+                comps.AutoShooterStart();
+                if(comps.FinishedShooting(3))
+                {
                     setPathState(-1);
                 }
                 break;
