@@ -91,7 +91,7 @@ public class PedroTeleop extends OpMode {
         follower.update();
         telemetryM.update();
         telemetryM.debug("goto: ", TargetPose);
-
+        telemetryM.debug("goto: ", TargetPose);
         // switch gears
         if (SinglePlayer) {
             if (gamepad1.left_stick_button) {
