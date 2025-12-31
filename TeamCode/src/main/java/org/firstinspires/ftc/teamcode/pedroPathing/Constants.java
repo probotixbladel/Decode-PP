@@ -33,10 +33,10 @@ public class Constants {
                     0.025
             ))
             .headingPIDFCoefficients(new PIDFCoefficients(
-                    2,
+                    1,
                     0,
-                    0,
-                    0.01
+                    0.06,
+                    0.05
             ))
             .drivePIDFCoefficients(new FilteredPIDFCoefficients(
                     0.003,
