@@ -97,69 +97,14 @@ public class BlueGoalAuto extends OpMode {
                 .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose.getHeading())
                 .build();
     }
-    private void Shoot(int numShots){
-        for (int i = 0; i < numShots; i++) {
-            if(comps.shooter.state != Shooter.ShooterState.READY){
-                try {
-                    Thread.sleep(20);
-                } catch (InterruptedException e) {
-                    return; // Exit if interrupted
-                }
-            }
-            pusher.Pusher.setPosition(pusher.Push);
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                return; // Exit if interrupted
-            }
-            pusher.Pusher.setPosition(pusher.Wait);
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                return; // Exit if interrupted
-            }
-            through.Through.setPower(through.in_power);
-            intake.intake.setPower(intake.intake_power);
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                return; // Exit if interrupted
-            }
-            through.Through.setPower(through.static_power);
-            intake.intake.setPower(intake.static_power);
-        }
-    }
 
     public void autonomousPathUpdate() {
-
-        /* SHOOTER TO SHOOT BALLS */
-
-        if (shooter.P != lP | shooter.D != lD | shooter.F != lF){
-            shooter.ShooterLeft.setVelocityPIDFCoefficients( shooter.P, 0, shooter.D, shooter.F);
-           // shooter.ShooterRight.setVelocityPIDFCoefficients(shooter.P, 0, shooter.D, shooter.F);
-            lP = shooter.P;
-            lD = shooter.D;
-            lF = shooter.F;
-            /*
-            shooter.ShooterLeft.setVelocity(shooter.TargetVel);
-           // shooter.ShooterRight.setVelocity(shooter.TargetVel);
-            shooter.CurrentVel = shooter.ShooterLeft.getVelocity();
-            if (shooter.CurrentVel < shooter.TargetVel - shooter.MinDeviation) {
-                shooter.state = Shooter.ShooterState.LOW;
-            } else if (shooter.CurrentVel > shooter.TargetVel + shooter.MaxDeviation) {
-                shooter.state = Shooter.ShooterState.HIGH;
-            } else {
-                shooter.state = Shooter.ShooterState.READY;
-            }
-            */
-        }
 
         switch (pathState) {
             case 0:
                 follower.followPath(scorePreload);
 
                 /* SHOOT PRELOAD */
-                Shoot(3);
 
                 setPathState(1);
                 break;
@@ -174,8 +119,6 @@ public class BlueGoalAuto extends OpMode {
                 if (!follower.isBusy()) {
 
                     /* GRAB PICKUP1 */
-                    intake.intake.setPower(intake.intake_power);
-                    through.Through.setPower(through.in_power);
 
                     // Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample
                     follower.followPath(grabPickup1, true);
@@ -187,14 +130,11 @@ public class BlueGoalAuto extends OpMode {
                 if (!follower.isBusy()) {
 
                     /* STOP GRABBING BALLS */
-                    intake.intake.setPower(intake.static_power);
-                    through.Through.setPower(through.static_power);
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                     follower.followPath(scorePickup1, true);
 
                     /* SHOOT 1 */
-                    Shoot(3);
                     setPathState(3);
                 }
                 break;
@@ -203,8 +143,6 @@ public class BlueGoalAuto extends OpMode {
                 if (!follower.isBusy()) {
 
                     /* GRAB PICKUP2 */
-                    intake.intake.setPower(intake.intake_power);
-                    through.Through.setPower(through.in_power);
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     follower.followPath(grabPickup2, true);
@@ -222,7 +160,6 @@ public class BlueGoalAuto extends OpMode {
                     follower.followPath(scorePickup2, true);
 
                     /* SHOOT 2 */
-                    Shoot(3);
                     setPathState(5);
                 }
                 break;
@@ -230,8 +167,6 @@ public class BlueGoalAuto extends OpMode {
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if (!follower.isBusy()) {
                     /* GRAB PICKUP3 */
-                    intake.intake.setPower(intake.intake_power);
-                    through.Through.setPower(through.in_power);
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     follower.followPath(grabPickup3, true);
@@ -242,14 +177,11 @@ public class BlueGoalAuto extends OpMode {
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup3Pose's position */
                 if (!follower.isBusy()) {
                     /* STOP GRABBING BALLS */
-                    intake.intake.setPower(intake.static_power);
-                    through.Through.setPower(through.static_power);
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                     follower.followPath(scorePickup3, true);
 
                     /* SHOOT 2 */
-                    Shoot(3);
                     setPathState(7);
                 }
                 break;

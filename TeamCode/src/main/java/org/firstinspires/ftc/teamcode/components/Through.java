@@ -31,8 +31,8 @@ public class Through {
     public void OutThrough(ComponentShell Comps) {
         state = ThroughState.OUTTHROUGH;
     }
-    public void InThrough(ComponentShell Comps) {
-        state = ThroughState.INTHROUGH;
+    public void StaticThrough(ComponentShell Comps) {
+        state = ThroughState.OFF;
     }
     public void update(ComponentShell Comps) {
         switch (state) {
@@ -51,9 +51,12 @@ public class Through {
         }
     }
 
-    public void StaticThrough(ComponentShell Comps) {
+    public void InThrough(ComponentShell Comps) {
         if (Comps.pusher.state == Pusher.PushState.WAITING) {
-            state = ThroughState.OFF;
+            state = ThroughState.INTHROUGH;
+        }
+        else {
+            Through.setPower(-0.2);
         }
     }
 }

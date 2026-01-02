@@ -96,7 +96,7 @@ public class Shooter {
     private double lP = P;
     private double lD = D;
     private double lF = F;
-    public static double MinToMax = 0.7; //percentage min-max
+    public static double MinToMax = 0.2; //percentage min-max
     private Pose ShootTo;
 
     public enum ShooterState {

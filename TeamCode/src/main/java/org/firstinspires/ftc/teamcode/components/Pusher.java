@@ -20,6 +20,8 @@ public class Pusher {
     public PushState state = PushState.RETURNING;
     public static double ShootTime = 0.5;
     public static double ReturnTime = 0.25;
+    public static double WaitTime = 0.2;
+    public boolean canShoot;
     public double PusherAngle = 0;
     public static double RestAngle = 340;
     public static double AriveAngle = 270;
@@ -38,7 +40,8 @@ public class Pusher {
 
     public boolean AttemptPush(ComponentShell Comps) {
         //if (!Comps.shooter.PreTargeting & Comps.follower.getAngularVelocity() < 0.314 & Comps.follower.getVelocity().getMagnitude() < 5) {
-            if (state == PushState.WAITING & Comps.shooter.state == Shooter.ShooterState.READY) {
+            if (canShoot & Comps.shooter.state == Shooter.ShooterState.READY) {
+                canShoot = false;
                 Pusher.setPosition(Push);
                 LastShot.reset();
                 state = PushState.SHOOTING;
@@ -60,8 +63,15 @@ public class Pusher {
             case RETURNING:
                 if (LastShot.seconds() > ReturnTime) {
                     state = PushState.WAITING;
+                    LastShot.reset();
                 }
                 break;
+            case WAITING:
+                if(LastShot.seconds() > WaitTime) {
+                    canShoot = true;
+                }
+                break;
+
         }
     }
 }
