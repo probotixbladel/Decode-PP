@@ -37,11 +37,7 @@ public class Through {
     public void update(ComponentShell Comps) {
         switch (state) {
             case INTHROUGH:
-                if (Comps.pusher.state == Pusher.PushState.WAITING) {
-                    Through.setPower(in_power);
-                } else {
-                    Through.setPower(-0.2);
-                }
+                Through.setPower(in_power);
                 break;
             case OUTTHROUGH:
                 Through.setPower(out_power);
@@ -52,7 +48,7 @@ public class Through {
     }
 
     public void InThrough(ComponentShell Comps) {
-        if (Comps.pusher.state == Pusher.PushState.WAITING) {
+        if (Comps.pusher.state == Pusher.PushState.WAITING || Comps.pusher.state == Pusher.PushState.RELOADING) {
             state = ThroughState.INTHROUGH;
         }
         else {

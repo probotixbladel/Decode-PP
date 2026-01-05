@@ -26,9 +26,14 @@ public class Intake {
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
-    public void TakeIn() {
-        state = IntakeState.INTAKE;
-        intake.setPower(intake_power);
+    public void TakeIn(ComponentShell Comps) {
+        if (Comps.pusher.state == Pusher.PushState.WAITING || Comps.pusher.state == Pusher.PushState.RELOADING) {
+            state = IntakeState.INTAKE;
+            intake.setPower(intake_power);
+        }
+        else {
+            intake.setPower(0);
+        }
     }
     public void TakeOut() {
         state = Intake.IntakeState.OUTTAKE;

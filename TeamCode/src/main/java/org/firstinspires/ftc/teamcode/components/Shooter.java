@@ -90,7 +90,7 @@ public class Shooter {
             {370,1570},
             {380,1570}
     };
-    public static double P = 100.0;
+    public static double P = 500.0;
     public static double D = 0.0;
     public static double F = 14.0;
     private double lP = P;

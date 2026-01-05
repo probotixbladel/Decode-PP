@@ -81,7 +81,7 @@ public class ComponentShell {
                 pusher.AttemptPush(this);
             }
             if (gamepad1.right_trigger > 0.2) {
-                intake.TakeIn();
+                intake.TakeIn(this);
             } else if (gamepad1.left_trigger > 0.2) {
                 intake.TakeOut();
             } else {
@@ -101,7 +101,7 @@ public class ComponentShell {
                 pusher.AttemptPush(this);
             }
             if (gamepad2.right_trigger > 0.2) {
-                intake.TakeIn();
+                intake.TakeIn(this);
             } else if (gamepad2.left_trigger > 0.2) {
                 intake.TakeOut();
             } else {
@@ -122,7 +122,7 @@ public class ComponentShell {
         if(pusher.AttemptPush(this)){
             shootNum += 1;
         }
-        intake.TakeIn();
+        intake.TakeIn(this);
         through.InThrough(this);
     }
     public boolean FinishedShooting(int num){
