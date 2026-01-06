@@ -39,14 +39,14 @@ public class Pusher {
     }
 
     public boolean AttemptPush(ComponentShell Comps) {
-        //if (!Comps.shooter.PreTargeting & Comps.follower.getAngularVelocity() < 0.314 & Comps.follower.getVelocity().getMagnitude() < 5) {
+        if (!Comps.shooter.PreTargeting & Comps.follower.getAngularVelocity() < 0.314 & Comps.follower.getVelocity().getMagnitude() < 5) {
             if (state == PushState.WAITING && Comps.shooter.state == Shooter.ShooterState.READY) {
                 Pusher.setPosition(Push);
                 LastShot.reset();
                 state = PushState.SHOOTING;
                 return true;
             }
-        //}
+        }
         return false;
     }
     public void update(ComponentShell Comps) {
@@ -66,7 +66,7 @@ public class Pusher {
                 }
                 break;
             case RELOADING:
-                if(LastShot.seconds() > WaitTime) {
+                if(LastShot.seconds() > WaitTime || Comps.detector.detecting) {
                     state = PushState.WAITING;
                 }
                 break;
