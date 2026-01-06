@@ -29,17 +29,17 @@ public class BlueGoal extends OpMode {
     private final Pose startPose = new Pose(18, 120, Math.toRadians(-45)); // Starting pose for our robot
     private final Pose scorePosePreload = new Pose(42, 102, Math.toRadians(-45)); // Scoring Pose of our robot for the preload. It is facing the goal at a -45 degree angle.
     private final Pose pickup1Setup = new Pose(42, 84, Math.toRadians(180)); // Setup to pickup the highest set of balls
-    private final Pose pickup1Pose = new Pose(18, 84, Math.toRadians(180));// Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose gateSetup = new Pose(18, 78, Math.toRadians(180)); // Stand infront of the gate
-    private final Pose gateOpen = new Pose(18, 75, Math.toRadians(180)); // Open the gate
+    private final Pose pickup1Pose = new Pose(20, 84, Math.toRadians(180));// Highest (First Set) of Artifacts from the Spike Mark.
+    private final Pose gateSetup = new Pose(20, 78, Math.toRadians(180)); // Stand infront of the gate
+    private final Pose gateOpen = new Pose(18, 78, Math.toRadians(180)); // Open the gate
     private final Pose scorePose1 = new Pose(54, 90, Math.toRadians(-45)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a -45 degree angle.
     private final Pose pickup2Setup = new Pose(48, 60, Math.toRadians(180)); // Setup to pickup the middle set of balls
     private final Pose pickup2Pose = new Pose(18, 60, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark.
     private final Pose scorePose2 = new Pose(48, 90, Math.toRadians(-45)); // Scoring Pose of our robot for the second pickup. It is facing the goal at a -45 degree angle.
     private final Pose pickup3Setup = new Pose(42, 36, Math.toRadians(180)); // Setup to pickup the lowest set of balls
     private final Pose pickup3Pose = new Pose(18, 36, Math.toRadians(180)); // Lowest (Third Set) of Artifacts from the Spike Mark.
-    private final Pose scorePose3 = new Pose(60, 78, Math.toRadians(-45)); // Scoring Pose of our robot for the third pickup. It is facing the goal at a -45 degree angle.
-    private final Pose leaveTrianglePose = new Pose(60,60, Math.toRadians(-45)); // Pose for leaving to triangle
+    private final Pose scorePose3 = new Pose(55, 78, Math.toRadians(-45)); // Scoring Pose of our robot for the third pickup. It is facing the goal at a -45 degree angle.
+    private final Pose leaveTrianglePose = new Pose(55,60, Math.toRadians(-45)); // Pose for leaving to triangle
     public Path scorePreload;
     public ComponentShell comps;
     public PathChain grabPickup1, openGate, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3, grabPickupSetup1, grabPickupSetup2, grabPickupSetup3, leave;
@@ -130,7 +130,7 @@ public class BlueGoal extends OpMode {
 
             case 2:
                 comps.AutoShooterStart();
-                if(comps.FinishedShooting(3) && comps.pusher.state == Pusher.PushState.WAITING)
+                if(comps.FinishedShooting(3) && (comps.pusher.state == Pusher.PushState.WAITING || comps.pusher.state == Pusher.PushState.RELOADING))
                 {
                     setPathState(3);
                 }
@@ -185,7 +185,7 @@ public class BlueGoal extends OpMode {
 
             case 9:
                 comps.AutoShooterStart();
-                if(comps.FinishedShooting(3) && comps.pusher.state == Pusher.PushState.WAITING){
+                if(comps.FinishedShooting(3) && (comps.pusher.state == Pusher.PushState.WAITING || comps.pusher.state == Pusher.PushState.RELOADING)){
                     comps.shooter.PreTargetTo(scorePose2);
                     setPathState(10);
                 }
@@ -226,7 +226,7 @@ public class BlueGoal extends OpMode {
 
             case 14:
                 comps.AutoShooterStart();
-                if(comps.FinishedShooting(3) && comps.pusher.state == Pusher.PushState.WAITING){
+                if(comps.FinishedShooting(3) && (comps.pusher.state == Pusher.PushState.WAITING || comps.pusher.state == Pusher.PushState.RELOADING)){
                     comps.shooter.PreTargetTo(scorePose3);
                     setPathState(15);
                 }
@@ -266,7 +266,7 @@ public class BlueGoal extends OpMode {
 
             case 19:
                 comps.AutoShooterStart();
-                if(comps.FinishedShooting(3) && comps.pusher.state == Pusher.PushState.WAITING){
+                if(comps.FinishedShooting(3) && (comps.pusher.state == Pusher.PushState.WAITING || comps.pusher.state == Pusher.PushState.RELOADING)){
                     setPathState(20);
                 }
                 break;

@@ -123,7 +123,7 @@ public class ComponentShell {
             shootNum += 1;
         }
         intake.TakeIn(this);
-        through.InThrough(this);
+        through.ShootingInThrough(this);
     }
     public boolean FinishedShooting(int num){
         if(shootNum >= num + 1){

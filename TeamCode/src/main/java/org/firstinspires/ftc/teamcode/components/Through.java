@@ -14,10 +14,12 @@ public class Through {
     public static double in_power = 1.0;
     public static double out_power = -1;
     public static double static_power = 0;
+    public static double loosen_power = -0.2;
     public ThroughState state = ThroughState.OFF;
     public enum ThroughState {
         INTHROUGH,
         OUTTHROUGH,
+        LOOSENING,
         OFF
     }
 
@@ -42,8 +44,11 @@ public class Through {
             case OUTTHROUGH:
                 Through.setPower(out_power);
                 break;
+            case LOOSENING:
+                Through.setPower(loosen_power);
             case OFF:
                 Through.setPower(static_power);
+                break;
         }
     }
 
@@ -52,7 +57,20 @@ public class Through {
             state = ThroughState.INTHROUGH;
         }
         else {
-            Through.setPower(-0.2);
+            state = ThroughState.LOOSENING;
         }
+    }
+
+    public void ShootingInThrough(ComponentShell Comps){
+        if (Comps.pusher.state == Pusher.PushState.RELOADING) {
+            state = ThroughState.INTHROUGH;
+        }
+        else {
+            state = ThroughState.LOOSENING;
+        }
+    }
+
+    public void LoosenThrough(){
+        state = ThroughState.LOOSENING;
     }
 }
