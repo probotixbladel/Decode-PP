@@ -53,19 +53,21 @@ public class Pusher {
         PusherAngle = PusherEnc.getVoltage() / 3.3 * 360;
         switch (state) {
             case SHOOTING:
-                if (LastShot.seconds() > ShootTime || (PusherAngle < AriveAngle && PusherAngle > 20)) {
+                if (LastShot.seconds() > ShootTime || (PusherAngle < AriveAngle && PusherAngle > 100)) {
                     Pusher.setPosition(Wait);
                     state = PushState.RETURNING;
                     LastShot.reset();
                 }
                 break;
             case RETURNING:
+                Pusher.setPosition(Wait);
                 if (LastShot.seconds() > ReturnTime || PusherAngle > RestAngle) {
                     state = PushState.RELOADING;
                     LastShot.reset();
                 }
                 break;
             case RELOADING:
+                Pusher.setPosition(Wait);
                 if(LastShot.seconds() > WaitTime || Comps.detector.detecting) {
                     state = PushState.WAITING;
                 }

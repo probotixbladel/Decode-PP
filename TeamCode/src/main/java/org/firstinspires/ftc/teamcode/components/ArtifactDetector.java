@@ -12,16 +12,16 @@ public class ArtifactDetector {
     public OpticalDistanceSensor odsSensor;  // Hardware Device Object
 
     public double distance = 0;
-    public double threshold = 1;
+    public double threshold = 0.1;
     public boolean detecting = false;
 
     public ArtifactDetector(HardwareMap hwm) {
         this.hardwareMap = hwm;
-        this.odsSensor = hardwareMap.get(OpticalDistanceSensor.class, "sensor_ods");
+        this.odsSensor = hardwareMap.get(OpticalDistanceSensor.class, "DistSens");
     }
 
     public void update() {
         distance = odsSensor.getLightDetected();
-        //detecting = distance < threshold;
+        detecting = distance > threshold;
     }
 }
