@@ -31,7 +31,7 @@ public class BlueGoal extends OpMode {
     private final Pose pickup1Setup = new Pose(42, 84, Math.toRadians(180)); // Setup to pickup the highest set of balls
     private final Pose pickup1Pose = new Pose(20, 84, Math.toRadians(180));// Highest (First Set) of Artifacts from the Spike Mark.
     private final Pose gateSetup = new Pose(20, 78, Math.toRadians(180)); // Stand infront of the gate
-    private final Pose gateOpen = new Pose(18, 78, Math.toRadians(180)); // Open the gate
+    private final Pose gateOpen = new Pose(16, 78, Math.toRadians(180)); // Open the gate
     private final Pose scorePose1 = new Pose(54, 90, Math.toRadians(-45)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a -45 degree angle.
     private final Pose pickup2Setup = new Pose(48, 60, Math.toRadians(180)); // Setup to pickup the middle set of balls
     private final Pose pickup2Pose = new Pose(18, 60, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark.
