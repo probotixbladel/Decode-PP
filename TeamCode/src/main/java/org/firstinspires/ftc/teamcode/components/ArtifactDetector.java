@@ -2,24 +2,26 @@ package org.firstinspires.ftc.teamcode.components;
 
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
 public class ArtifactDetector {
     public HardwareMap hardwareMap;
-    public DistanceSensor Detector;
+    public OpticalDistanceSensor odsSensor;  // Hardware Device Object
+
     public double distance = 0;
-    public double threshold = 20;
+    public double threshold = 1;
     public boolean detecting = false;
 
     public ArtifactDetector(HardwareMap hwm) {
         this.hardwareMap = hwm;
-        this.Detector = hardwareMap.get(DistanceSensor.class, "ColSens");
+        this.odsSensor = hardwareMap.get(OpticalDistanceSensor.class, "sensor_ods");
     }
 
     public void update() {
-        distance = Detector.getDistance(DistanceUnit.MM);
-        detecting = distance < threshold;
+        distance = odsSensor.getLightDetected();
+        //detecting = distance < threshold;
     }
 }

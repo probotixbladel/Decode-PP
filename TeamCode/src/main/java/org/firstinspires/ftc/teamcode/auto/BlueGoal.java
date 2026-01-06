@@ -116,6 +116,7 @@ public class BlueGoal extends OpMode {
         switch (pathState) {
             case 0:
                 follower.followPath(scorePreload);
+                comps.through.InThrough(comps);
                 comps.shooter.PreTargetTo(scorePosePreload);
                 setPathState(1);
                 break;
@@ -146,7 +147,6 @@ public class BlueGoal extends OpMode {
             case 4:
                 if(!follower.isBusy()){
                     comps.intake.TakeIn(comps);
-                    comps.through.InThrough(comps);
                     follower.followPath(grabPickup1, 0.7, true);
                     setPathState(5);
                 }
@@ -155,7 +155,6 @@ public class BlueGoal extends OpMode {
             case 5:
                 if(!follower.isBusy()){
                     comps.intake.StaticIntake();
-                    comps.through.StaticThrough(comps);
                     follower.followPath(openGate, 0.5, true);
                     setPathState(6);
                 }
@@ -201,7 +200,6 @@ public class BlueGoal extends OpMode {
             case 11:
                 if(!follower.isBusy()){
                     comps.intake.TakeIn(comps);
-                    comps.through.InThrough(comps);
                     follower.followPath(grabPickup2, 0.7, true);
                     setPathState(12);
                 }
@@ -210,7 +208,6 @@ public class BlueGoal extends OpMode {
             case 12:
                 if(!follower.isBusy()) {
                     comps.intake.StaticIntake();
-                    comps.through.StaticThrough(comps);
                     follower.followPath(scorePickup2, true);
                     setPathState(13);
                 }
@@ -242,7 +239,6 @@ public class BlueGoal extends OpMode {
             case 16:
                 if(!follower.isBusy()){
                     comps.intake.TakeIn(comps);
-                    comps.through.InThrough(comps);
                     follower.followPath(grabPickup3, 0.7, true);
                     setPathState(17);
                 }
