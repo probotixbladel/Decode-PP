@@ -115,8 +115,10 @@ public class Shooter {
         switch (al) {
             case RED:
                 ShootTo = new Pose(133,135);
+                break;
             case BLUE:
                 ShootTo = new Pose(11,135);
+                break;
         }
     }
 

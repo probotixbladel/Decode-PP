@@ -63,6 +63,7 @@ public class ComponentShell {
         if (pos != null) {
             limePos = pos;
         }
+        telemetryM.debug("alliance: ", alliance);
         telemetryM.debug("Pusher angle:", pusher.PusherAngle);
         telemetryM.debug("Pusher state:", pusher.state);
         telemetryM.debug("detector dist", detector.distance);
