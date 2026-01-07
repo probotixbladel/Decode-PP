@@ -125,7 +125,7 @@ public class ComponentShell {
         intake.TakeIn(this);
     }
     public boolean FinishedShooting(int num){
-        if(shootNum >= num + 1){
+        if(shootNum >= num){
             intake.StaticIntake();
             return true;
         }

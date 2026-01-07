@@ -12,7 +12,7 @@ public class ArtifactDetector {
     public OpticalDistanceSensor odsSensor;  // Hardware Device Object
 
     public double distance = 0;
-    public double threshold = 0.1;
+    public double threshold = 0.01;
     public boolean detecting = false;
 
     public ArtifactDetector(HardwareMap hwm) {
