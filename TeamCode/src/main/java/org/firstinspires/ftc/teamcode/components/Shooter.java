@@ -44,8 +44,8 @@ public class Shooter {
             {270,1360},
             {280,1370},
             {290,1390},
-            {300,1410},
-            {310,1420}
+            {300,1400},
+            {310,1410}
             //{320,1440},
             //{330,1480},
             //{340,1510},
@@ -81,7 +81,7 @@ public class Shooter {
             {280,1440},
             {290,1450},
             {300,1460},
-            {310,1470}
+            {310,1460}
             //{320,1520},
             //{330,1550},
             //{340,1560},
@@ -96,7 +96,7 @@ public class Shooter {
     private double lP = P;
     private double lD = D;
     private double lF = F;
-    public static double MinToMax = 0.2; //percentage min-max
+    public static double MinToMax = 0.15; //percentage min-max
     private Pose ShootTo;
 
     public enum ShooterState {
