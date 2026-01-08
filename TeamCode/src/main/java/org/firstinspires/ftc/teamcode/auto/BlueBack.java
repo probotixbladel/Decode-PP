@@ -27,16 +27,16 @@ public class BlueBack extends OpMode {
     public static double gateTime = 2;
     private int pathState;
     private final Pose startPose = new Pose(56, 7, Math.toRadians(-90)); // Starting pose for our robot
-    private final Pose scorePosePreload = new Pose(60, 11, Math.toRadians(290)); // Scoring Pose of our robot for the preload. It is facing the goal at a 290 degree angle.
-    private final Pose pickup1Setup = new Pose(12, 21, Math.toRadians(225)); // Setup to pickup balls in the hp zone
-    private final Pose pickup1Pose = new Pose(8, 8, Math.toRadians(-90));// balls in the hp zone
-    private final Pose scorePose1 = new Pose(60, 11, Math.toRadians(290)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a 290 degree angle.
-    private final Pose pickup2Setup = new Pose(40, 35, Math.toRadians(180)); // Setup to pickup the lowest set of balls
-    private final Pose pickup2Pose = new Pose(16, 35, Math.toRadians(180)); // Lowest (Third Set) of Artifacts from the Spike Mark.
+    private final Pose scorePosePreload = new Pose(60, 11, Math.toRadians(287)); // Scoring Pose of our robot for the preload. It is facing the goal at a 290 degree angle.
+    private final Pose pickup1Setup = new Pose(11, 21, Math.toRadians(200)); // Setup to pickup balls in the hp zone
+    private final Pose pickup1Pose = new Pose(11, 12, Math.toRadians(200));// balls in the hp zone
+    private final Pose scorePose1 = new Pose(60, 11, Math.toRadians(287)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a 290 degree angle.
+    private final Pose pickup2Setup = new Pose(42, 36, Math.toRadians(180)); // Setup to pickup the lowest set of balls
+    private final Pose pickup2Pose = new Pose(15, 36, Math.toRadians(180)); // Lowest (Third Set) of Artifacts from the Spike Mark.
     private final Pose scorePose2 = new Pose(60, 11, Math.toRadians(290)); // Scoring Pose of our robot for the second pickup. It is facing the goal at a 290 degree angle.
-    private final Pose scoopSetup = new Pose(8, 12, Math.toRadians(90)); // Setup to scoop remaining balls in the hp zone
-    private final Pose scoopPose = new Pose(8, 57, Math.toRadians(90)); // Pose to scoop remaining balls in the hp zone
-    private final Pose scorePose3 = new Pose(60, 11, Math.toRadians(290)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a 290 degree angle.
+    private final Pose scoopSetup = new Pose(11, 12, Math.toRadians(150)); // Setup to scoop remaining balls in the hp zone
+    private final Pose scoopPose = new Pose(12, 50, Math.toRadians(150)); // Pose to scoop remaining balls in the hp zone
+    private final Pose scorePose3 = new Pose(60, 11, Math.toRadians(287)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a 290 degree angle.
     private final Pose leaveTriangle = new Pose(60, 35, Math.toRadians(90)); // Leave small triangle
     public Path scorePreload;
     public ComponentShell comps;
