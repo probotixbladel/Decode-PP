@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.auto;
 
-import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
@@ -10,6 +9,7 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -19,27 +19,27 @@ import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
-@Autonomous(name = "RedGoal", group = "Examples")
-public class RedGoal extends OpMode {
+@Autonomous(name = "BlueGoal_pg123", group = "Examples")
+public class BlueGoal_pg123 extends OpMode {
     private Follower follower;
     public ElapsedTime Timer = new ElapsedTime();
     private Timer pathTimer, actionTimer, opmodeTimer;
     public static double gateTime = 2;
     private int pathState;
-    private final Pose startPose = new Pose(126, 121, Math.toRadians(216)); // Starting pose for our robot
-    private final Pose scorePosePreload = new Pose(100, 96, Math.toRadians(226)); // Scoring Pose of our robot for the preload. It is facing the goal at a -45 degree angle.
-    private final Pose pickup1Setup = new Pose(98, 81, Math.toRadians(0)); // Setup to pickup the highest set of balls
-    private final Pose pickup1Pose = new Pose(118, 81, Math.toRadians(0));// Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose gateSetup = new Pose(118, 76, Math.toRadians(0)); // Stand infront of the gate
-    private final Pose gateOpen = new Pose(128, 76, Math.toRadians(0)); // Open the gate
-    private final Pose scorePose1 = new Pose(100, 96, Math.toRadians(225)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a -45 degree angle.
-    private final Pose pickup2Setup = new Pose(92, 58, Math.toRadians(0)); // Setup to pickup the middle set of balls
-    private final Pose pickup2Pose = new Pose(118, 58, Math.toRadians(0)); // Middle (Second Set) of Artifacts from the Spike Mark.
-    private final Pose scorePose2 = new Pose(106, 99, Math.toRadians(228)); // Scoring Pose of our robot for the second pickup. It is facing the goal at a -36 degree angle.
-    private final Pose pickup3Setup = new Pose(96, 34, Math.toRadians(0)); // Setup to pickup the lowest set of balls
-    private final Pose pickup3Pose = new Pose(121, 34, Math.toRadians(0)); // Lowest (Third Set) of Artifacts from the Spike Mark.
-    private final Pose scorePose3 = new Pose(93, 89, Math.toRadians(226)); // Scoring Pose of our robot for the third pickup. It is facing the goal at a -36 degree angle.
-    private final Pose leaveTrianglePose = new Pose(94,60, Math.toRadians(226)); // Pose for leaving to triangle
+    private final Pose startPose = new Pose(18, 121, Math.toRadians(-36)); // Starting pose for our robot
+    private final Pose scorePosePreload = new Pose(42, 102, Math.toRadians(-46)); // Scoring Pose of our robot for the preload. It is facing the goal at a -45 degree angle.
+    private final Pose pickup1Setup = new Pose(42, 84, Math.toRadians(180)); // Setup to pickup the highest set of balls
+    private final Pose pickup1Pose = new Pose(20, 84, Math.toRadians(180));// Highest (First Set) of Artifacts from the Spike Mark.
+    private final Pose gateSetup = new Pose(20, 78, Math.toRadians(180)); // Stand infront of the gate
+    private final Pose gateOpen = new Pose(14, 78, Math.toRadians(180)); // Open the gate
+    private final Pose scorePose1 = new Pose(54, 90, Math.toRadians(-45)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a -45 degree angle.
+    private final Pose pickup2Setup = new Pose(48, 60, Math.toRadians(180)); // Setup to pickup the middle set of balls
+    private final Pose pickup2Pose = new Pose(17, 60, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark.
+    private final Pose scorePose2 = new Pose(48, 90, Math.toRadians(-48)); // Scoring Pose of our robot for the second pickup. It is facing the goal at a -36 degree angle.
+    private final Pose pickup3Setup = new Pose(42, 38, Math.toRadians(180)); // Setup to pickup the lowest set of balls
+    private final Pose pickup3Pose = new Pose(17, 38, Math.toRadians(180)); // Lowest (Third Set) of Artifacts from the Spike Mark.
+    private final Pose scorePose3 = new Pose(55, 89, Math.toRadians(-46)); // Scoring Pose of our robot for the third pickup. It is facing the goal at a -36 degree angle.
+    private final Pose leaveTrianglePose = new Pose(50,60, Math.toRadians(-46)); // Pose for leaving to triangle
     public Path scorePreload;
     public ComponentShell comps;
     public PathChain grabPickup1, openGate, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3, grabPickupSetup1, grabPickupSetup2, grabPickupSetup3, leave;
@@ -286,7 +286,7 @@ public class RedGoal extends OpMode {
         buildPaths();
         follower.setStartingPose(startPose);
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
-        comps = new ComponentShell(hardwareMap, follower, telemetryM, ComponentShell.Alliance.RED, true);
+        comps = new ComponentShell(hardwareMap, follower, telemetryM, ComponentShell.Alliance.BLUE, true);
     }
 
     public void setPathState(int pState) {
@@ -323,6 +323,6 @@ public class RedGoal extends OpMode {
 
     @Override
     public void stop() {
-        Storage.write(ComponentShell.Alliance.RED, follower.getPose());
+        Storage.write(ComponentShell.Alliance.BLUE, follower.getPose());
     }
 }

@@ -19,25 +19,25 @@ import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
-@Autonomous(name = "RedBack", group = "Examples")
-public class RedBack extends OpMode {
+@Autonomous(name = "BlueBack_ph3s", group = "Examples")
+public class BlueBack_ph3s extends OpMode {
     private Follower follower;
     public ElapsedTime Timer = new ElapsedTime();
     private Timer pathTimer, actionTimer, opmodeTimer;
     public static double scoopTime = 2;
     private int pathState;
-    private final Pose startPose = new Pose(88, 7, Math.toRadians(-90)); // Starting pose for our robot
-    private final Pose scorePosePreload = new Pose(85, 10, Math.toRadians(-114)); // Scoring Pose of our robot for the preload. It is facing the goal at a 290 degree angle.
-    private final Pose pickup1Setup = new Pose(133, 21, Math.toRadians(-20)); // Setup to pickup balls in the hp zone
-    private final Pose pickup1Pose = new Pose(133, 12, Math.toRadians(-20));// balls in the hp zone
-    private final Pose scorePose1 = new Pose(85, 10, Math.toRadians(-114)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a 290 degree angle.
-    private final Pose pickup2Setup = new Pose(102, 32, Math.toRadians(0)); // Setup to pickup the lowest set of balls
-    private final Pose pickup2Pose = new Pose(125, 32, Math.toRadians(0)); // Lowest (Third Set) of Artifacts from the Spike Mark.
-    private final Pose scorePose2 = new Pose(85, 10, Math.toRadians(-114)); // Scoring Pose of our robot for the second pickup. It is facing the goal at a 290 degree angle.
-    private final Pose scoopSetup = new Pose(130, 50, Math.toRadians(-60)); // Setup to scoop remaining balls in the hp zone
-    private final Pose scoopPose = new Pose(130, 14, Math.toRadians(-60)); // Pose to scoop remaining balls in the hp zone
-    private final Pose scorePose3 = new Pose(85, 10, Math.toRadians(-114)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a 290 degree angle.
-    private final Pose leaveTriangle = new Pose(84, 35, Math.toRadians(90)); // Leave small triangle
+    private final Pose startPose = new Pose(56, 7, Math.toRadians(-90)); // Starting pose for our robot
+    private final Pose scorePosePreload = new Pose(59, 10, Math.toRadians(290)); // Scoring Pose of our robot for the preload. It is facing the goal at a 290 degree angle.
+    private final Pose pickup1Setup = new Pose(11, 21, Math.toRadians(200)); // Setup to pickup balls in the hp zone
+    private final Pose pickup1Pose = new Pose(11, 12, Math.toRadians(200));// balls in the hp zone
+    private final Pose scorePose1 = new Pose(59, 10, Math.toRadians(290)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a 290 degree angle.
+    private final Pose pickup2Setup = new Pose(42, 36, Math.toRadians(180)); // Setup to pickup the lowest set of balls
+    private final Pose pickup2Pose = new Pose(15, 36, Math.toRadians(180)); // Lowest (Third Set) of Artifacts from the Spike Mark.
+    private final Pose scorePose2 = new Pose(59, 10, Math.toRadians(290)); // Scoring Pose of our robot for the second pickup. It is facing the goal at a 290 degree angle.
+    private final Pose scoopSetup = new Pose(12, 50, Math.toRadians(240)); // Setup to scoop remaining balls in the hp zone
+    private final Pose scoopPose = new Pose(11, 14, Math.toRadians(240)); // Pose to scoop remaining balls in the hp zone
+    private final Pose scorePose3 = new Pose(59, 10, Math.toRadians(290)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a 290 degree angle.
+    private final Pose leaveTriangle = new Pose(60, 35, Math.toRadians(90)); // Leave small triangle
     public Path scorePreload;
     public ComponentShell comps;
     public PathChain grabPickup1, grabPickup2, scorePickup1, scorePickup2, scorePickup3, grabPickupSetup1, grabPickupSetup2, leave, grabScoopSetup, grabScoop;
@@ -264,7 +264,7 @@ public class RedBack extends OpMode {
         buildPaths();
         follower.setStartingPose(startPose);
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
-        comps = new ComponentShell(hardwareMap, follower, telemetryM, ComponentShell.Alliance.RED, true);
+        comps = new ComponentShell(hardwareMap, follower, telemetryM, ComponentShell.Alliance.BLUE, true);
     }
 
     public void setPathState(int pState) {
@@ -301,6 +301,6 @@ public class RedBack extends OpMode {
 
     @Override
     public void stop() {
-        Storage.write(ComponentShell.Alliance.RED, follower.getPose());
+        Storage.write(ComponentShell.Alliance.BLUE, follower.getPose());
     }
 }

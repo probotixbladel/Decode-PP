@@ -19,28 +19,30 @@ import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
-@Autonomous(name = "BlueBack", group = "Examples")
-public class BlueBack extends OpMode {
+@Autonomous(name = "BlueGoal_p1g23", group = "Examples")
+public class BlueGoal_p1g23 extends OpMode {
     private Follower follower;
     public ElapsedTime Timer = new ElapsedTime();
     private Timer pathTimer, actionTimer, opmodeTimer;
-    public static double scoopTime = 2;
+    public static double gateTime = 3;
     private int pathState;
-    private final Pose startPose = new Pose(56, 7, Math.toRadians(-90)); // Starting pose for our robot
-    private final Pose scorePosePreload = new Pose(59, 10, Math.toRadians(290)); // Scoring Pose of our robot for the preload. It is facing the goal at a 290 degree angle.
-    private final Pose pickup1Setup = new Pose(11, 21, Math.toRadians(200)); // Setup to pickup balls in the hp zone
-    private final Pose pickup1Pose = new Pose(11, 12, Math.toRadians(200));// balls in the hp zone
-    private final Pose scorePose1 = new Pose(59, 10, Math.toRadians(290)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a 290 degree angle.
-    private final Pose pickup2Setup = new Pose(42, 36, Math.toRadians(180)); // Setup to pickup the lowest set of balls
-    private final Pose pickup2Pose = new Pose(15, 36, Math.toRadians(180)); // Lowest (Third Set) of Artifacts from the Spike Mark.
-    private final Pose scorePose2 = new Pose(59, 10, Math.toRadians(290)); // Scoring Pose of our robot for the second pickup. It is facing the goal at a 290 degree angle.
-    private final Pose scoopSetup = new Pose(12, 50, Math.toRadians(240)); // Setup to scoop remaining balls in the hp zone
-    private final Pose scoopPose = new Pose(11, 14, Math.toRadians(240)); // Pose to scoop remaining balls in the hp zone
-    private final Pose scorePose3 = new Pose(59, 10, Math.toRadians(290)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a 290 degree angle.
-    private final Pose leaveTriangle = new Pose(60, 35, Math.toRadians(90)); // Leave small triangle
+    private final Pose startPose = new Pose(18, 121, Math.toRadians(-36)); // Starting pose for our robot
+    private final Pose scorePosePreload = new Pose(42, 102, Math.toRadians(-46)); // Scoring Pose of our robot for the preload. It is facing the goal at a -45 degree angle.
+    private final Pose pickup1Setup = new Pose(42, 84, Math.toRadians(180)); // Setup to pickup the highest set of balls
+    private final Pose pickup1Pose = new Pose(20, 84, Math.toRadians(180));// Highest (First Set) of Artifacts from the Spike Mark.
+    private final Pose gateSetup = new Pose(20, 78, Math.toRadians(180)); // Stand infront of the gate
+    private final Pose gateOpen = new Pose(14, 78, Math.toRadians(180)); // Open the gate
+    private final Pose scorePose1 = new Pose(54, 90, Math.toRadians(-45)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a -45 degree angle.
+    private final Pose pickup2Setup = new Pose(53, 65, Math.toRadians(180)); // Setup to pickup the middle set of balls
+    private final Pose pickup2Pose = new Pose(17, 60, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark.
+    private final Pose scorePose2 = new Pose(48, 90, Math.toRadians(-48)); // Scoring Pose of our robot for the second pickup. It is facing the goal at a -36 degree angle.
+    private final Pose pickup3Setup = new Pose(42, 38, Math.toRadians(180)); // Setup to pickup the lowest set of balls
+    private final Pose pickup3Pose = new Pose(17, 38, Math.toRadians(180)); // Lowest (Third Set) of Artifacts from the Spike Mark.
+    private final Pose scorePose3 = new Pose(55, 89, Math.toRadians(-46)); // Scoring Pose of our robot for the third pickup. It is facing the goal at a -36 degree angle.
+    private final Pose leaveTrianglePose = new Pose(50,60, Math.toRadians(-46)); // Pose for leaving to triangle
     public Path scorePreload;
     public ComponentShell comps;
-    public PathChain grabPickup1, grabPickup2, scorePickup1, scorePickup2, scorePickup3, grabPickupSetup1, grabPickupSetup2, leave, grabScoopSetup, grabScoop;
+    public PathChain grabPickup1, openGate, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3, grabPickupSetup1, grabPickupSetup2, grabPickupSetup3, leave;
     public int Shots = 0;
     private TelemetryManager telemetryM;
 
@@ -60,14 +62,21 @@ public class BlueBack extends OpMode {
                 .setLinearHeadingInterpolation(pickup1Setup.getHeading(), pickup1Pose.getHeading())
                 .build();
 
+        openGate = follower.pathBuilder()
+                .addPath(new BezierLine(scorePose1, gateSetup))
+                .setLinearHeadingInterpolation(scorePose1.getHeading(), pickup1Pose.getHeading())
+                .addPath(new BezierLine(gateSetup, gateOpen))
+                .setLinearHeadingInterpolation(pickup1Pose.getHeading(), pickup1Pose.getHeading())
+                .build();
+
         scorePickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Pose, scorePose1))
                 .setLinearHeadingInterpolation(pickup1Pose.getHeading(), scorePose1.getHeading())
                 .build();
 
         grabPickupSetup2 = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose1, pickup2Setup))
-                .setLinearHeadingInterpolation(scorePose1.getHeading(), pickup2Pose.getHeading())
+                .addPath(new BezierLine(gateOpen, pickup2Setup))
+                .setLinearHeadingInterpolation(gateOpen.getHeading(), pickup2Pose.getHeading())
                 .build();
 
         grabPickup2 = follower.pathBuilder()
@@ -80,24 +89,24 @@ public class BlueBack extends OpMode {
                 .setLinearHeadingInterpolation(pickup2Pose.getHeading(), scorePose2.getHeading())
                 .build();
 
-        grabScoopSetup = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose2, scoopSetup))
-                .setLinearHeadingInterpolation(scorePose2.getHeading(), scoopSetup.getHeading())
+        grabPickupSetup3 = follower.pathBuilder()
+                .addPath(new BezierLine(scorePose2, pickup3Setup))
+                .setLinearHeadingInterpolation(scorePose2.getHeading(), pickup3Pose.getHeading())
                 .build();
 
-        grabScoop = follower.pathBuilder()
-                .addPath(new BezierLine(scoopSetup, scoopPose))
-                .setLinearHeadingInterpolation(scoopSetup.getHeading(), scoopPose.getHeading())
+        grabPickup3 = follower.pathBuilder()
+                .addPath(new BezierLine(pickup3Setup, pickup3Pose))
+                .setLinearHeadingInterpolation(pickup3Setup.getHeading(), pickup3Pose.getHeading())
                 .build();
 
         scorePickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(scoopPose, scorePose3))
-                .setLinearHeadingInterpolation(scoopPose.getHeading(), scorePose3.getHeading())
+                .addPath(new BezierLine(pickup3Pose, scorePose3))
+                .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose3.getHeading())
                 .build();
 
         leave = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose3, leaveTriangle))
-                .setLinearHeadingInterpolation(scorePose3.getHeading(), leaveTriangle.getHeading())
+                .addPath(new BezierLine(scorePose3, leaveTrianglePose))
+                .setLinearHeadingInterpolation(scorePose3.getHeading(), leaveTrianglePose.getHeading())
                 .build();
     }
 
@@ -106,9 +115,9 @@ public class BlueBack extends OpMode {
 
         switch (pathState) {
             case 0:
+                follower.followPath(scorePreload);
                 comps.through.InThrough(comps);
                 comps.shooter.PreTargetTo(scorePosePreload);
-                follower.followPath(scorePreload);
                 setPathState(1);
                 break;
             case 1:
@@ -145,7 +154,8 @@ public class BlueBack extends OpMode {
                 break;
 
             case 5:
-                if(!follower.isBusy()) {
+                if(!follower.isBusy()){
+                    comps.intake.StaticIntake();
                     follower.followPath(scorePickup1, true);
                     setPathState(6);
                 }
@@ -169,81 +179,94 @@ public class BlueBack extends OpMode {
 
             case 8:
                 if(!follower.isBusy()){
-                    follower.followPath(grabPickupSetup2,true);
+                    comps.intake.StaticIntake();
+                    follower.followPath(openGate,true);
                     setPathState(9);
                 }
                 break;
 
             case 9:
-                if(!follower.isBusy()){
-                    comps.intake.TakeIn(comps);
-                    follower.followPath(grabPickup2, 1, true);
-                    setPathState(10);
-                }
+                Timer.reset();
+                setPathState(10);
                 break;
 
             case 10:
-                if(!follower.isBusy()) {
-                    comps.intake.StaticIntake();
-                    follower.followPath(scorePickup2, true);
+                if(Timer.seconds() > gateTime){
+                    follower.followPath(grabPickupSetup2,true);
                     setPathState(11);
                 }
                 break;
 
             case 11:
                 if(!follower.isBusy()){
-                    comps.ResetShootNum();
-                    comps.shooter.Arived();
+                    comps.intake.TakeIn(comps);
+                    follower.followPath(grabPickup2, 1, true);
                     setPathState(12);
                 }
                 break;
 
             case 12:
-                comps.AutoShooterStart();
-                if(comps.FinishedShooting(3) && (comps.pusher.state == Pusher.PushState.WAITING || comps.pusher.state == Pusher.PushState.RELOADING)){
-                    comps.shooter.PreTargetTo(scorePose3);
+                if(!follower.isBusy()) {
+                    comps.intake.StaticIntake();
+                    follower.followPath(scorePickup2, true);
                     setPathState(13);
                 }
                 break;
 
             case 13:
                 if(!follower.isBusy()){
-                    follower.followPath(grabScoopSetup,true);
+                    comps.ResetShootNum();
+                    comps.shooter.Arived();
                     setPathState(14);
                 }
                 break;
 
             case 14:
-                if(!follower.isBusy()){
-                    comps.intake.TakeIn(comps);
-                    follower.followPath(grabScoop, 1, true);
+                comps.AutoShooterStart();
+                if(comps.FinishedShooting(3) && (comps.pusher.state == Pusher.PushState.WAITING || comps.pusher.state == Pusher.PushState.RELOADING)){
+                    comps.shooter.PreTargetTo(scorePose3);
                     setPathState(15);
                 }
                 break;
 
             case 15:
-                if(!follower.isBusy()) {
-                    comps.intake.StaticIntake();
-                    follower.followPath(scorePickup3, true);
+                if(!follower.isBusy()){
+                    follower.followPath(grabPickupSetup3,true);
                     setPathState(16);
                 }
                 break;
+
             case 16:
                 if(!follower.isBusy()){
-                    comps.ResetShootNum();
-                    comps.shooter.Arived();
+                    comps.intake.TakeIn(comps);
+                    follower.followPath(grabPickup3, 1, true);
                     setPathState(17);
                 }
                 break;
 
             case 17:
-                comps.AutoShooterStart();
-                if(comps.FinishedShooting(3) && (comps.pusher.state == Pusher.PushState.WAITING || comps.pusher.state == Pusher.PushState.RELOADING)){
+                if(!follower.isBusy()) {
+                    comps.intake.StaticIntake();
+                    follower.followPath(scorePickup3, true);
                     setPathState(18);
                 }
                 break;
-
             case 18:
+                if(!follower.isBusy()){
+                    comps.ResetShootNum();
+                    comps.shooter.Arived();
+                    setPathState(19);
+                }
+                break;
+
+            case 19:
+                comps.AutoShooterStart();
+                if(comps.FinishedShooting(3) && (comps.pusher.state == Pusher.PushState.WAITING || comps.pusher.state == Pusher.PushState.RELOADING)){
+                    setPathState(20);
+                }
+                break;
+
+            case 20:
                 comps.intake.StaticIntake();
                 comps.through.StaticThrough(comps);
                 follower.followPath(leave, true);
