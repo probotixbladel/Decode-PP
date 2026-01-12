@@ -35,7 +35,7 @@ public class PedroTeleop_Red_Goal extends OpMode {
         // TODO: Tune these values for your application
         // This does NOT create any mechanical advantage, it is purely for control
         private final double[] translationGears = { 0.3, 0.6, 0.8, 1.0 };
-        private final double[] rotationGears = { 0.3, 0.6, 0.8, 1.0 };
+        private final double[] rotationGears = { 0.3, 0.4, 0.6, 0.75 };
 
         public int gear = 1; // the index of the gear in use
 
@@ -110,13 +110,13 @@ public class PedroTeleop_Red_Goal extends OpMode {
                 scaler.gear = 3;
             }
         } else {
-            if (gamepad1.a) {
+            if (gamepad1.b) {
                 scaler.gear = 0;
-            } else if (gamepad1.b) {
-                scaler.gear = 1;
             } else if (gamepad1.x) {
-                scaler.gear = 2;
+                scaler.gear = 1;
             } else if (gamepad1.y) {
+                scaler.gear = 2;
+            } else if (gamepad1.a) {
                 scaler.gear = 3;
             }
         }
