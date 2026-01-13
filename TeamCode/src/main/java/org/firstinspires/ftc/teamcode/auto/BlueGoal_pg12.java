@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
-@Autonomous(name = "BlueGoal_pg12", group = "Not tuned")
+@Autonomous(name = "BlueGoal_pg12", group = "Examples")
 public class BlueGoal_pg12 extends OpMode {
     private Follower follower;
     public ElapsedTime Timer = new ElapsedTime();

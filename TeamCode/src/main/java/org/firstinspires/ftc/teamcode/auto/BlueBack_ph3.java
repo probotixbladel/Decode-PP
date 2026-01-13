@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
-@Autonomous(name = "BlueBack_ph3", group = "Not tuned")
+@Autonomous(name = "BlueBack_ph3", group = "Examples")
 public class BlueBack_ph3 extends OpMode {
     private Follower follower;
     public ElapsedTime Timer = new ElapsedTime();
