@@ -205,7 +205,7 @@ public class BlueBack_ph3 extends OpMode {
                 }
                 break;
 
-            case 18:
+            case 13:
                 comps.intake.StaticIntake();
                 comps.through.StaticThrough(comps);
                 follower.followPath(leave, true);
