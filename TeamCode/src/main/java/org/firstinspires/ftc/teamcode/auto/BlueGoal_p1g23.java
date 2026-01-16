@@ -30,7 +30,7 @@ public class BlueGoal_p1g23 extends OpMode {
     private final Pose scorePosePreload = new Pose(42, 102, Math.toRadians(-46)); // Scoring Pose of our robot for the preload. It is facing the goal at a -45 degree angle.
     private final Pose pickup1Setup = new Pose(42, 84, Math.toRadians(180)); // Setup to pickup the highest set of balls
     private final Pose pickup1Pose = new Pose(20, 84, Math.toRadians(180));// Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose gateSetup = new Pose(20, 78, Math.toRadians(180)); // Stand infront of the gate
+    private final Pose gateSetup = new Pose(25, 78, Math.toRadians(180)); // Stand infront of the gate
     private final Pose gateOpen = new Pose(14, 78, Math.toRadians(180)); // Open the gate
     private final Pose scorePose1 = new Pose(54, 90, Math.toRadians(-45)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a -45 degree angle.
     private final Pose pickup2Setup = new Pose(53, 65, Math.toRadians(180)); // Setup to pickup the middle set of balls
@@ -63,8 +63,8 @@ public class BlueGoal_p1g23 extends OpMode {
                 .build();
 
         openGate = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose1, gateSetup))
-                .setLinearHeadingInterpolation(scorePose1.getHeading(), pickup1Pose.getHeading())
+                .addPath(new BezierLine(pickup2Pose, gateSetup))
+                .setLinearHeadingInterpolation(pickup2Pose.getHeading(), pickup1Pose.getHeading())
                 .addPath(new BezierLine(gateSetup, gateOpen))
                 .setLinearHeadingInterpolation(pickup1Pose.getHeading(), pickup1Pose.getHeading())
                 .build();
@@ -75,8 +75,8 @@ public class BlueGoal_p1g23 extends OpMode {
                 .build();
 
         grabPickupSetup2 = follower.pathBuilder()
-                .addPath(new BezierLine(gateOpen, pickup2Setup))
-                .setLinearHeadingInterpolation(gateOpen.getHeading(), pickup2Pose.getHeading())
+                .addPath(new BezierLine(scorePose1, pickup2Setup))
+                .setLinearHeadingInterpolation(scorePose1.getHeading(), pickup2Pose.getHeading())
                 .build();
 
         grabPickup2 = follower.pathBuilder()
@@ -179,34 +179,34 @@ public class BlueGoal_p1g23 extends OpMode {
 
             case 8:
                 if(!follower.isBusy()){
-                    comps.intake.StaticIntake();
-                    follower.followPath(openGate,true);
+                    follower.followPath(grabPickupSetup2,true);
                     setPathState(9);
                 }
                 break;
 
             case 9:
-                Timer.reset();
-                setPathState(10);
+                if(!follower.isBusy()){
+                    comps.intake.TakeIn(comps);
+                    follower.followPath(grabPickup2, 1, true);
+                    setPathState(10);
+                }
                 break;
 
             case 10:
-                if(Timer.seconds() > gateTime){
-                    follower.followPath(grabPickupSetup2,true);
+                if(!follower.isBusy()){
+                    comps.intake.StaticIntake();
+                    follower.followPath(openGate,true);
                     setPathState(11);
                 }
                 break;
 
             case 11:
-                if(!follower.isBusy()){
-                    comps.intake.TakeIn(comps);
-                    follower.followPath(grabPickup2, 1, true);
-                    setPathState(12);
-                }
+                Timer.reset();
+                setPathState(12);
                 break;
 
             case 12:
-                if(!follower.isBusy()) {
+                if(Timer.seconds() > gateTime) {
                     comps.intake.StaticIntake();
                     follower.followPath(scorePickup2, true);
                     setPathState(13);

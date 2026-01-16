@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
-@Autonomous(name = "RedGoal_p12g3", group = "Not tuned")
+@Autonomous(name = "RedGoal_p12g3", group = "Example")
 public class RedGoal_p12g3 extends OpMode {
     private Follower follower;
     public ElapsedTime Timer = new ElapsedTime();
@@ -220,19 +220,19 @@ public class RedGoal_p12g3 extends OpMode {
                 if(!follower.isBusy()){
                     comps.intake.StaticIntake();
                     follower.followPath(openGate,true);
-                    setPathState(9);
+                    setPathState(14);
                 }
                 break;
 
             case 14:
                 Timer.reset();
-                setPathState(10);
+                setPathState(15);
                 break;
 
             case 15:
                 if(Timer.seconds() > gateTime){
                     follower.followPath(grabPickupSetup3,true);
-                    setPathState(11);
+                    setPathState(16);
                 }
                 break;
 

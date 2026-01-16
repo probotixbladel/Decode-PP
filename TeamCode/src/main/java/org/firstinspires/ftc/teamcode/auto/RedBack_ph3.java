@@ -19,8 +19,8 @@ import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
-@Autonomous(name = "RedBack_phs", group = "Example")
-public class RedBack_phs extends OpMode {
+@Autonomous(name = "RedBack_ph3", group = "Example")
+public class RedBack_ph3 extends OpMode {
     private Follower follower;
     public ElapsedTime Timer = new ElapsedTime();
     private Timer pathTimer, actionTimer, opmodeTimer;
@@ -81,8 +81,8 @@ public class RedBack_phs extends OpMode {
                 .build();
 
         grabScoopSetup = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose1, scoopSetup))
-                .setLinearHeadingInterpolation(scorePose1.getHeading(), scoopSetup.getHeading())
+                .addPath(new BezierLine(scorePose2, scoopSetup))
+                .setLinearHeadingInterpolation(scorePose2.getHeading(), scoopSetup.getHeading())
                 .build();
 
         grabScoop = follower.pathBuilder()
@@ -96,8 +96,8 @@ public class RedBack_phs extends OpMode {
                 .build();
 
         leave = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose3, leaveTriangle))
-                .setLinearHeadingInterpolation(scorePose3.getHeading(), leaveTriangle.getHeading())
+                .addPath(new BezierLine(scorePose2, leaveTriangle))
+                .setLinearHeadingInterpolation(scorePose2.getHeading(), leaveTriangle.getHeading())
                 .build();
     }
 
@@ -169,7 +169,7 @@ public class RedBack_phs extends OpMode {
 
             case 8:
                 if(!follower.isBusy()){
-                    follower.followPath(grabScoopSetup,true);
+                    follower.followPath(grabPickupSetup2,true);
                     setPathState(9);
                 }
                 break;
@@ -177,7 +177,7 @@ public class RedBack_phs extends OpMode {
             case 9:
                 if(!follower.isBusy()){
                     comps.intake.TakeIn(comps);
-                    follower.followPath(grabScoop, 1, true);
+                    follower.followPath(grabPickup2, 1, true);
                     setPathState(10);
                 }
                 break;
@@ -185,10 +185,11 @@ public class RedBack_phs extends OpMode {
             case 10:
                 if(!follower.isBusy()) {
                     comps.intake.StaticIntake();
-                    follower.followPath(scorePickup3, true);
+                    follower.followPath(scorePickup2, true);
                     setPathState(11);
                 }
                 break;
+
             case 11:
                 if(!follower.isBusy()){
                     comps.ResetShootNum();
@@ -200,6 +201,7 @@ public class RedBack_phs extends OpMode {
             case 12:
                 comps.AutoShooterStart();
                 if(comps.FinishedShooting(3) && (comps.pusher.state == Pusher.PushState.WAITING || comps.pusher.state == Pusher.PushState.RELOADING)){
+                    comps.shooter.PreTargetTo(scorePose3);
                     setPathState(13);
                 }
                 break;

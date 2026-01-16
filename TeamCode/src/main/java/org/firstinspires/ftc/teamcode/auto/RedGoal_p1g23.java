@@ -33,8 +33,8 @@ public class RedGoal_p1g23 extends OpMode {
     private final Pose gateSetup = new Pose(118, 76, Math.toRadians(0)); // Stand infront of the gate
     private final Pose gateOpen = new Pose(128, 76, Math.toRadians(0)); // Open the gate
     private final Pose scorePose1 = new Pose(100, 96, Math.toRadians(225)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a -45 degree angle.
-    private final Pose pickup2Setup = new Pose(85, 65, Math.toRadians(0)); // Setup to pickup the middle set of balls
-    private final Pose pickup2Pose = new Pose(118, 56, Math.toRadians(0)); // Middle (Second Set) of Artifacts from the Spike Mark.
+    private final Pose pickup2Setup = new Pose(92, 58, Math.toRadians(0)); // Setup to pickup the middle set of balls
+    private final Pose pickup2Pose = new Pose(118, 58, Math.toRadians(0)); // Middle (Second Set) of Artifacts from the Spike Mark.
     private final Pose scorePose2 = new Pose(106, 99, Math.toRadians(228)); // Scoring Pose of our robot for the second pickup. It is facing the goal at a -36 degree angle.
     private final Pose pickup3Setup = new Pose(96, 34, Math.toRadians(0)); // Setup to pickup the lowest set of balls
     private final Pose pickup3Pose = new Pose(121, 34, Math.toRadians(0)); // Lowest (Third Set) of Artifacts from the Spike Mark.
@@ -63,8 +63,8 @@ public class RedGoal_p1g23 extends OpMode {
                 .build();
 
         openGate = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose1, gateSetup))
-                .setLinearHeadingInterpolation(scorePose1.getHeading(), pickup1Pose.getHeading())
+                .addPath(new BezierLine(pickup2Pose, gateSetup))
+                .setLinearHeadingInterpolation(pickup2Pose.getHeading(), pickup1Pose.getHeading())
                 .addPath(new BezierLine(gateSetup, gateOpen))
                 .setLinearHeadingInterpolation(pickup1Pose.getHeading(), pickup1Pose.getHeading())
                 .build();
@@ -75,8 +75,8 @@ public class RedGoal_p1g23 extends OpMode {
                 .build();
 
         grabPickupSetup2 = follower.pathBuilder()
-                .addPath(new BezierLine(gateOpen, pickup2Setup))
-                .setLinearHeadingInterpolation(gateOpen.getHeading(), pickup2Pose.getHeading())
+                .addPath(new BezierLine(scorePose1, pickup2Setup))
+                .setLinearHeadingInterpolation(scorePose1.getHeading(), pickup2Pose.getHeading())
                 .build();
 
         grabPickup2 = follower.pathBuilder()
@@ -179,34 +179,34 @@ public class RedGoal_p1g23 extends OpMode {
 
             case 8:
                 if(!follower.isBusy()){
-                    comps.intake.StaticIntake();
-                    follower.followPath(openGate,true);
+                    follower.followPath(grabPickupSetup2,true);
                     setPathState(9);
                 }
                 break;
 
             case 9:
-                Timer.reset();
-                setPathState(10);
+                if(!follower.isBusy()){
+                    comps.intake.TakeIn(comps);
+                    follower.followPath(grabPickup2, 1, true);
+                    setPathState(10);
+                }
                 break;
 
             case 10:
-                if(Timer.seconds() > gateTime){
-                    follower.followPath(grabPickupSetup2,true);
+                if(!follower.isBusy()){
+                    comps.intake.StaticIntake();
+                    follower.followPath(openGate,true);
                     setPathState(11);
                 }
                 break;
 
             case 11:
-                if(!follower.isBusy()){
-                    comps.intake.TakeIn(comps);
-                    follower.followPath(grabPickup2, 1, true);
-                    setPathState(12);
-                }
+                Timer.reset();
+                setPathState(12);
                 break;
 
             case 12:
-                if(!follower.isBusy()) {
+                if(Timer.seconds() > gateTime) {
                     comps.intake.StaticIntake();
                     follower.followPath(scorePickup2, true);
                     setPathState(13);

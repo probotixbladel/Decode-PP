@@ -25,7 +25,7 @@ public class Through {
     public Through(HardwareMap hwm) {
         this.hardwareMap = hwm;
         Through = hardwareMap.get(DcMotorEx.class, "Through");
-        Through.setDirection(DcMotor.Direction.FORWARD);
+        Through.setDirection(DcMotor.Direction.REVERSE);
         Through.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 

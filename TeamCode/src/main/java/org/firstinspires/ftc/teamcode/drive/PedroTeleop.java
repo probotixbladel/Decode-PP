@@ -29,7 +29,7 @@ public class PedroTeleop extends OpMode {
     public Pose TargetPose = new Pose(70,70,Math.toRadians(270));
     public static ComponentShell.Alliance alliance = Carry.alliance;
     private boolean automatedDrive;
-    private boolean robotcentric = true;
+    private boolean robotcentric = false;
     private TelemetryManager telemetryM;
     private final PedroInputScaler scaler = new PedroInputScaler();
     private ComponentShell Comps;

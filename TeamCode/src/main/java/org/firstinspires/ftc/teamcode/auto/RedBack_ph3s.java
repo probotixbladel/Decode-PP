@@ -37,7 +37,7 @@ public class RedBack_ph3s extends OpMode {
     private final Pose scoopSetup = new Pose(130, 50, Math.toRadians(-60)); // Setup to scoop remaining balls in the hp zone
     private final Pose scoopPose = new Pose(130, 14, Math.toRadians(-60)); // Pose to scoop remaining balls in the hp zone
     private final Pose scorePose3 = new Pose(85, 10, Math.toRadians(-114)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a 290 degree angle.
-    private final Pose leaveTriangle = new Pose(84, 35, Math.toRadians(90)); // Leave small triangle
+    private final Pose leaveTriangle = new Pose(84, 35, Math.toRadians(180)); // Leave small triangle
     public Path scorePreload;
     public ComponentShell comps;
     public PathChain grabPickup1, grabPickup2, scorePickup1, scorePickup2, scorePickup3, grabPickupSetup1, grabPickupSetup2, leave, grabScoopSetup, grabScoop;
