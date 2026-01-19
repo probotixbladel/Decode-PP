@@ -16,9 +16,9 @@ import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
-@TeleOp(name="PedroTeleOp", group="Linear OpMode")
+@TeleOp(name="PedroTeleOp2", group="Linear OpMode")
 public class PedroTeleop2 extends OpMode {
-    public static boolean SinglePlayer = true;
+    public static boolean SinglePlayer = false;
     private Follower follower;
     public static Pose startingPose; //See ExampleAuto to understand how to use this
     public Pose TargetPose = new Pose(70,70,Math.toRadians(270));
@@ -72,10 +72,10 @@ public class PedroTeleop2 extends OpMode {
         follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
-        Comps = new ComponentShell(hardwareMap, follower, telemetryM, ComponentShell.Alliance.BLUE, SinglePlayer);
         Storage.Data data = Storage.read();
         startingPose = data.storedPose;
         alliance = data.storedAlliance;
+        Comps = new ComponentShell(hardwareMap, follower, telemetryM, alliance, SinglePlayer);
     }
 
     @Override
@@ -149,12 +149,22 @@ public class PedroTeleop2 extends OpMode {
                         true // Robot Centric
                 );
             } else {
-                follower.setTeleOpDrive(
-                        -driveInputs[1],
-                        -driveInputs[0],
-                        driveInputs[2],
-                        false // Robot Centric
-                );
+                if(alliance == ComponentShell.Alliance.BLUE){
+                    follower.setTeleOpDrive(
+                            -driveInputs[1],
+                            -driveInputs[0],
+                            driveInputs[2],
+                            false // Robot Centric
+                    );
+                }
+                else if(alliance == ComponentShell.Alliance.RED){
+                    follower.setTeleOpDrive(
+                            driveInputs[1],
+                            driveInputs[0],
+                            driveInputs[2],
+                            false // Robot Centric
+                    );
+                }
             }
         }
         Comps.updateTeleop(gamepad1, gamepad2);
