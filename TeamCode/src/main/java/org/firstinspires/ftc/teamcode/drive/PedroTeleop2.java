@@ -166,8 +166,10 @@ public class PedroTeleop2 extends OpMode {
         switch (alliance) {
             case RED:
                 Goal = new Pose(133,135);
+                break;
             case BLUE:
                 Goal = new Pose(11,135);
+                break;
         }
 
         boolean InShootZone = false;
