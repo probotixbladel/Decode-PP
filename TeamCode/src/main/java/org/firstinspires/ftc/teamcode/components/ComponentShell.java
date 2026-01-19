@@ -31,6 +31,7 @@ public class ComponentShell {
     public Alliance alliance;
     public boolean SinglePlayer;
     public int shootNum;
+    public Floodgate Floodgate;
 
     public enum Alliance {
         BLUE,
@@ -50,6 +51,7 @@ public class ComponentShell {
         this.follower = flw;
         this.telemetryM = Tm;
         this.SinglePlayer = single;
+        this.Floodgate = new Floodgate(hardwareMap);
     }
 
     public void update() {
@@ -59,6 +61,7 @@ public class ComponentShell {
         shooter.setSpeeds(follower.getPose());
         detector.update();
         through.update(this);
+        Floodgate.update(this);
 
         if (pos != null) {
             limePos = pos;
@@ -73,6 +76,7 @@ public class ComponentShell {
         telemetryM.debug("through state: ", through.state);
         telemetryM.debug("Vel: ", shooter.CurrentVel, shooter.TargetVel, "dist", shooter.setSpeeds(follower.getPose()));
         telemetryM.debug("shooter state: ", shooter.state);
+        telemetryM.debug("FloodgateCurrent", Floodgate.FloodgateCurrent);
     }
 
     public void updateTeleop(Gamepad gamepad1, Gamepad gamepad2) {
