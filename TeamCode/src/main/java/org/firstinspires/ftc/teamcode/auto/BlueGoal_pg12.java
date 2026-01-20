@@ -30,9 +30,9 @@ public class BlueGoal_pg12 extends OpMode {
     private final Pose scorePosePreload = new Pose(42, 102, Math.toRadians(-46)); // Scoring Pose of our robot for the preload. It is facing the goal at a -45 degree angle.
     private final Pose pickup1Setup = new Pose(42, 84, Math.toRadians(180)); // Setup to pickup the highest set of balls
     private final Pose pickup1Pose = new Pose(20, 84, Math.toRadians(180));// Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose gateSetup = new Pose(20, 78, Math.toRadians(180)); // Stand infront of the gate
-    private final Pose gateOpen = new Pose(14, 78, Math.toRadians(180)); // Open the gate
-    private final Pose scorePose1 = new Pose(54, 90, Math.toRadians(-45)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a -45 degree angle.
+    private final Pose gateSetup = new Pose(20, 75, Math.toRadians(180)); // Stand infront of the gate
+    private final Pose gateOpen = new Pose(14, 75, Math.toRadians(180)); // Open the gate
+    private final Pose scorePose1 = new Pose(54, 90, Math.toRadians(-50)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a -45 degree angle.
     private final Pose pickup2Setup = new Pose(48, 60, Math.toRadians(180)); // Setup to pickup the middle set of balls
     private final Pose pickup2Pose = new Pose(17, 60, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark.
     private final Pose scorePose2 = new Pose(48, 90, Math.toRadians(-48)); // Scoring Pose of our robot for the second pickup. It is facing the goal at a -36 degree angle.

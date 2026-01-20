@@ -66,7 +66,7 @@ public class RedGoal_p1g2 extends OpMode {
                 .addPath(new BezierLine(pickup2Pose, gateSetup))
                 .setLinearHeadingInterpolation(pickup2Pose.getHeading(), pickup1Pose.getHeading())
                 .addPath(new BezierLine(gateSetup, gateOpen))
-                .setLinearHeadingInterpolation(pickup1Pose.getHeading(), pickup1Pose.getHeading())
+                .setLinearHeadingInterpolation(pickup2Pose.getHeading(), pickup1Pose.getHeading())
                 .build();
 
         scorePickup1 = follower.pathBuilder()
@@ -105,8 +105,8 @@ public class RedGoal_p1g2 extends OpMode {
                 .build();
 
         leave = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose2, leaveTrianglePose))
-                .setLinearHeadingInterpolation(scorePose2.getHeading(), leaveTrianglePose.getHeading())
+                .addPath(new BezierLine(scorePose3, leaveTrianglePose))
+                .setLinearHeadingInterpolation(scorePose3.getHeading(), leaveTrianglePose.getHeading())
                 .build();
     }
 
@@ -224,7 +224,6 @@ public class RedGoal_p1g2 extends OpMode {
             case 14:
                 comps.AutoShooterStart();
                 if(comps.FinishedShooting(3) && (comps.pusher.state == Pusher.PushState.WAITING || comps.pusher.state == Pusher.PushState.RELOADING)){
-                    comps.shooter.PreTargetTo(scorePose3);
                     setPathState(15);
                 }
                 break;
