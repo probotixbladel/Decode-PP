@@ -69,11 +69,11 @@ public class PedroTeleop2 extends OpMode {
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
+        Storage.Data data = Storage.read();
+        startingPose = data.storedPose;
         follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
-        Storage.Data data = Storage.read();
-        startingPose = data.storedPose;
         alliance = data.storedAlliance;
         Comps = new ComponentShell(hardwareMap, follower, telemetryM, alliance, SinglePlayer);
     }
