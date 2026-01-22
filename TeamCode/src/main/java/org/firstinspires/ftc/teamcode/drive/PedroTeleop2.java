@@ -184,11 +184,11 @@ public class PedroTeleop2 extends OpMode {
 
         boolean InShootZone = false;
         if (pos.getY() > 72 & pos.getY() < 130) {
-            double MaxDeviasion = pos.getY() - 72;
-            InShootZone = pos.getX() > 72 - MaxDeviasion & pos.getX() < 72 + MaxDeviasion;
+            double MaxDeviation = pos.getY() - 72;
+            InShootZone = pos.getX() > 72 - MaxDeviation & pos.getX() < 72 + MaxDeviation;
         } else if (pos.getY() < 24 & pos.getY() > 14) {
-            double MaxDeviasion = 24 - pos.getY();
-            InShootZone = pos.getX() > 72 - MaxDeviasion & pos.getX() < 72 + MaxDeviasion;
+            double MaxDeviation = 24 - pos.getY();
+            InShootZone = pos.getX() > 72 - MaxDeviation & pos.getX() < 72 + MaxDeviation;
         }
         if (InShootZone) {
             if(Goal.distanceFrom(pos) < 28){
@@ -198,7 +198,8 @@ public class PedroTeleop2 extends OpMode {
                 return new Pose(x, y, Math.atan2(Goal.getY() - pos.getY(), Goal.getX() - pos.getX()) + Math.PI);
             }
 
-            return pos.withHeading(Math.atan2(Goal.getY() - pos.getY(), Goal.getX() - pos.getX()) + Math.PI);
+            //return pos.withHeading(Math.atan2(Goal.getY() - pos.getY(), Goal.getX() - pos.getX()) + Math.PI);
+            return pos.withHeading(Math.toRadians(Math.toDegrees(Math.abs(Math.atan((pos.getX()-Goal.getX())/(pos.getY()-Goal.getY())))) + -90));//fuck you
         }
 
 

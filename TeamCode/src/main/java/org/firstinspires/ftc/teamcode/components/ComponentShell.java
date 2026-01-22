@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.components;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.configurables.annotations.IgnoreConfigurable;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.pedropathing.follower.Follower;
@@ -66,6 +67,7 @@ public class ComponentShell {
         if (pos != null) {
             limePos = pos;
         }
+
         telemetryM.debug("alliance: ", alliance);
         telemetryM.debug("Pusher angle:", pusher.PusherAngle);
         telemetryM.debug("Pusher state:", pusher.state);
@@ -77,6 +79,7 @@ public class ComponentShell {
         telemetryM.debug("Vel: ", shooter.CurrentVel, shooter.TargetVel, "dist", shooter.setSpeeds(follower.getPose()));
         telemetryM.debug("shooter state: ", shooter.state);
         telemetryM.debug("FloodgateCurrent", Floodgate.FloodgateCurrent);
+        telemetryM.update();
     }
 
     public void updateTeleop(Gamepad gamepad1, Gamepad gamepad2) {
