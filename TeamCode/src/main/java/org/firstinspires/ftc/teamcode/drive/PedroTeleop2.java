@@ -198,8 +198,7 @@ public class PedroTeleop2 extends OpMode {
                 return new Pose(x, y, Math.atan2(Goal.getY() - pos.getY(), Goal.getX() - pos.getX()) + Math.PI);
             }
 
-            //return pos.withHeading(Math.atan2(Goal.getY() - pos.getY(), Goal.getX() - pos.getX()) + Math.PI);
-            return pos.withHeading(Math.toRadians(Math.toDegrees(Math.abs(Math.atan((pos.getX()-Goal.getX())/(pos.getY()-Goal.getY())))) + -90));//fuck you
+            return pos.withHeading(Math.atan2(Goal.getY() - pos.getY(), Goal.getX() - pos.getX()) - 0.5 * Math.PI);
         }
 
 
