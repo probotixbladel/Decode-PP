@@ -143,8 +143,8 @@ public class PedroTeleop2 extends OpMode {
             );
             if (robotcentric) {
                 follower.setTeleOpDrive(
-                        driveInputs[1],
-                        driveInputs[0],
+                        -driveInputs[1], //
+                        -driveInputs[0], //
                         driveInputs[2],
                         true // Robot Centric
                 );
