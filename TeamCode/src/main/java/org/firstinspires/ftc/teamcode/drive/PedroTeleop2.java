@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.components.ComponentShell;
+import org.firstinspires.ftc.teamcode.components.Floodgate;
 import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
@@ -24,7 +25,7 @@ public class PedroTeleop2 extends OpMode {
     public Pose TargetPose = new Pose(70,70,Math.toRadians(270));
     public static ComponentShell.Alliance alliance;
     private boolean automatedDrive;
-    private boolean robotcentric = false;
+    private boolean robotCentric = false;
     private TelemetryManager telemetryM;
     private final PedroInputScaler scaler = new PedroInputScaler();
     private ComponentShell Comps;
@@ -45,7 +46,7 @@ public class PedroTeleop2 extends OpMode {
         // 1 < n < 3: recommended
         // TODO: experiment to find your optimal value
         private static final double translationCurveExponent = 2.0;
-        private static final double rotationCurveExponent = 2.0;
+        private static final double rotationCurveExponent = 1.2;
 
         // Applies a signed exponential curve to controller input.
         // This preserves the input direction while adjusting sensitivity.
@@ -65,7 +66,6 @@ public class PedroTeleop2 extends OpMode {
         }
     }
 
-
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
@@ -76,10 +76,12 @@ public class PedroTeleop2 extends OpMode {
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         alliance = data.storedAlliance;
         Comps = new ComponentShell(hardwareMap, follower, telemetryM, alliance, SinglePlayer);
+
     }
 
     @Override
     public void start() {
+
         follower.startTeleopDrive();
     }
 
@@ -109,7 +111,7 @@ public class PedroTeleop2 extends OpMode {
             }
         }
         if (gamepad1.dpadDownWasPressed()) {
-            robotcentric = !robotcentric;
+            robotCentric = !robotCentric;
         }
 
         //Stop automated following if the follower is done
@@ -141,7 +143,7 @@ public class PedroTeleop2 extends OpMode {
                     -gamepad1.right_stick_x
 
             );
-            if (robotcentric) {
+            if (robotCentric) {
                 follower.setTeleOpDrive(
                         -driveInputs[1], //
                         -driveInputs[0], //

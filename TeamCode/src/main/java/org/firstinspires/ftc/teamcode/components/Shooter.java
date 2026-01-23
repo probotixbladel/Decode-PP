@@ -40,9 +40,9 @@ public class Shooter {
             {230,1230},
             {240,1270},
             {250,1280},
-            {260,1320},
-            {270,1360},
-            {280,1370},
+            {260,1300},
+            {270,1340},
+            {280,1360},
             {290,1380},
             {300,1390},
             {310,1395}
@@ -74,9 +74,9 @@ public class Shooter {
             {210,1300},
             {220,1310},
             {230,1340},
-            {240,1370},
+            {240,1360},
             {250,1380},
-            {260,1420},
+            {260,1400}, //1420
             {270,1430},
             {280,1430},
             {290,1440},
@@ -143,9 +143,9 @@ public class Shooter {
 
     public double setSpeeds(Pose RobotPos) {
         if (!PreTargeting) {
-            double distance = (Math.sqrt(Math.pow(RobotPos.getY() - ShootTo.getY(), 2) + Math.pow(RobotPos.getX() - ShootTo.getX(), 2)) - 8) * 2.54;
-            MaxSpeed = interpolate(MaxPoints, distance) - 5;
-            MinSpeed = interpolate(MinPoints, distance) + 5;
+            double distance = (Math.sqrt(Math.pow(RobotPos.getY() - ShootTo.getY(), 2) + Math.pow(RobotPos.getX() - ShootTo.getX(), 2)) - 16) * 2.54;
+            MaxSpeed = interpolate(MaxPoints, distance) - 10;
+            MinSpeed = interpolate(MinPoints, distance) + 10;
             TargetVel = MinSpeed + (MaxSpeed - MinSpeed) * MinToMax;
             return distance;
         }

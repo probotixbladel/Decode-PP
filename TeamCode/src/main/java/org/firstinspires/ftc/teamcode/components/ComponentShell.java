@@ -39,7 +39,6 @@ public class ComponentShell {
         RED
     }
 
-
     public ComponentShell(HardwareMap hwm, Follower flw, TelemetryManager Tm, Alliance al, boolean single) {
         this.alliance = al;
         this.hardwareMap = hwm;
@@ -74,7 +73,7 @@ public class ComponentShell {
         telemetryM.debug("detector dist", detector.distance);
         telemetryM.debug("lime pos: ", limePos);
         telemetryM.debug("Number of shots left", shootNum);
-        telemetryM.debug("folower pos: ", follower.getPose());
+        telemetryM.debug("follower pos: ", follower.getPose());
         telemetryM.debug("through state: ", through.state);
         telemetryM.debug("Vel: ", shooter.CurrentVel, shooter.TargetVel, "dist", shooter.setSpeeds(follower.getPose()));
         telemetryM.debug("shooter state: ", shooter.state);
