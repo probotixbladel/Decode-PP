@@ -78,7 +78,6 @@ public class ComponentShell {
         telemetryM.debug("Vel: ", shooter.CurrentVel, shooter.TargetVel, "dist", shooter.setSpeeds(follower.getPose()));
         telemetryM.debug("shooter state: ", shooter.state);
         telemetryM.debug("FloodgateCurrent", Floodgate.FloodgateCurrent);
-        telemetryM.update();
     }
 
     public void updateTeleop(Gamepad gamepad1, Gamepad gamepad2) {
