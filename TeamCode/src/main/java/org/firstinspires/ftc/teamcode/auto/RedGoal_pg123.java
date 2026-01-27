@@ -34,7 +34,7 @@ public class RedGoal_pg123 extends OpMode {
     private final Pose gateOpen = new Pose(128, 76, Math.toRadians(0)); // Open the gate
     private final Pose scorePose1 = new Pose(100, 96, Math.toRadians(225)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a -45 degree angle.
     private final Pose pickup2Setup = new Pose(92, 58, Math.toRadians(0)); // Setup to pickup the middle set of balls
-    private final Pose pickup2Pose = new Pose(118, 58, Math.toRadians(0)); // Middle (Second Set) of Artifacts from the Spike Mark.
+    private final Pose pickup2Pose = new Pose(120, 58, Math.toRadians(0)); // Middle (Second Set) of Artifacts from the Spike Mark.
     private final Pose scorePose2 = new Pose(106, 99, Math.toRadians(228)); // Scoring Pose of our robot for the second pickup. It is facing the goal at a -36 degree angle.
     private final Pose pickup3Setup = new Pose(96, 34, Math.toRadians(0)); // Setup to pickup the lowest set of balls
     private final Pose pickup3Pose = new Pose(121, 34, Math.toRadians(0)); // Lowest (Third Set) of Artifacts from the Spike Mark.

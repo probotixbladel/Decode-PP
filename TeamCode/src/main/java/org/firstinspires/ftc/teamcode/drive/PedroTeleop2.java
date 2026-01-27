@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.components.ComponentShell;
-import org.firstinspires.ftc.teamcode.components.Floodgate;
 import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
