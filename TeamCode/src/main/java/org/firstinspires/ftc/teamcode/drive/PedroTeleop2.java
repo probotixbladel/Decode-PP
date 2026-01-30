@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Configurable
 @TeleOp(name="PedroTeleOp2", group="Linear OpMode")
 public class PedroTeleop2 extends OpMode {
+    private Pose Goal;
     public static boolean SinglePlayer = false;
     private Follower follower;
     private double TargetHeading;
@@ -76,6 +77,14 @@ public class PedroTeleop2 extends OpMode {
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         alliance = data.storedAlliance;
         Comps = new ComponentShell(hardwareMap, follower, telemetryM, alliance, SinglePlayer);
+        switch (alliance) {
+            case RED:
+                Goal = new Pose(133, 135);
+                break;
+            case BLUE:
+                Goal = new Pose(11, 135);
+                break;
+        }
 
     }
 
@@ -113,15 +122,6 @@ public class PedroTeleop2 extends OpMode {
         if (gamepad1.dpadDownWasPressed()) {
             robotCentric = !robotCentric;
         }
-        Pose Goal = new Pose();
-        switch (alliance) {
-            case RED:
-                Goal = new Pose(133, 135);
-                break;
-            case BLUE:
-                Goal = new Pose(11, 135);
-                break;
-        }
 
         //Stop automated following if the follower is done
         if (automatedDrive && (!gamepad1.right_bumper || !follower.isBusy())) {
@@ -132,7 +132,7 @@ public class PedroTeleop2 extends OpMode {
             double dy = Goal.getY() - follower.getPose().getY();
             double dx = Goal.getX() - follower.getPose().getX();
             double alpha = Math.atan2(dy, dx);
-            double beta = 0.5 * Math.PI - alpha;
+            double beta = alpha - Math.PI;
             //follower.pathBuilder().addPath(new Path( ));
             //follower.followPath(follower.pathBuilder() //Lazy Curve Generation
             //        .addPath(new Path(new BezierLine(follower::getPose, follower::getPose)))
@@ -140,7 +140,7 @@ public class PedroTeleop2 extends OpMode {
             //        .build());
             follower.turnTo(beta);
             automatedDrive = true;
-            Comps.shooter.PreTargetTo(follower.getPose());
+            //Comps.shooter.PreTargetTo(TargetPose);
         }
 
         if (!automatedDrive) {
