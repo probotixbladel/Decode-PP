@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.drive;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.control.PIDFCoefficients;
+import com.pedropathing.control.PIDFController;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
@@ -30,6 +32,10 @@ public class PedroTeleop2 extends OpMode {
     private TelemetryManager telemetryM;
     private final PedroInputScaler scaler = new PedroInputScaler();
     private ComponentShell Comps;
+    public PIDFController GoalPID;
+    public double kp = 1;
+    public double kd = 0.0;
+    public double kf = 0.1;
     static class PedroInputScaler {
         // TODO: Tune these values for your application
         // This does NOT create any mechanical advantage, it is purely for control
@@ -142,6 +148,9 @@ public class PedroTeleop2 extends OpMode {
             automatedDrive = true;
             //Comps.shooter.PreTargetTo(TargetPose);
         }
+        if (gamepad1.leftBumperWasPressed()){
+            GoalPID = new PIDFController(new PIDFCoefficients(kp,0,kd,kf));
+        }
 
         if (!automatedDrive) {
             //This is the normal version to use in the TeleOp
@@ -160,7 +169,22 @@ public class PedroTeleop2 extends OpMode {
                         true // Robot Centric
                 );
             } else {
-                if(alliance == ComponentShell.Alliance.BLUE){
+                if(gamepad1.left_bumper) {
+                    double dy = Goal.getY() - follower.getPose().getY();
+                    double dx = Goal.getX() - follower.getPose().getX();
+                    double alpha = Math.atan2(dy, dx);
+                    double beta = alpha - Math.PI;
+                    GoalPID.setTargetPosition(beta);
+                    GoalPID.updatePosition(follower.getHeading());
+
+                    follower.setTeleOpDrive(
+                            -driveInputs[1],
+                            -driveInputs[0],
+                            Math.min(Math.max(GoalPID.run(),-1),1),
+                            false // Robot Centric
+                    );
+                }
+                else if(alliance == ComponentShell.Alliance.BLUE){
                     follower.setTeleOpDrive(
                             -driveInputs[1],
                             -driveInputs[0],
