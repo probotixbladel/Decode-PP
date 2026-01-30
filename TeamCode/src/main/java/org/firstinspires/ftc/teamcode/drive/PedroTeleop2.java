@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 public class PedroTeleop2 extends OpMode {
     public static boolean SinglePlayer = false;
     private Follower follower;
+    private double TargetHeading;
     public static Pose startingPose; //See ExampleAuto to understand how to use this
     public Pose TargetPose = new Pose(70,70,Math.toRadians(270));
     public static ComponentShell.Alliance alliance;
@@ -112,6 +113,15 @@ public class PedroTeleop2 extends OpMode {
         if (gamepad1.dpadDownWasPressed()) {
             robotCentric = !robotCentric;
         }
+        Pose Goal = new Pose();
+        switch (alliance) {
+            case RED:
+                Goal = new Pose(133, 135);
+                break;
+            case BLUE:
+                Goal = new Pose(11, 135);
+                break;
+        }
 
         //Stop automated following if the follower is done
         if (automatedDrive && (!gamepad1.right_bumper || !follower.isBusy())) {
@@ -119,18 +129,18 @@ public class PedroTeleop2 extends OpMode {
             automatedDrive = false;
             Comps.shooter.Arived();
         } else if (gamepad1.rightBumperWasPressed()) {
-            TargetPose = NearestShot(follower.getPose());
-            if (TargetPose.roughlyEquals(follower.getPose().withHeading(TargetPose.getHeading()), 0.1)) {
-                follower.turnTo(TargetPose.getHeading());
-            } else {
-                follower.pathBuilder().addPath(new Path( ));
-                follower.followPath(follower.pathBuilder() //Lazy Curve Generation
-                        .addPath(new Path(new BezierLine(follower::getPose, TargetPose)))
-                        .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, TargetPose.getHeading(), 0.8))
-                        .build());
-            }
+            double dy = Goal.getY() - follower.getPose().getY();
+            double dx = Goal.getX() - follower.getPose().getX();
+            double alpha = Math.atan2(dy, dx);
+            double beta = 0.5 * Math.PI - alpha;
+            //follower.pathBuilder().addPath(new Path( ));
+            //follower.followPath(follower.pathBuilder() //Lazy Curve Generation
+            //        .addPath(new Path(new BezierLine(follower::getPose, follower::getPose)))
+            //        .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, beta, 1))
+            //        .build());
+            follower.turnTo(beta);
             automatedDrive = true;
-            Comps.shooter.PreTargetTo(TargetPose);
+            Comps.shooter.PreTargetTo(follower.getPose());
         }
 
         if (!automatedDrive) {
@@ -171,7 +181,7 @@ public class PedroTeleop2 extends OpMode {
         Comps.updateTeleop(gamepad1, gamepad2);
     }
 
-    public Pose NearestShot(Pose pos) {
+    /*public Pose NearestShot(Pose pos) {
         Pose ShootPos;
         Pose Goal = new Pose();
         switch (alliance) {
@@ -231,9 +241,9 @@ public class PedroTeleop2 extends OpMode {
         }
 
         return ShootPos;
-    }
+    }*/                                                                 // sjoerd told me too, im sowwy
 
-    public Pose ClosePoint(Pose point, Pose startLine, Pose endLine, Pose goal) {
+    /*public Pose ClosePoint(Pose point, Pose startLine, Pose endLine, Pose goal) {
         double abX = endLine.getX() - startLine.getX();
         double abY = endLine.getY() - startLine.getY();
 
@@ -249,5 +259,5 @@ public class PedroTeleop2 extends OpMode {
         double heading = Math.atan2(goal.getY() - y, goal.getX() - x);
 
         return new Pose(x, y, heading + Math.PI);
-    }
+    }*/
 }
