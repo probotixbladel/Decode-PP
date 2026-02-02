@@ -10,7 +10,7 @@ public class Blinky {
     public ElapsedTime detectorTimer;
 	public ElapsedTime strobeTimer;
 	public static double strobeTime = 0.3;
-    public static double detectorTimeTreshold = 0.3;
+    public static double detectorTimeTreshold = 0.5;
 	public static double colorInterval = 0.02;
 	public boolean strobeLawn = false;
     private boolean detecting = false;
@@ -75,8 +75,8 @@ public class Blinky {
 						if (strobeLawn) {
 							Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.LAWN_GREEN);
 						} else {
-							Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
 						}
+						Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
 						break;
 					case HIGH:
 						relativeSpeed = comps.shooter.CurrentVel / Shooter.MaxSpeed;
