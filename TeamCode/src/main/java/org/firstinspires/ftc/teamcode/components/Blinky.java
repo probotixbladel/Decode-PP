@@ -11,16 +11,14 @@ public class Blinky {
     static public double detectorTime = 1;
     private boolean wasDetecting = false;
     private boolean timerStarted = false;
-    public ComponentShell comps;
-    public Blinky(HardwareMap hwm, ComponentShell comps){
-        this.comps = comps;
+    public Blinky(HardwareMap hwm){
         this.hardwareMap = hwm;
         this.Blinky = hardwareMap.get(RevBlinkinLedDriver.class, "Blinkin");
         this.detectorTimer = new ElapsedTime();
     }
 
-    public void update(){
-        if (comps.detector.detecting) {
+    public void update(ComponentShell comps){
+        /*if (comps.detector.detecting) {
             Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_BLUE);
             if (!wasDetecting) {
                 detectorTimer.reset();
@@ -38,6 +36,7 @@ public class Blinky {
                 Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.LAWN_GREEN);
             }
         }
-        wasDetecting = comps.detector.detecting;
+        wasDetecting = comps.detector.detecting;*/
+        Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.LAWN_GREEN);
     }
 }

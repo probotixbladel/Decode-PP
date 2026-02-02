@@ -50,7 +50,7 @@ public class ComponentShell {
         this.pusher = new Pusher(hardwareMap);
         this.through = new Through(hardwareMap);
         this.limeLight = new LimeLight(hardwareMap, alliance);
-        this.blinky = new Blinky(hardwareMap, this);
+        this.blinky = new Blinky(hardwareMap);
         this.follower = flw;
         this.telemetryM = Tm;
         this.SinglePlayer = single;
@@ -59,7 +59,7 @@ public class ComponentShell {
 
     public void update() {
         Pose pos = limeLight.update(this, telemetryM, Math.toDegrees(follower.getHeading()));
-        blinky.update();
+        blinky.update(this);
         shooter.update();
         pusher.update(this);
         shooter.setSpeeds(follower.getPose());
