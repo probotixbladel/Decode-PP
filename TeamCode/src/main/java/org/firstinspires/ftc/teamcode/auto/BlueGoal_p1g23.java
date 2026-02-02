@@ -10,6 +10,7 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -17,7 +18,7 @@ import org.firstinspires.ftc.teamcode.components.ComponentShell;
 import org.firstinspires.ftc.teamcode.components.Pusher;
 import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-
+@Disabled
 @Configurable
 @Autonomous(name = "BlueGoal_p1g23", group = "Examples")
 public class BlueGoal_p1g23 extends OpMode {

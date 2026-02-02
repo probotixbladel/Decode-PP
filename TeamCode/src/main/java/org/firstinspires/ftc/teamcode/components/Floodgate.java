@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.components;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.PWMOutput;
 
 @Configurable
 public class Floodgate {

@@ -33,9 +33,9 @@ public class PedroTeleop2 extends OpMode {
     private final PedroInputScaler scaler = new PedroInputScaler();
     private ComponentShell Comps;
     public PIDFController GoalPID;
-    public double kp = 1;
-    public double kd = 0.0;
-    public double kf = 0.1;
+    static public double kp = 1.35;
+    static public double kd = 0.12;
+    static public double kf = 0.1;
     static class PedroInputScaler {
         // TODO: Tune these values for your application
         // This does NOT create any mechanical advantage, it is purely for control
@@ -85,7 +85,7 @@ public class PedroTeleop2 extends OpMode {
         Comps = new ComponentShell(hardwareMap, follower, telemetryM, alliance, SinglePlayer);
         switch (alliance) {
             case RED:
-                Goal = new Pose(133, 135);
+                Goal = new Pose(137, 135);
                 break;
             case BLUE:
                 Goal = new Pose(11, 135);
@@ -130,11 +130,11 @@ public class PedroTeleop2 extends OpMode {
         }
 
         //Stop automated following if the follower is done
-        if (automatedDrive && (!gamepad1.right_bumper || !follower.isBusy())) {
+        if (automatedDrive && (!gamepad1.left_bumper || !follower.isBusy())) {
             follower.startTeleopDrive();
             automatedDrive = false;
             Comps.shooter.Arived();
-        } else if (gamepad1.rightBumperWasPressed()) {
+        } else if (gamepad1.leftBumperWasPressed()) {
             double dy = Goal.getY() - follower.getPose().getY();
             double dx = Goal.getX() - follower.getPose().getX();
             double alpha = Math.atan2(dy, dx);
@@ -148,7 +148,7 @@ public class PedroTeleop2 extends OpMode {
             automatedDrive = true;
             //Comps.shooter.PreTargetTo(TargetPose);
         }
-        if (gamepad1.leftBumperWasPressed()){
+        if (gamepad1.rightBumperWasPressed()){
             GoalPID = new PIDFController(new PIDFCoefficients(kp,0,kd,kf));
         }
 
@@ -169,7 +169,7 @@ public class PedroTeleop2 extends OpMode {
                         true // Robot Centric
                 );
             } else {
-                if(gamepad1.left_bumper) {
+                if(gamepad1.right_bumper) {
                     double dy = Goal.getY() - follower.getPose().getY();
                     double dx = Goal.getX() - follower.getPose().getX();
                     double alpha = Math.atan2(dy, dx);
@@ -177,12 +177,23 @@ public class PedroTeleop2 extends OpMode {
                     GoalPID.setTargetPosition(beta);
                     GoalPID.updatePosition(follower.getHeading());
 
-                    follower.setTeleOpDrive(
-                            -driveInputs[1],
-                            -driveInputs[0],
-                            Math.min(Math.max(GoalPID.run(),-1),1),
-                            false // Robot Centric
-                    );
+                    if(alliance == ComponentShell.Alliance.BLUE){
+                        follower.setTeleOpDrive(
+                                -driveInputs[1],
+                                -driveInputs[0],
+                                Math.min(Math.max(GoalPID.run(),-1),1),
+                                false // Robot Centric
+                        );
+                    }
+                    else if(alliance == ComponentShell.Alliance.RED){
+                        follower.setTeleOpDrive(
+                                driveInputs[1],
+                                driveInputs[0],
+                                Math.min(Math.max(GoalPID.run(),-1),1),
+                                false // Robot Centric
+                        );
+                    }
+
                 }
                 else if(alliance == ComponentShell.Alliance.BLUE){
                     follower.setTeleOpDrive(
