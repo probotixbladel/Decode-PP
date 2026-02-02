@@ -139,14 +139,8 @@ public class PedroTeleop2 extends OpMode {
             double dx = Goal.getX() - follower.getPose().getX();
             double alpha = Math.atan2(dy, dx);
             double beta = alpha - Math.PI;
-            //follower.pathBuilder().addPath(new Path( ));
-            //follower.followPath(follower.pathBuilder() //Lazy Curve Generation
-            //        .addPath(new Path(new BezierLine(follower::getPose, follower::getPose)))
-            //        .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, beta, 1))
-            //        .build());
             follower.turnTo(beta);
             automatedDrive = true;
-            //Comps.shooter.PreTargetTo(TargetPose);
         }
         if (gamepad1.rightBumperWasPressed()){
             GoalPID = new PIDFController(new PIDFCoefficients(kp,0,kd,kf));
@@ -161,6 +155,7 @@ public class PedroTeleop2 extends OpMode {
                     -gamepad1.right_stick_x
 
             );
+
             if (robotCentric) {
                 follower.setTeleOpDrive(
                         -driveInputs[1], //
@@ -215,84 +210,4 @@ public class PedroTeleop2 extends OpMode {
         }
         Comps.updateTeleop(gamepad1, gamepad2);
     }
-
-    /*public Pose NearestShot(Pose pos) {
-        Pose ShootPos;
-        Pose Goal = new Pose();
-        switch (alliance) {
-            case RED:
-                Goal = new Pose(133,135);
-                break;
-            case BLUE:
-                Goal = new Pose(11,135);
-                break;
-        }
-
-        boolean InShootZone = false;
-        if (pos.getY() > 72 & pos.getY() < 130) {
-            double MaxDeviation = pos.getY() - 72;
-            InShootZone = pos.getX() > 72 - MaxDeviation & pos.getX() < 72 + MaxDeviation;
-        } else if (pos.getY() < 24 & pos.getY() > 14) {
-            double MaxDeviation = 24 - pos.getY();
-            InShootZone = pos.getX() > 72 - MaxDeviation & pos.getX() < 72 + MaxDeviation;
-        }
-        if (InShootZone) {
-            if(Goal.distanceFrom(pos) < 28){
-                double mult = 28/Goal.distanceFrom(pos);
-                double x = Goal.getX() - ((Goal.getX() - pos.getX()) * mult);
-                double y = Goal.getY() - ((Goal.getY() - pos.getY()) * mult);
-                return new Pose(x, y, Math.atan2(Goal.getY() - pos.getY(), Goal.getX() - pos.getX()) + Math.PI);
-            }
-
-            return pos.withHeading(Math.atan2(Goal.getY() - pos.getY(), Goal.getX() - pos.getX()) - 0.5 * Math.PI);
-        }
-
-
-        if (pos.getY() >= 130 & pos.getX() < 96 & pos.getX() > 48) {
-            return new Pose(pos.getX(), 130,Math.atan2(Goal.getY() - 130, Goal.getX() - pos.getX()) + Math.PI);
-        }
-        if (pos.getY() <= 14 & pos.getX() < 86 & pos.getX() > 58) {
-            return new Pose(pos.getX(), 14,Math.atan2(Goal.getY() - 14, Goal.getX() - pos.getX()) + Math.PI);
-        }
-
-        Pose near  = ClosePoint(pos, new Pose(72,72), new Pose(29 ,113), Goal);
-        Pose far   = ClosePoint(pos, new Pose(72,24), new Pose(63 ,15 ), Goal);
-        Pose near1 = ClosePoint(pos, new Pose(72,72), new Pose(115,113), Goal);
-        Pose far1  = ClosePoint(pos, new Pose(72,24), new Pose(81 ,15 ), Goal);
-
-        double MinDist = near.distanceFrom(pos);
-        ShootPos = near;
-        if (far.distanceFrom(pos) < MinDist) {
-            MinDist = far.distanceFrom(pos);
-            ShootPos = far;
-        }
-        if (near1.distanceFrom(pos) < MinDist) {
-            MinDist = near1.distanceFrom(pos);
-            ShootPos = near1;
-        }
-        if (far1.distanceFrom(pos) < MinDist) {
-            MinDist = far1.distanceFrom(pos);
-            ShootPos = far1;
-        }
-
-        return ShootPos;
-    }*/                                                                 // sjoerd told me too, im sowwy
-
-    /*public Pose ClosePoint(Pose point, Pose startLine, Pose endLine, Pose goal) {
-        double abX = endLine.getX() - startLine.getX();
-        double abY = endLine.getY() - startLine.getY();
-
-        double t = ((point.getX() - startLine.getX()) * abX +
-                (point.getY() - startLine.getY()) * abY)
-                / (abX * abX + abY * abY);
-
-        t = Math.max(0, Math.min(1, t));
-
-        double x = startLine.getX() + t * abX;
-        double y = startLine.getY() + t * abY;
-
-        double heading = Math.atan2(goal.getY() - y, goal.getX() - x);
-
-        return new Pose(x, y, heading + Math.PI);
-    }*/
 }
