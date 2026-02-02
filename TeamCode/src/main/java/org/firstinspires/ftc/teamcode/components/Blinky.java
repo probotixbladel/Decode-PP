@@ -11,7 +11,7 @@ public class Blinky {
 	public ElapsedTime strobeTimer;
 	public static double strobeTime = 0.3;
     public static double detectorTimeTreshold = 0.3;
-	public static double colorInterval = 0.05;
+	public static double colorInterval = 0.02;
 	public boolean strobeLawn = false;
     private boolean detecting = false;
 	private boolean wasDetecting = false;
