@@ -35,16 +35,6 @@ public class Blinky {
 		}
 
 		switch (state) {
-			case WAS_DETECTING:
-				Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
-				if (detectorTimer.seconds() > detectorTimeTreshold + 0.5) {
-					state = BlinkState.IDLE;
-				}
-				if (detectorTimer.seconds() < detectorTimeTreshold) {
-					state = BlinkState.DETECTING;
-				}
-				break;
-
 			case DETECTING:
 				if (detectorTimer.seconds() > detectorTimeTreshold) {
 					state = BlinkState.WAS_DETECTING;
@@ -57,7 +47,17 @@ public class Blinky {
 				if (strobeLawn) {
 					Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
 				} else {
-					Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
+					Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+				}
+				break;
+
+			case WAS_DETECTING:
+				Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
+				if (detectorTimer.seconds() > detectorTimeTreshold + 0.5) {
+					state = BlinkState.IDLE;
+				}
+				if (detectorTimer.seconds() < detectorTimeTreshold) {
+					state = BlinkState.DETECTING;
 				}
 				break;
 
