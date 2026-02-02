@@ -10,7 +10,7 @@ public class Blinky {
     public ElapsedTime detectorTimer;
 	public ElapsedTime strobeTimer;
 	public static double strobeTime = 0.2;
-    public static double detectorTimeTreshold = 0.5;
+    public static double detectorTimeTreshold = 0.6;
 	public static double colorInterval = 0.02;
 	public boolean strobeLawn = false;
     private boolean detecting = false;
@@ -33,72 +33,39 @@ public class Blinky {
 		if (comps.detector.detecting) {
 			detectorTimer.reset();
 		}
-		if (detectorTimer.seconds() < detectorTimeTreshold) {
-			state = BlinkState.DETECTING;
-		}
 
 		switch (state) {
 			case WAS_DETECTING:
 				Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
-				if (detectorTimer.seconds() > detectorTimeTreshold + strobeTime) {
+				if (detectorTimer.seconds() > detectorTimeTreshold + 0.5) {
 					state = BlinkState.IDLE;
 				}
+				if (detectorTimer.seconds() < detectorTimeTreshold) {
+					state = BlinkState.DETECTING;
+				}
 				break;
+
 			case DETECTING:
 				if (detectorTimer.seconds() > detectorTimeTreshold) {
 					state = BlinkState.WAS_DETECTING;
 				}
-				double relativeSpeed;
-				switch (comps.shooter.state) {
-					case LOW:
-						relativeSpeed = comps.shooter.CurrentVel / Shooter.MinSpeed;
-						if (relativeSpeed >= 1.0 - colorInterval) {
-							Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
-						} else if (relativeSpeed >= 1.0 - colorInterval * 2) {
-							Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.GOLD);
-						} else if (relativeSpeed >= 1.0 - colorInterval * 3) {
-							Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.ORANGE);
-						} else if (relativeSpeed >= 1.0 - colorInterval * 4) {
-							Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE);
-						} else if (relativeSpeed >= 1.0 - colorInterval * 5) {
-							Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
-						} else {
-							Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_RED);
-						}
-						break;
-					case READY:
-						if (strobeTimer.seconds() > strobeTime) {
-							strobeTimer.reset();
-							strobeLawn = !strobeLawn;
-						}
+				if (strobeTimer.seconds() > strobeTime) {
+					strobeTimer.reset();
+					strobeLawn = !strobeLawn;
+				}
 
-						if (strobeLawn) {
-							Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
-						} else {
-							Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
-						}
-
-						break;
-					case HIGH:
-						relativeSpeed = comps.shooter.CurrentVel / Shooter.MaxSpeed;
-						if (relativeSpeed <= 1.0 + colorInterval) {
-							Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
-						} else if (relativeSpeed <= 1.0 + colorInterval * 2) {
-							Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.SKY_BLUE);
-						} else if (relativeSpeed <= 1.0 + colorInterval * 3) {
-							Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_BLUE);
-						} else if (relativeSpeed <= 1.0 + colorInterval * 4) {
-							Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
-						} else if (relativeSpeed <= 1.0 + colorInterval * 5) {
-							Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE_VIOLET);
-						} else {
-							Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.VIOLET);
-						}
-						break;
+				if (strobeLawn) {
+					Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+				} else {
+					Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
 				}
 				break;
+
 			case IDLE:
 				Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.LAWN_GREEN);
+				if (detectorTimer.seconds() < detectorTimeTreshold) {
+					state = BlinkState.DETECTING;
+				}
 		}
     }
 }
