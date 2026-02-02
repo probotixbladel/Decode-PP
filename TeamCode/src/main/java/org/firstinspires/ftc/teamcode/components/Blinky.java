@@ -53,7 +53,7 @@ public class Blinky {
 
 			case WAS_DETECTING:
 				Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
-				if (detectorTimer.seconds() > detectorTimeTreshold + 0.5) {
+				if (detectorTimer.seconds() > detectorTimeTreshold + 1) {
 					state = BlinkState.IDLE;
 				}
 				if (detectorTimer.seconds() < detectorTimeTreshold) {
