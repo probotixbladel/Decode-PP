@@ -24,14 +24,14 @@ public class BlueGoal_p12u3 extends OpMode {
     private Follower follower;
     public ElapsedTime Timer = new ElapsedTime();
     private Timer pathTimer, actionTimer, opmodeTimer;
-    public static double gateTime = 2;
+    public static double gateTime = 5;
     private int pathState;
     private final Pose startPose = new Pose(18, 121, Math.toRadians(-36)); // Starting pose for our robot
     private final Pose scorePosePreload = new Pose(42, 102, Math.toRadians(-46)); // Scoring Pose of our robot for the preload. It is facing the goal at a -45 degree angle.
     private final Pose pickup1Setup = new Pose(42, 84, Math.toRadians(180)); // Setup to pickup the highest set of balls
     private final Pose pickup1Pose = new Pose(20, 84, Math.toRadians(180));// Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose gateSetup = new Pose(20, 60, Math.toRadians(135)); // Stand infront of the gate
-    private final Pose gateOpen = new Pose(12, 60, Math.toRadians(135)); // Open the gate
+    private final Pose gateSetup = new Pose(30, 59, Math.toRadians(145)); // Stand infront of the gate
+    private final Pose gateOpen = new Pose(13, 59, Math.toRadians(145)); // Open the gate
     private final Pose scorePose1 = new Pose(54, 90, Math.toRadians(-45)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a -45 degree angle.
     private final Pose pickup2Setup = new Pose(48, 60, Math.toRadians(180)); // Setup to pickup the middle set of balls
     private final Pose pickup2Pose = new Pose(20, 60, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark.
@@ -64,9 +64,9 @@ public class BlueGoal_p12u3 extends OpMode {
 
         openGate = follower.pathBuilder()
                 .addPath(new BezierLine(scorePose2, gateSetup))
-                .setLinearHeadingInterpolation(scorePose2.getHeading(), pickup1Pose.getHeading())
+                .setLinearHeadingInterpolation(scorePose2.getHeading(), gateSetup.getHeading())
                 .addPath(new BezierLine(gateSetup, gateOpen))
-                .setLinearHeadingInterpolation(gateSetup.getHeading(), pickup1Pose.getHeading())
+                .setLinearHeadingInterpolation(gateSetup.getHeading(), gateOpen.getHeading())
                 .build();
 
         scorePickup1 = follower.pathBuilder()
@@ -223,50 +223,6 @@ public class BlueGoal_p12u3 extends OpMode {
             case 14:
                 Timer.reset();
                 comps.intake.TakeIn(comps);
-                setPathState(15);
-                break;
-
-            case 15:
-                if(Timer.seconds() > gateTime){
-                    comps.intake.StaticIntake();
-                    setPathState(-1);
-                }
-                break;
-
-            case 16:
-                if(!follower.isBusy()){
-                    comps.intake.TakeIn(comps);
-                    follower.followPath(grabPickup3, 1, true);
-                    setPathState(17);
-                }
-                break;
-
-            case 17:
-                if(!follower.isBusy()) {
-                    comps.intake.StaticIntake();
-                    follower.followPath(scorePickup3, true);
-                    setPathState(18);
-                }
-                break;
-            case 18:
-                if(!follower.isBusy()){
-                    comps.ResetShootNum();
-                    comps.shooter.Arived();
-                    setPathState(19);
-                }
-                break;
-
-            case 19:
-                comps.AutoShooterStart();
-                if(comps.FinishedShooting(3) && (comps.pusher.state == Pusher.PushState.WAITING || comps.pusher.state == Pusher.PushState.RELOADING)){
-                    setPathState(20);
-                }
-                break;
-
-            case 20:
-                comps.intake.StaticIntake();
-                comps.through.StaticThrough(comps);
-                follower.followPath(leave, true);
                 setPathState(-1);
                 break;
 
