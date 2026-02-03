@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.components;
 
-
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -20,6 +19,7 @@ public class Intake {
         OUTTAKE,
         OFF
     }
+
     public Intake(HardwareMap hwm) {
         this.hardwareMap = hwm;
         intake = hardwareMap.get(DcMotorEx.class, "intake");
@@ -35,6 +35,7 @@ public class Intake {
             intake.setPower(0);
         }
     }
+
     public void TakeOut() {
         state = Intake.IntakeState.OUTTAKE;
         intake.setPower(outtake_power);
@@ -43,6 +44,5 @@ public class Intake {
         state = Intake.IntakeState.OFF;
         intake.setPower(static_power);
     }
-
 
 }

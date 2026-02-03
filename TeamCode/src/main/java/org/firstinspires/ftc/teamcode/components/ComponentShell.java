@@ -101,8 +101,6 @@ public class ComponentShell {
 
             if (gamepad1.x) {
                 through.InThrough(this);
-            } else if (gamepad1.left_bumper) {
-                through.OutThrough(this);
             } else {
                 through.StaticThrough(this);
             }
@@ -130,7 +128,7 @@ public class ComponentShell {
     }
     public void ResetShootNum(){shootNum = 0;}
     public void AutoShooterStart(){
-        if(pusher.AttemptPush(this)){
+        if(pusher.AttemptPush(this)) {
             shootNum += 1;
         }
         intake.TakeIn(this);

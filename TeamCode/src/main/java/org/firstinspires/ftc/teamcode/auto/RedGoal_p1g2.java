@@ -18,7 +18,6 @@ import org.firstinspires.ftc.teamcode.components.ComponentShell;
 import org.firstinspires.ftc.teamcode.components.Pusher;
 import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-@Disabled
 @Configurable
 @Autonomous(name = "RedGoal_p1g2", group = "Examples")
 public class RedGoal_p1g2 extends OpMode {

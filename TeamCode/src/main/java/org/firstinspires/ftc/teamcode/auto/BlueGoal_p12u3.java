@@ -10,7 +10,6 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -18,29 +17,32 @@ import org.firstinspires.ftc.teamcode.components.ComponentShell;
 import org.firstinspires.ftc.teamcode.components.Pusher;
 import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
 @Configurable
-@Autonomous(name = "RedBack_ph3", group = "Example")
-public class RedBack_ph3 extends OpMode {
+@Autonomous(name = "BlueGoal_p12u3", group = "Examples")
+public class BlueGoal_p12u3 extends OpMode {
     private Follower follower;
     public ElapsedTime Timer = new ElapsedTime();
     private Timer pathTimer, actionTimer, opmodeTimer;
-    public static double scoopTime = 2;
+    public static double gateTime = 2;
     private int pathState;
-    private final Pose startPose = new Pose(88, 7, Math.toRadians(-90)); // Starting pose for our robot
-    private final Pose scorePosePreload = new Pose(85, 10, Math.toRadians(-114)); // Scoring Pose of our robot for the preload. It is facing the goal at a 290 degree angle.
-    private final Pose pickup1Setup = new Pose(133, 21, Math.toRadians(-20)); // Setup to pickup balls in the hp zone
-    private final Pose pickup1Pose = new Pose(133, 12, Math.toRadians(-20));// balls in the hp zone
-    private final Pose scorePose1 = new Pose(85, 10, Math.toRadians(-114)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a 290 degree angle.
-    private final Pose pickup2Setup = new Pose(102, 32, Math.toRadians(0)); // Setup to pickup the lowest set of balls
-    private final Pose pickup2Pose = new Pose(125, 32, Math.toRadians(0)); // Lowest (Third Set) of Artifacts from the Spike Mark.
-    private final Pose scorePose2 = new Pose(85, 10, Math.toRadians(-114)); // Scoring Pose of our robot for the second pickup. It is facing the goal at a 290 degree angle.
-    private final Pose scoopSetup = new Pose(130, 50, Math.toRadians(-60)); // Setup to scoop remaining balls in the hp zone
-    private final Pose scoopPose = new Pose(130, 14, Math.toRadians(-60)); // Pose to scoop remaining balls in the hp zone
-    private final Pose scorePose3 = new Pose(85, 10, Math.toRadians(-114)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a 290 degree angle.
-    private final Pose leaveTriangle = new Pose(84, 35, Math.toRadians(180)); // Leave small triangle
+    private final Pose startPose = new Pose(18, 121, Math.toRadians(-36)); // Starting pose for our robot
+    private final Pose scorePosePreload = new Pose(42, 102, Math.toRadians(-46)); // Scoring Pose of our robot for the preload. It is facing the goal at a -45 degree angle.
+    private final Pose pickup1Setup = new Pose(42, 84, Math.toRadians(180)); // Setup to pickup the highest set of balls
+    private final Pose pickup1Pose = new Pose(20, 84, Math.toRadians(180));// Highest (First Set) of Artifacts from the Spike Mark.
+    private final Pose gateSetup = new Pose(20, 60, Math.toRadians(135)); // Stand infront of the gate
+    private final Pose gateOpen = new Pose(12, 60, Math.toRadians(135)); // Open the gate
+    private final Pose scorePose1 = new Pose(54, 90, Math.toRadians(-45)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a -45 degree angle.
+    private final Pose pickup2Setup = new Pose(48, 60, Math.toRadians(180)); // Setup to pickup the middle set of balls
+    private final Pose pickup2Pose = new Pose(20, 60, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark.
+    private final Pose scorePose2 = new Pose(48, 90, Math.toRadians(-48)); // Scoring Pose of our robot for the second pickup. It is facing the goal at a -36 degree angle.
+    private final Pose pickup3Setup = new Pose(42, 38, Math.toRadians(180)); // Setup to pickup the lowest set of balls
+    private final Pose pickup3Pose = new Pose(17, 38, Math.toRadians(180)); // Lowest (Third Set) of Artifacts from the Spike Mark.
+    private final Pose scorePose3 = new Pose(55, 89, Math.toRadians(-46)); // Scoring Pose of our robot for the third pickup. It is facing the goal at a -36 degree angle.
+    private final Pose leaveTrianglePose = new Pose(50,60, Math.toRadians(-46)); // Pose for leaving to triangle
     public Path scorePreload;
     public ComponentShell comps;
-    public PathChain grabPickup1, grabPickup2, scorePickup1, scorePickup2, scorePickup3, grabPickupSetup1, grabPickupSetup2, leave, grabScoopSetup, grabScoop;
+    public PathChain grabPickup1, openGate, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3, grabPickupSetup1, grabPickupSetup2, grabPickupSetup3, leave;
     public int Shots = 0;
     private TelemetryManager telemetryM;
 
@@ -60,9 +62,16 @@ public class RedBack_ph3 extends OpMode {
                 .setLinearHeadingInterpolation(pickup1Setup.getHeading(), pickup1Pose.getHeading())
                 .build();
 
+        openGate = follower.pathBuilder()
+                .addPath(new BezierLine(scorePose2, gateSetup))
+                .setLinearHeadingInterpolation(scorePose2.getHeading(), pickup1Pose.getHeading())
+                .addPath(new BezierLine(gateSetup, gateOpen))
+                .setLinearHeadingInterpolation(gateSetup.getHeading(), pickup1Pose.getHeading())
+                .build();
+
         scorePickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(pickup1Pose, scorePose1))
-                .setLinearHeadingInterpolation(pickup1Pose.getHeading(), scorePose1.getHeading())
+                .addPath(new BezierLine(pickup1Setup, scorePose1))
+                .setLinearHeadingInterpolation(pickup1Setup.getHeading(), scorePose1.getHeading())
                 .build();
 
         grabPickupSetup2 = follower.pathBuilder()
@@ -80,24 +89,24 @@ public class RedBack_ph3 extends OpMode {
                 .setLinearHeadingInterpolation(pickup2Pose.getHeading(), scorePose2.getHeading())
                 .build();
 
-        grabScoopSetup = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose2, scoopSetup))
-                .setLinearHeadingInterpolation(scorePose2.getHeading(), scoopSetup.getHeading())
+        grabPickupSetup3 = follower.pathBuilder()
+                .addPath(new BezierLine(scorePose2, pickup3Setup))
+                .setLinearHeadingInterpolation(scorePose2.getHeading(), pickup3Pose.getHeading())
                 .build();
 
-        grabScoop = follower.pathBuilder()
-                .addPath(new BezierLine(scoopSetup, scoopPose))
-                .setLinearHeadingInterpolation(scoopSetup.getHeading(), scoopPose.getHeading())
+        grabPickup3 = follower.pathBuilder()
+                .addPath(new BezierLine(pickup3Setup, pickup3Pose))
+                .setLinearHeadingInterpolation(pickup3Setup.getHeading(), pickup3Pose.getHeading())
                 .build();
 
         scorePickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(scoopPose, scorePose3))
-                .setLinearHeadingInterpolation(scoopPose.getHeading(), scorePose3.getHeading())
+                .addPath(new BezierLine(pickup3Pose, scorePose3))
+                .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose3.getHeading())
                 .build();
 
         leave = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose2, leaveTriangle))
-                .setLinearHeadingInterpolation(scorePose2.getHeading(), leaveTriangle.getHeading())
+                .addPath(new BezierLine(scorePose3, leaveTrianglePose))
+                .setLinearHeadingInterpolation(scorePose3.getHeading(), leaveTrianglePose.getHeading())
                 .build();
     }
 
@@ -106,9 +115,9 @@ public class RedBack_ph3 extends OpMode {
 
         switch (pathState) {
             case 0:
+                follower.followPath(scorePreload);
                 comps.through.InThrough(comps);
                 comps.shooter.PreTargetTo(scorePosePreload);
-                follower.followPath(scorePreload);
                 setPathState(1);
                 break;
             case 1:
@@ -145,7 +154,7 @@ public class RedBack_ph3 extends OpMode {
                 break;
 
             case 5:
-                if(!follower.isBusy()) {
+                if(!follower.isBusy()){
                     follower.followPath(scorePickup1, true);
                     setPathState(6);
                 }
@@ -207,6 +216,54 @@ public class RedBack_ph3 extends OpMode {
                 break;
 
             case 13:
+                follower.followPath(openGate, true);
+                setPathState(14);
+                break;
+
+            case 14:
+                Timer.reset();
+                comps.intake.TakeIn(comps);
+                setPathState(15);
+                break;
+
+            case 15:
+                if(Timer.seconds() > gateTime){
+                    comps.intake.StaticIntake();
+                    setPathState(-1);
+                }
+                break;
+
+            case 16:
+                if(!follower.isBusy()){
+                    comps.intake.TakeIn(comps);
+                    follower.followPath(grabPickup3, 1, true);
+                    setPathState(17);
+                }
+                break;
+
+            case 17:
+                if(!follower.isBusy()) {
+                    comps.intake.StaticIntake();
+                    follower.followPath(scorePickup3, true);
+                    setPathState(18);
+                }
+                break;
+            case 18:
+                if(!follower.isBusy()){
+                    comps.ResetShootNum();
+                    comps.shooter.Arived();
+                    setPathState(19);
+                }
+                break;
+
+            case 19:
+                comps.AutoShooterStart();
+                if(comps.FinishedShooting(3) && (comps.pusher.state == Pusher.PushState.WAITING || comps.pusher.state == Pusher.PushState.RELOADING)){
+                    setPathState(20);
+                }
+                break;
+
+            case 20:
                 comps.intake.StaticIntake();
                 comps.through.StaticThrough(comps);
                 follower.followPath(leave, true);
@@ -227,7 +284,7 @@ public class RedBack_ph3 extends OpMode {
         buildPaths();
         follower.setStartingPose(startPose);
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
-        comps = new ComponentShell(hardwareMap, follower, telemetryM, ComponentShell.Alliance.RED, true);
+        comps = new ComponentShell(hardwareMap, follower, telemetryM, ComponentShell.Alliance.BLUE, true);
     }
 
     public void setPathState(int pState) {
@@ -264,6 +321,6 @@ public class RedBack_ph3 extends OpMode {
 
     @Override
     public void stop() {
-        Storage.write(ComponentShell.Alliance.RED, follower.getPose());
+        Storage.write(ComponentShell.Alliance.BLUE, follower.getPose());
     }
 }
