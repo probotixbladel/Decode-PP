@@ -15,6 +15,5 @@ public class BlueReset extends LinearOpMode {
     @Override
     public void runOpMode() {
         Storage.write(ComponentShell.Alliance.BLUE, startingPose);
-
     }
 }

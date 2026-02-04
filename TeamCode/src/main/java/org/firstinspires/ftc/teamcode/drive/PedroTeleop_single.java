@@ -6,10 +6,8 @@ import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.control.PIDFController;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.HeadingInterpolator;
-import com.pedropathing.paths.Path;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -17,13 +15,13 @@ import org.firstinspires.ftc.teamcode.components.ComponentShell;
 import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
+@Disabled
 @Configurable
 @TeleOp(name="PedroTeleOp_single", group="Linear OpMode")
 public class PedroTeleop_single extends OpMode {
     private Pose Goal;
     public static boolean SinglePlayer = true;
     private Follower follower;
-    private double TargetHeading;
     public static Pose startingPose; //See ExampleAuto to understand how to use this
     public Pose TargetPose = new Pose(70,70,Math.toRadians(270));
     public static ComponentShell.Alliance alliance;
@@ -137,18 +135,20 @@ public class PedroTeleop_single extends OpMode {
         if (automatedDrive && (!gamepad1.left_bumper || !follower.isBusy())) {
             follower.startTeleopDrive();
             automatedDrive = false;
-            Comps.shooter.Arived();
+            Comps.shooter.Arrived();
         } else if (gamepad1.leftBumperWasPressed()) {
             double dy = Goal.getY() - follower.getPose().getY();
             double dx = Goal.getX() - follower.getPose().getX();
             double alpha = Math.atan2(dy, dx);
             double beta = alpha - Math.PI;
-            //follower.pathBuilder().addPath(new Path( ));
-            //follower.followPath(follower.pathBuilder() //Lazy Curve Generation
-            //        .addPath(new Path(new BezierLine(follower::getPose, follower::getPose)))
-            //        .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, beta, 1))
-            //        .build());
-            follower.turnTo(beta);
+            /*
+            follower.pathBuilder().addPath(new Path( ));
+            follower.followPath(follower.pathBuilder() //Lazy Curve Generation
+                    .addPath(new Path(new BezierLine(follower::getPose, follower::getPose)))
+                    .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, beta, 1))
+                    .build());
+            */
+			follower.turnTo(beta);
             automatedDrive = true;
             //Comps.shooter.PreTargetTo(TargetPose);
         }

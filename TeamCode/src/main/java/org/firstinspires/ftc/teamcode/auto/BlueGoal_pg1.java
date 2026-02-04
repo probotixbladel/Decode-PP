@@ -118,7 +118,7 @@ public class BlueGoal_pg1 extends OpMode {
             case 0:
                 if(Timer.seconds() > waitTime) {
                     follower.followPath(scorePreload);
-                    comps.through.InThrough(comps);
+                    comps.through.InThrough();
                     comps.shooter.PreTargetTo(scorePosePreload);
                     setPathState(1);
                 }
@@ -127,7 +127,7 @@ public class BlueGoal_pg1 extends OpMode {
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if (!follower.isBusy()) {
                     comps.ResetShootNum();
-                    comps.shooter.Arived();
+                    comps.shooter.Arrived();
                     setPathState(2);
                 }
                 break;
@@ -179,7 +179,7 @@ public class BlueGoal_pg1 extends OpMode {
             case 8:
                 if(!follower.isBusy()){
                     comps.ResetShootNum();
-                    comps.shooter.Arived();
+                    comps.shooter.Arrived();
                     setPathState(9);
                 }
                 break;
@@ -193,7 +193,7 @@ public class BlueGoal_pg1 extends OpMode {
 
             case 10:
                 comps.intake.StaticIntake();
-                comps.through.StaticThrough(comps);
+                comps.through.StaticThrough();
                 follower.followPath(leave, true);
                 setPathState(-1);
                 break;

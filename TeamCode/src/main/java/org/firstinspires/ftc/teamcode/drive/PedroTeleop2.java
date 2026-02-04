@@ -6,10 +6,7 @@ import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.control.PIDFController;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.HeadingInterpolator;
-import com.pedropathing.paths.Path;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -23,7 +20,6 @@ public class PedroTeleop2 extends OpMode {
     private Pose Goal;
     public static boolean SinglePlayer = false;
     private Follower follower;
-    private double TargetHeading;
     public static Pose startingPose; //See ExampleAuto to understand how to use this
     public Pose TargetPose = new Pose(70,70,Math.toRadians(270));
     public static ComponentShell.Alliance alliance;
@@ -36,10 +32,10 @@ public class PedroTeleop2 extends OpMode {
     static public double kp = 1.35;
     static public double kd = 0.12;
     static public double kf = 0.1;
-    static public int blueX = 11;
-    static public int blueY = 135;
-    static public int redX = 137;
-    static public int redY = 135;
+    static public int blueX = 0;
+    static public int blueY = 144;
+    static public int redX = 144;
+    static public int redY = 144;
     static class PedroInputScaler {
         // TODO: Tune these values for your application
         // This does NOT create any mechanical advantage, it is purely for control
@@ -95,7 +91,6 @@ public class PedroTeleop2 extends OpMode {
                 Goal = new Pose(blueX, blueY);
                 break;
         }
-
     }
 
     @Override
@@ -104,11 +99,9 @@ public class PedroTeleop2 extends OpMode {
         follower.startTeleopDrive();
     }
 
-    @Override
+	@Override
     public void loop() {
         //Call this once per loop
-        follower.update();
-        telemetryM.update();
         telemetryM.debug("goto: ", TargetPose);
 
         // switch gears
@@ -137,7 +130,7 @@ public class PedroTeleop2 extends OpMode {
         if (automatedDrive && (!gamepad1.left_bumper || !follower.isBusy())) {
             follower.startTeleopDrive();
             automatedDrive = false;
-            Comps.shooter.Arived();
+            Comps.shooter.Arrived();
         } else if (gamepad1.leftBumperWasPressed()) {
             double dy = Goal.getY() - follower.getPose().getY();
             double dx = Goal.getX() - follower.getPose().getX();
@@ -150,7 +143,7 @@ public class PedroTeleop2 extends OpMode {
             GoalPID = new PIDFController(new PIDFCoefficients(kp,0,kd,kf));
         }
 
-        if (!automatedDrive) {
+		if (!automatedDrive) {
             //This is the normal version to use in the TeleOp
 
             double[] driveInputs = scaler.getScaledInput(
@@ -212,6 +205,18 @@ public class PedroTeleop2 extends OpMode {
                 }
             }
         }
-        Comps.updateTeleop(gamepad1, gamepad2);
+		Comps.updateTeleop(gamepad1, gamepad2);
+
+		if (Comps.floodgate.floodgateCurrent > 17) {
+			follower.setMaxPower(0.6);
+			if (Comps.floodgate.floodgateCurrent > 20) {
+				follower.setMaxPower(0.2);
+			}
+		} else {
+			follower.setMaxPower(1);
+		}
+
+		follower.update();
+		telemetryM.update();
     }
 }

@@ -154,8 +154,8 @@ public class BlueGoalAuto extends OpMode {
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup2Pose's position */
                 if (!follower.isBusy()) {
                     /* STOP GRABBING BALLS */
-                    intake.intake.setPower(intake.static_power);
-                    through.Through.setPower(through.static_power);
+                    intake.intake.setPower(intake.staticPower);
+                    through.Through.setPower(through.staticPower);
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                     follower.followPath(scorePickup2, true);

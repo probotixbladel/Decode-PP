@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 @Configurable
 public class ArtifactDetector {
-    public HardwareMap hardwareMap;
 	public OpticalDistanceSensor odsSensor;  // Hardware Device Object
 	public OpticalDistanceSensor odsSensor2;  // Hardware Device Object
 
@@ -18,13 +17,12 @@ public class ArtifactDetector {
 
 
     public ArtifactDetector(HardwareMap hwm) {
-        this.hardwareMap = hwm;
-        this.odsSensor = hardwareMap.get(OpticalDistanceSensor.class, "DistSens");
-		this.odsSensor2 = hardwareMap.get(OpticalDistanceSensor.class, "DistSens2");
+		this.odsSensor = hwm.get(OpticalDistanceSensor.class, "DistSens");
+		this.odsSensor2 = hwm.get(OpticalDistanceSensor.class, "DistSens2");
     }
 
-    public void update() {
-        distance = odsSensor.getLightDetected();
+	public void update() {
+		distance = odsSensor.getLightDetected();
 		distance2 = odsSensor2.getLightDetected();
         detecting = (distance > minThreshold && distance < maxThreshold) || (distance2 > minThreshold && distance2 < maxThreshold);
     }

@@ -1,22 +1,11 @@
 package org.firstinspires.ftc.teamcode.components;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.bylazar.configurables.annotations.IgnoreConfigurable;
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.CoordinateSystem;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.geometry.PedroCoordinates;
-import com.pedropathing.ftc.PoseConverter;
 import com.bylazar.telemetry.TelemetryManager;
-
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @Configurable
 public class ComponentShell {
@@ -25,6 +14,7 @@ public class ComponentShell {
     public final Shooter shooter;
     public Pusher pusher;
     public Through through;
+	public Floodgate floodgate;
     public Blinky blinky;
     public ArtifactDetector detector;
     public Follower follower;
@@ -34,7 +24,6 @@ public class ComponentShell {
     public Alliance alliance;
     public boolean SinglePlayer;
     public int shootNum;
-    public Floodgate Floodgate;
 
     public enum Alliance {
         BLUE,
@@ -54,24 +43,19 @@ public class ComponentShell {
         this.follower = flw;
         this.telemetryM = Tm;
         this.SinglePlayer = single;
-        this.Floodgate = new Floodgate(hardwareMap);
+        this.floodgate = new Floodgate(hardwareMap);
     }
 
-    public void update() {
-        Pose pos = limeLight.update(this, telemetryM, Math.toDegrees(follower.getHeading()));
+	public void update() {
+		floodgate.update();
+		//Pose pos = limeLight.update(this, telemetryM, Math.toDegrees(follower.getHeading()));
         blinky.update(this);
-        shooter.update();
+        shooter.update(this);
         pusher.update(this);
-        shooter.setSpeeds(follower.getPose());
         detector.update();
         through.update(this);
-        Floodgate.update(this);
 
-        if (pos != null) {
-            limePos = pos;
-        }
-
-        telemetryM.debug("alliance: ", alliance);
+		telemetryM.debug("alliance: ", alliance);
         telemetryM.debug("Pusher angle:", pusher.PusherAngle);
         telemetryM.debug("Pusher state:", pusher.state);
         telemetryM.debug("detector dist", detector.distance);
@@ -80,9 +64,9 @@ public class ComponentShell {
         telemetryM.debug("Number of shots left", shootNum);
         telemetryM.debug("follower pos: ", follower.getPose());
         telemetryM.debug("through state: ", through.state);
-        telemetryM.debug("Vel: ", shooter.CurrentVel, shooter.TargetVel, "dist", shooter.setSpeeds(follower.getPose()));
+        telemetryM.debug("Vel: ", shooter.CurrentVel, Shooter.TargetVel, "dist", shooter.setSpeeds(follower.getPose()));
         telemetryM.debug("shooter state: ", shooter.state);
-        telemetryM.debug("FloodgateCurrent", Floodgate.FloodgateCurrent);
+        telemetryM.debug("FloodgateCurrent", floodgate.floodgateCurrent);
 
 
     }
@@ -102,9 +86,9 @@ public class ComponentShell {
             }
 
             if (gamepad1.x) {
-                through.InThrough(this);
+                through.InThrough();
             } else {
-                through.StaticThrough(this);
+                through.StaticThrough();
             }
 
         } else {
@@ -120,21 +104,26 @@ public class ComponentShell {
             }
 
             if (gamepad2.x) {
-                through.InThrough(this);
+                through.InThrough();
             } else if (gamepad2.left_bumper) {
-                through.OutThrough(this);
+                through.OutThrough();
             } else {
-                through.StaticThrough(this);
+                through.StaticThrough();
             }
         }
     }
-    public void ResetShootNum(){shootNum = 0;}
+
+    public void ResetShootNum(){
+		shootNum = 0;
+	}
+
     public void AutoShooterStart(){
         if(pusher.AttemptPush(this)) {
             shootNum += 1;
         }
         intake.TakeIn(this);
     }
+
     public boolean FinishedShooting(int num){
         if(shootNum >= num){
             intake.StaticIntake();

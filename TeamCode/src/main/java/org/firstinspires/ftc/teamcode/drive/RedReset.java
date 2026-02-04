@@ -14,6 +14,5 @@ public class RedReset extends LinearOpMode {
     @Override
     public void runOpMode() {
         Storage.write(ComponentShell.Alliance.RED, startingPose);
-
     }
 }

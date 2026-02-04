@@ -7,14 +7,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Blinky {
     public HardwareMap hardwareMap;
     public RevBlinkinLedDriver Blinky;
-    public ElapsedTime detectorTimer;
+    public ElapsedTime detectorTimer = new ElapsedTime();
 	public ElapsedTime strobeTimer;
 	public static double strobeTime = 0.2;
-    public static double detectorTimeTreshold = 0.6;
-	public static double colorInterval = 0.02;
+    public static double detectorTimeThreshold = 0.6;
 	public boolean strobeLawn = false;
-    private boolean detecting = false;
-	private boolean wasDetecting = false;
 	public BlinkState state = BlinkState.IDLE;
 	public enum BlinkState {
 		WAS_DETECTING,
@@ -22,10 +19,9 @@ public class Blinky {
 		IDLE
 	}
 
-    public Blinky(HardwareMap hwm){
+	public Blinky(HardwareMap hwm){
         this.hardwareMap = hwm;
         this.Blinky = hardwareMap.get(RevBlinkinLedDriver.class, "Blinkin");
-        this.detectorTimer = new ElapsedTime();
 		this.strobeTimer = new ElapsedTime();
     }
 
@@ -36,7 +32,7 @@ public class Blinky {
 
 		switch (state) {
 			case DETECTING:
-				if (detectorTimer.seconds() > detectorTimeTreshold) {
+				if (detectorTimer.seconds() > detectorTimeThreshold) {
 					state = BlinkState.WAS_DETECTING;
 				}
 				if (strobeTimer.seconds() > strobeTime) {
@@ -53,17 +49,17 @@ public class Blinky {
 
 			case WAS_DETECTING:
 				Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
-				if (detectorTimer.seconds() > detectorTimeTreshold + 1.0) {// dis goeie
+				if (detectorTimer.seconds() > detectorTimeThreshold + 1.0) {
 					state = BlinkState.IDLE;
 				}
-				if (detectorTimer.seconds() < detectorTimeTreshold) {
+				if (detectorTimer.seconds() < detectorTimeThreshold) {
 					state = BlinkState.DETECTING;
 				}
 				break;
 
 			case IDLE:
 				Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.LAWN_GREEN);
-				if (detectorTimer.seconds() < detectorTimeTreshold) {
+				if (detectorTimer.seconds() < detectorTimeThreshold) {
 					state = BlinkState.DETECTING;
 				}
 		}

@@ -10,7 +10,6 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.bylazar.configurables.annotations.Configurable;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -116,7 +115,7 @@ public class BlueGoal_pg123 extends OpMode {
         switch (pathState) {
             case 0:
                 follower.followPath(scorePreload);
-                comps.through.InThrough(comps);
+                comps.through.InThrough();
                 comps.shooter.PreTargetTo(scorePosePreload);
                 setPathState(1);
                 break;
@@ -124,7 +123,7 @@ public class BlueGoal_pg123 extends OpMode {
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if (!follower.isBusy()) {
                     comps.ResetShootNum();
-                    comps.shooter.Arived();
+                    comps.shooter.Arrived();
                     setPathState(2);
                 }
                 break;
@@ -176,7 +175,7 @@ public class BlueGoal_pg123 extends OpMode {
             case 8:
                 if(!follower.isBusy()){
                     comps.ResetShootNum();
-                    comps.shooter.Arived();
+                    comps.shooter.Arrived();
                     setPathState(9);
                 }
                 break;
@@ -215,7 +214,7 @@ public class BlueGoal_pg123 extends OpMode {
             case 13:
                 if(!follower.isBusy()){
                     comps.ResetShootNum();
-                    comps.shooter.Arived();
+                    comps.shooter.Arrived();
                     setPathState(14);
                 }
                 break;
@@ -253,7 +252,7 @@ public class BlueGoal_pg123 extends OpMode {
             case 18:
                 if(!follower.isBusy()){
                     comps.ResetShootNum();
-                    comps.shooter.Arived();
+                    comps.shooter.Arrived();
                     setPathState(19);
                 }
                 break;
@@ -267,7 +266,7 @@ public class BlueGoal_pg123 extends OpMode {
 
             case 20:
                 comps.intake.StaticIntake();
-                comps.through.StaticThrough(comps);
+                comps.through.StaticThrough();
                 follower.followPath(leave, true);
                 setPathState(-1);
                 break;

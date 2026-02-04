@@ -125,7 +125,7 @@ public class BlueGoal_p12u extends OpMode {
         switch (pathState) {
             case 0:
                 follower.followPath(scorePreload);
-                comps.through.InThrough(comps);
+                comps.through.InThrough();
                 comps.shooter.PreTargetTo(scorePosePreload);
                 setPathState(1);
                 break;
@@ -133,7 +133,7 @@ public class BlueGoal_p12u extends OpMode {
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if (!follower.isBusy()) {
                     comps.ResetShootNum();
-                    comps.shooter.Arived();
+                    comps.shooter.Arrived();
                     setPathState(2);
                 }
                 break;
@@ -172,7 +172,7 @@ public class BlueGoal_p12u extends OpMode {
             case 6:
                 if(!follower.isBusy()){
                     comps.ResetShootNum();
-                    comps.shooter.Arived();
+                    comps.shooter.Arrived();
                     setPathState(7);
                 }
                 break;
@@ -211,7 +211,7 @@ public class BlueGoal_p12u extends OpMode {
             case 11:
                 if(!follower.isBusy()){
                     comps.ResetShootNum();
-                    comps.shooter.Arived();
+                    comps.shooter.Arrived();
                     setPathState(12);
                 }
                 break;
@@ -246,7 +246,7 @@ public class BlueGoal_p12u extends OpMode {
             case 16:
                 if(!follower.isBusy()){
                     comps.ResetShootNum();
-                    comps.shooter.Arived();
+                    comps.shooter.Arrived();
                     setPathState(17);
                 }
                 break;

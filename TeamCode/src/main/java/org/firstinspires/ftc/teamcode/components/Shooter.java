@@ -10,8 +10,7 @@ import com.pedropathing.geometry.Pose;
 
 @Configurable
 public class Shooter {
-    private HardwareMap hardwareMap;
-    public DcMotorEx ShooterLeft;
+	public DcMotorEx ShooterLeft;
     //public DcMotorEx ShooterRight;
     public ShooterState state = ShooterState.LOW;
     public static double TargetVel = 1250;
@@ -19,7 +18,7 @@ public class Shooter {
     public static double MinSpeed = 1200;
     public double CurrentVel = 0;
     public static boolean PreTargeting = false;
-    public static double[][] MinPoints = {  // data min snelheid
+    public static double[][] MinPoints = {  // data min speed
             {60,1000},
             {70,1000},
             {80,960},
@@ -55,7 +54,7 @@ public class Shooter {
             //{380,1530}
     };
 
-    public static double[][] MaxPoints = { // data max snelheid
+    public static double[][] MaxPoints = { // data max speed
             {60,1060},
             {70,1070},
             {80,1080},
@@ -106,8 +105,7 @@ public class Shooter {
     }
 
     public Shooter(HardwareMap hwm, ComponentShell.Alliance al) {
-        this.hardwareMap = hwm;
-        ShooterLeft = hardwareMap.get(DcMotorEx.class, "shooterLeft");
+		ShooterLeft = hwm.get(DcMotorEx.class, "shooterLeft");
         ShooterLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         ShooterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ShooterLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -157,11 +155,12 @@ public class Shooter {
         PreTargeting = true;
     }
 
-    public void Arived() {
+    public void Arrived() {
         PreTargeting = false;
     }
 
-    public void update(){
+    public void update(ComponentShell Comps){
+		this.setSpeeds(Comps.follower.getPose());
         if (P != lP | D != lD | F != lF){
             ShooterLeft.setVelocityPIDFCoefficients( P, 0, D, F);
             lP = P;

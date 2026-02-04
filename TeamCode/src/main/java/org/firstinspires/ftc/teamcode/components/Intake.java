@@ -3,16 +3,15 @@ package org.firstinspires.ftc.teamcode.components;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 @Configurable
 public class Intake {
-    private HardwareMap hardwareMap;
-    public DcMotorEx intake;
-    public static double intake_power = 1.0;
-    public static double outtake_power = -0.6;
-    public static double static_power = 0.3;
+	public DcMotorEx intake;
+	public static double intakePower = 1.0;
+	public static double intakePowerOverCurrent = 0.6;
+    public static double outtakePower = -0.6;
+    public static double staticPower = 0.3;
     public IntakeState state = IntakeState.OFF;
     public enum IntakeState {
         INTAKE,
@@ -21,15 +20,18 @@ public class Intake {
     }
 
     public Intake(HardwareMap hwm) {
-        this.hardwareMap = hwm;
-        intake = hardwareMap.get(DcMotorEx.class, "intake");
+		intake = hwm.get(DcMotorEx.class, "intake");
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void TakeIn(ComponentShell Comps) {
-        if (Comps.pusher.state == Pusher.PushState.WAITING || Comps.pusher.state == Pusher.PushState.RELOADING) {
-            state = IntakeState.INTAKE;
-            intake.setPower(intake_power);
+		if (Comps.pusher.state == Pusher.PushState.WAITING || Comps.pusher.state == Pusher.PushState.RELOADING) {
+			state = IntakeState.INTAKE;
+			if (Comps.floodgate.floodgateCurrent > 18) {
+				intake.setPower(intakePowerOverCurrent);
+			} else {
+				intake.setPower(intakePower);
+			}
         }
         else {
             intake.setPower(0);
@@ -38,11 +40,11 @@ public class Intake {
 
     public void TakeOut() {
         state = Intake.IntakeState.OUTTAKE;
-        intake.setPower(outtake_power);
+        intake.setPower(outtakePower);
     }
     public void StaticIntake() {
         state = Intake.IntakeState.OFF;
-        intake.setPower(static_power);
+        intake.setPower(staticPower);
     }
 
 }

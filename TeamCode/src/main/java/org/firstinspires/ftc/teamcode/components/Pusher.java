@@ -1,18 +1,14 @@
 package org.firstinspires.ftc.teamcode.components;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 
 @Configurable
 public class Pusher {
-    private final HardwareMap hardwareMap;
-    public Servo Pusher;
+	public Servo Pusher;
     public static double Wait = 0.0;
     public static double Push = 0.28;
     public ElapsedTime LastShot = new ElapsedTime();
@@ -24,7 +20,7 @@ public class Pusher {
 	public static double MaxSpeed = 0.2;
     public double PusherAngle = 0;
     public static double RestAngle = 340;
-    public static double AriveAngle = 270;
+    public static double ArriveAngle = 270;
     AnalogInput PusherEnc;
     public enum PushState {
         WAITING,
@@ -34,13 +30,12 @@ public class Pusher {
     }
 
     public Pusher(HardwareMap hwm) {
-        this.hardwareMap = hwm;
-        Pusher = hardwareMap.get(Servo.class, "Pusher");
-        PusherEnc = hardwareMap.get(AnalogInput.class, "PusherEnc");
+		Pusher = hwm.get(Servo.class, "Pusher");
+        PusherEnc = hwm.get(AnalogInput.class, "PusherEnc");
     }
 
     public boolean AttemptPush(ComponentShell Comps) {
-        if (!Comps.shooter.PreTargeting & Comps.follower.getAngularVelocity() < 0.314 & Comps.follower.getVelocity().getMagnitude() < MaxSpeed) {
+        if (!Shooter.PreTargeting & Comps.follower.getAngularVelocity() < 0.314 & Comps.follower.getVelocity().getMagnitude() < MaxSpeed) {
             if (state == PushState.WAITING && Comps.shooter.state == Shooter.ShooterState.READY) {
                 Pusher.setPosition(Push);
                 LastShot.reset();
@@ -54,7 +49,7 @@ public class Pusher {
         PusherAngle = PusherEnc.getVoltage() / 3.3 * 360;
         switch (state) {
             case SHOOTING:
-                if (LastShot.seconds() > ShootTime || (PusherAngle < AriveAngle && PusherAngle > 100)) {
+                if (LastShot.seconds() > ShootTime || (PusherAngle < ArriveAngle && PusherAngle > 100)) {
                     Pusher.setPosition(Wait);
                     state = PushState.RETURNING;
                     LastShot.reset();
