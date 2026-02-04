@@ -36,6 +36,10 @@ public class PedroTeleop2 extends OpMode {
     static public double kp = 1.35;
     static public double kd = 0.12;
     static public double kf = 0.1;
+    static public int blueX = 11;
+    static public int blueY = 135;
+    static public int redX = 137;
+    static public int redY = 135;
     static class PedroInputScaler {
         // TODO: Tune these values for your application
         // This does NOT create any mechanical advantage, it is purely for control
@@ -85,10 +89,10 @@ public class PedroTeleop2 extends OpMode {
         Comps = new ComponentShell(hardwareMap, follower, telemetryM, alliance, SinglePlayer);
         switch (alliance) {
             case RED:
-                Goal = new Pose(137, 135);
+                Goal = new Pose(redX, redY);
                 break;
             case BLUE:
-                Goal = new Pose(11, 135);
+                Goal = new Pose(blueX, blueY);
                 break;
         }
 

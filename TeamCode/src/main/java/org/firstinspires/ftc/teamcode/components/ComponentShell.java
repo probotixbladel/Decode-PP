@@ -75,6 +75,7 @@ public class ComponentShell {
         telemetryM.debug("Pusher angle:", pusher.PusherAngle);
         telemetryM.debug("Pusher state:", pusher.state);
         telemetryM.debug("detector dist", detector.distance);
+        telemetryM.debug("Detecting:", detector.detecting);
         telemetryM.debug("lime pos: ", limePos);
         telemetryM.debug("Number of shots left", shootNum);
         telemetryM.debug("follower pos: ", follower.getPose());
@@ -82,6 +83,7 @@ public class ComponentShell {
         telemetryM.debug("Vel: ", shooter.CurrentVel, shooter.TargetVel, "dist", shooter.setSpeeds(follower.getPose()));
         telemetryM.debug("shooter state: ", shooter.state);
         telemetryM.debug("FloodgateCurrent", Floodgate.FloodgateCurrent);
+
 
     }
 

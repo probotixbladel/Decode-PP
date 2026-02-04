@@ -1,14 +1,10 @@
 package org.firstinspires.ftc.teamcode.components;
 
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-
-
-
-
+@Configurable
 public class ArtifactDetector {
     public HardwareMap hardwareMap;
 	public OpticalDistanceSensor odsSensor;  // Hardware Device Object
@@ -16,7 +12,8 @@ public class ArtifactDetector {
 
 	public double distance = 0;
 	public double distance2 = 0;
-    public double threshold = 0.025;
+    static public double minThreshold = 0.025;
+    static public double maxThreshold = 2.0;
     public boolean detecting = false;
 
 
@@ -29,7 +26,7 @@ public class ArtifactDetector {
     public void update() {
         distance = odsSensor.getLightDetected();
 		distance2 = odsSensor2.getLightDetected();
-        detecting = (distance > threshold) || (distance2 > threshold);
+        detecting = (distance > minThreshold && distance < maxThreshold) || (distance2 > minThreshold && distance2 < maxThreshold);
     }
 
 }
