@@ -42,7 +42,7 @@ public class PedroTeleop2 extends OpMode {
         private final double[] translationGears = { 0.3, 0.6, 0.8, 1.0 };
         private final double[] rotationGears = { 0.3, 0.4, 0.6, 0.75 };
 
-        public int gear = 1; // the index of the gear in use
+        public int gear = 3; // the index of the gear in use
 
 
         // Curves exponents
@@ -112,6 +112,12 @@ public class PedroTeleop2 extends OpMode {
                 scaler.gear = 3;
             }
         } else {
+            if (gamepad1.a) {
+                scaler.gear = 3;
+            } else if (gamepad1.b) {
+                scaler.gear = 0;
+            }
+            /*
             if (gamepad1.b) {
                 scaler.gear = 0;
             } else if (gamepad1.x) {
@@ -121,6 +127,7 @@ public class PedroTeleop2 extends OpMode {
             } else if (gamepad1.a) {
                 scaler.gear = 3;
             }
+            */
         }
         if (gamepad1.dpadDownWasPressed()) {
             robotCentric = !robotCentric;
@@ -147,18 +154,18 @@ public class PedroTeleop2 extends OpMode {
             //This is the normal version to use in the TeleOp
 
             double[] driveInputs = scaler.getScaledInput(
-                    -gamepad1.left_stick_x,
-                    -gamepad1.left_stick_y,
-                    -gamepad1.right_stick_x
+                -gamepad1.left_stick_x,
+                -gamepad1.left_stick_y,
+                -gamepad1.right_stick_x
 
             );
 
             if (robotCentric) {
                 follower.setTeleOpDrive(
-                        -driveInputs[1], //
-                        -driveInputs[0], //
-                        driveInputs[2],
-                        true // Robot Centric
+                    -driveInputs[1], //
+                    -driveInputs[0], //
+                    driveInputs[2],
+                    true // Robot Centric
                 );
             } else {
                 if(gamepad1.right_bumper) {
@@ -168,39 +175,23 @@ public class PedroTeleop2 extends OpMode {
                     double beta = alpha - Math.PI;
                     GoalPID.setTargetPosition(beta);
                     GoalPID.updatePosition(follower.getHeading());
-
-                    if(alliance == ComponentShell.Alliance.BLUE){
-                        follower.setTeleOpDrive(
-                                -driveInputs[1],
-                                -driveInputs[0],
-                                Math.min(Math.max(GoalPID.run(),-1),1),
-                                false // Robot Centric
-                        );
-                    }
-                    else if(alliance == ComponentShell.Alliance.RED){
-                        follower.setTeleOpDrive(
-                                driveInputs[1],
-                                driveInputs[0],
-                                Math.min(Math.max(GoalPID.run(),-1),1),
-                                false // Robot Centric
-                        );
-                    }
-
+                    driveInputs[2] = Math.min(Math.max(GoalPID.run(),-1),1);
                 }
-                else if(alliance == ComponentShell.Alliance.BLUE){
+
+                if(alliance == ComponentShell.Alliance.BLUE){
                     follower.setTeleOpDrive(
-                            -driveInputs[1],
-                            -driveInputs[0],
-                            driveInputs[2],
-                            false // Robot Centric
+                        -driveInputs[1],
+                        -driveInputs[0],
+                        driveInputs[2],
+                        false // Robot Centric
                     );
                 }
                 else if(alliance == ComponentShell.Alliance.RED){
                     follower.setTeleOpDrive(
-                            driveInputs[1],
-                            driveInputs[0],
-                            driveInputs[2],
-                            false // Robot Centric
+                        driveInputs[1],
+                        driveInputs[0],
+                        driveInputs[2],
+                        false // Robot Centric
                     );
                 }
             }

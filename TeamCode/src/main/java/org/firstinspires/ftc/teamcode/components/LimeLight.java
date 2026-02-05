@@ -11,26 +11,26 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 @Configurable
 public class LimeLight {
-	public Limelight3A limelight;
+	public Limelight3A limeLight;
     public LimeLight(HardwareMap hwm, ComponentShell.Alliance al) {
-		limelight = hwm.get(Limelight3A.class, "limelight");
+		limeLight = hwm.get(Limelight3A.class, "limelight");
         switch (al){
             case BLUE:
-                limelight.pipelineSwitch(0);
+                limeLight.pipelineSwitch(0);
             case RED:
-                limelight.pipelineSwitch(0);
+                limeLight.pipelineSwitch(0);
         }
-        limelight.start();
+        limeLight.start();
     }
 
     public Pose update(TelemetryManager telemetryM, double robotYaw) {
-        LLStatus status = limelight.getStatus();
+        LLStatus status = limeLight.getStatus();
         telemetryM.debug("P Index: ", status.getPipelineIndex(), "P Type: ", status.getPipelineType());
 
         Pose3D botPoseMt2;
         Pose pos = new Pose();
-        limelight.updateRobotOrientation(robotYaw);
-        LLResult result = limelight.getLatestResult();
+        limeLight.updateRobotOrientation(robotYaw);
+        LLResult result = limeLight.getLatestResult();
 
         if (result != null && result.isValid()) {
             if (result.getStaleness() < 100) {

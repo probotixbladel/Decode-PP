@@ -6,13 +6,13 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 
 @Configurable
 public class Floodgate {
-	private final AnalogInput floodgateEnc;
+	private final AnalogInput floodgateSens;
     public double floodgateCurrent = 0;
     public Floodgate(HardwareMap hwm) {
-		floodgateEnc = hwm.get(AnalogInput.class, "FloodgateEnc");
+		floodgateSens = hwm.get(AnalogInput.class, "FloodgateEnc");
 
     }
     public void update() {
-        floodgateCurrent = floodgateEnc.getVoltage() / 3.3 * 80; //80A Max Current
+        floodgateCurrent = floodgateSens.getVoltage() / 3.3 * 80; //80A Max Current
     }
 }
