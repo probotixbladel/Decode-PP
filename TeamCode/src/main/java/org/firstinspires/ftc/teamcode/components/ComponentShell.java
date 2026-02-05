@@ -19,7 +19,7 @@ public class ComponentShell {
     public ArtifactDetector detector;
     public Follower follower;
     public TelemetryManager telemetryM;
-    public LimeLight limeLight;
+    //public LimeLight limeLight;
     public Pose limePos = new Pose();
     public Alliance alliance;
     public boolean SinglePlayer;
@@ -38,7 +38,7 @@ public class ComponentShell {
         this.shooter = new Shooter(hardwareMap, alliance);
         this.pusher = new Pusher(hardwareMap);
         this.through = new Through(hardwareMap);
-        this.limeLight = new LimeLight(hardwareMap, alliance);
+        //this.limeLight = new LimeLight(hardwareMap, alliance);
         this.blinky = new Blinky(hardwareMap);
         this.follower = flw;
         this.telemetryM = Tm;
@@ -49,10 +49,10 @@ public class ComponentShell {
 	public void update() {
 		floodgate.update();
 		//Pose pos = limeLight.update(this, telemetryM, Math.toDegrees(follower.getHeading()));
+        detector.update();
         blinky.update(this);
         shooter.update(this);
         pusher.update(this);
-        detector.update();
         through.update(this);
 
 		telemetryM.debug("alliance: ", alliance);

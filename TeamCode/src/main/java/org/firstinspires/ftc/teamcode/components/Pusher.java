@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 @Configurable
 public class Pusher {
 	public Servo Pusher;
-    public static double Wait = 0.0;
+    public static double Wait = 0.02; //make higher
     public static double Push = 0.28;
     public ElapsedTime LastShot = new ElapsedTime();
 
@@ -19,8 +19,8 @@ public class Pusher {
     public static double WaitTime = 0.5;
 	public static double MaxSpeed = 0.2;
     public double PusherAngle = 0;
-    public static double RestAngle = 340;
-    public static double ArriveAngle = 270;
+    public static double RestAngle = 335; // make lower
+    public static double ArriveAngle = 265; // make higher
     AnalogInput PusherEnc;
     public enum PushState {
         WAITING,
@@ -49,6 +49,7 @@ public class Pusher {
         PusherAngle = PusherEnc.getVoltage() / 3.3 * 360;
         switch (state) {
             case SHOOTING:
+                // PusherAngle > 100 is to avoid detecting overflows
                 if (LastShot.seconds() > ShootTime || (PusherAngle < ArriveAngle && PusherAngle > 100)) {
                     Pusher.setPosition(Wait);
                     state = PushState.RETURNING;

@@ -13,6 +13,8 @@ public class ArtifactDetector {
 	public double distance2 = 0;
     static public double minThreshold = 0.025;
     static public double maxThreshold = 2.0;
+    static public double minThreshold2 = 0.015;
+    static public double maxThreshold2 = 2.0;
     public boolean detecting = false;
 
 
@@ -24,7 +26,7 @@ public class ArtifactDetector {
 	public void update() {
 		distance = odsSensor.getLightDetected();
 		distance2 = odsSensor2.getLightDetected();
-        detecting = (distance > minThreshold && distance < maxThreshold) || (distance2 > minThreshold && distance2 < maxThreshold);
+        detecting = (distance > minThreshold && distance < maxThreshold) || (distance2 > minThreshold2 && distance2 < maxThreshold2);
     }
 
 }
