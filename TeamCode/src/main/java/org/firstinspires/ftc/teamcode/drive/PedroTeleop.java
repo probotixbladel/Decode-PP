@@ -26,7 +26,7 @@ public class PedroTeleop extends OpMode {
     private TelemetryManager telemetryM;
     private final PedroInputScaler scaler = new PedroInputScaler();
     private ComponentShell Comps;
-    public PIDFController GoalPID;
+    public PIDFController GoalPID = new PIDFController(new PIDFCoefficients(0,0,0,0));
 	public static double offsetX = 1.5748;
 	public static double blueAngleOffset = 0;
 	public static double redAngleOffset = 0;
