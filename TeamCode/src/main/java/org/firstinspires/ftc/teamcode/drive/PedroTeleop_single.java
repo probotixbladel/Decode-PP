@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.components.ComponentShell;
 import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Disabled
+
 @Configurable
 @TeleOp(name="PedroTeleOp_single", group="Linear OpMode")
 public class PedroTeleop_single extends OpMode {
@@ -216,6 +216,14 @@ public class PedroTeleop_single extends OpMode {
                     );
                 }
             }
+        }
+        if (Comps.floodgate.floodgateCurrent > 17) {
+            follower.setMaxPower(0.6);
+            if (Comps.floodgate.floodgateCurrent > 20) {
+                follower.setMaxPower(0.2);
+            }
+        } else {
+            follower.setMaxPower(1);
         }
         Comps.updateTeleop(gamepad1, gamepad2);
     }
