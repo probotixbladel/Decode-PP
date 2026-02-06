@@ -15,15 +15,13 @@ import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
-@TeleOp(name="PedroTeleOp2", group="Linear OpMode")
-public class PedroTeleop2 extends OpMode {
+@TeleOp(name="PedroTeleop", group="Linear OpMode")
+public class PedroTeleop extends OpMode {
     private Pose Goal;
-    public static boolean SinglePlayer = false;
+    public static boolean singlePlayer = false;
     private Follower follower;
-    public static Pose startingPose; //See ExampleAuto to understand how to use this
-    public Pose TargetPose = new Pose(70,70,Math.toRadians(270));
+    public static Pose startingPose;
     public static ComponentShell.Alliance alliance;
-    private boolean automatedDrive;
     private boolean robotCentric = false;
     private TelemetryManager telemetryM;
     private final PedroInputScaler scaler = new PedroInputScaler();
@@ -82,7 +80,7 @@ public class PedroTeleop2 extends OpMode {
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         alliance = data.storedAlliance;
-        Comps = new ComponentShell(hardwareMap, follower, telemetryM, alliance, SinglePlayer);
+        Comps = new ComponentShell(hardwareMap, follower, telemetryM, alliance, singlePlayer);
         switch (alliance) {
             case RED:
                 Goal = new Pose(redX, redY);
@@ -101,101 +99,70 @@ public class PedroTeleop2 extends OpMode {
 
 	@Override
     public void loop() {
-        //Call this once per loop
-        telemetryM.debug("goto: ", TargetPose);
-
-        // switch gears
-        if (SinglePlayer) {
-            if (gamepad1.left_stick_button) {
-                scaler.gear = 1;
+        if (gamepad1.rightBumperWasPressed()){
+            GoalPID = new PIDFController(new PIDFCoefficients(kp,0,kd,kf));
+            if (singlePlayer) {
+                if (gamepad1.left_stick_button) {
+                    scaler.gear = 1;
+                } else {
+                    scaler.gear = 3;
+                }
             } else {
-                scaler.gear = 3;
+                if (gamepad1.a) {
+                    scaler.gear = 3;
+                } else if (gamepad1.b) {
+                    scaler.gear = 0;
+                }
             }
-        } else {
-            if (gamepad1.a) {
-                scaler.gear = 3;
-            } else if (gamepad1.b) {
-                scaler.gear = 0;
+
+            if (gamepad1.dpadDownWasPressed()) {
+                robotCentric = !robotCentric;
             }
-            /*
-            if (gamepad1.b) {
-                scaler.gear = 0;
-            } else if (gamepad1.x) {
-                scaler.gear = 1;
-            } else if (gamepad1.y) {
-                scaler.gear = 2;
-            } else if (gamepad1.a) {
-                scaler.gear = 3;
-            }
-            */
-        }
-        if (gamepad1.dpadDownWasPressed()) {
-            robotCentric = !robotCentric;
         }
 
-        //Stop automated following if the follower is done
-        if (automatedDrive && (!gamepad1.left_bumper || !follower.isBusy())) {
-            follower.startTeleopDrive();
-            automatedDrive = false;
-            Comps.shooter.Arrived();
-        } else if (gamepad1.leftBumperWasPressed()) {
+        double[] driveInputs = scaler.getScaledInput(
+            -gamepad1.left_stick_x,
+            -gamepad1.left_stick_y,
+            -gamepad1.right_stick_x
+
+        );
+
+        if(gamepad1.right_bumper) {
             double dy = Goal.getY() - follower.getPose().getY();
             double dx = Goal.getX() - follower.getPose().getX();
             double alpha = Math.atan2(dy, dx);
             double beta = alpha - Math.PI;
-            follower.turnTo(beta);
-            automatedDrive = true;
-        }
-        if (gamepad1.rightBumperWasPressed()){
-            GoalPID = new PIDFController(new PIDFCoefficients(kp,0,kd,kf));
+            GoalPID.setTargetPosition(beta);
+            GoalPID.updatePosition(follower.getHeading());
+            driveInputs[2] = Math.min(Math.max(GoalPID.run(),-1),1);
         }
 
-		if (!automatedDrive) {
-            //This is the normal version to use in the TeleOp
-
-            double[] driveInputs = scaler.getScaledInput(
-                -gamepad1.left_stick_x,
-                -gamepad1.left_stick_y,
-                -gamepad1.right_stick_x
-
+        if (robotCentric) {
+            follower.setTeleOpDrive(
+                -driveInputs[1],
+                -driveInputs[0],
+                driveInputs[2],
+                true // Robot Centric
             );
-
-            if (robotCentric) {
+        } else {
+            if(alliance == ComponentShell.Alliance.BLUE){
                 follower.setTeleOpDrive(
-                    -driveInputs[1], //
-                    -driveInputs[0], //
+                    -driveInputs[1],
+                    -driveInputs[0],
                     driveInputs[2],
-                    true // Robot Centric
+                    false // Robot Centric
                 );
-            } else {
-                if(gamepad1.right_bumper) {
-                    double dy = Goal.getY() - follower.getPose().getY();
-                    double dx = Goal.getX() - follower.getPose().getX();
-                    double alpha = Math.atan2(dy, dx);
-                    double beta = alpha - Math.PI;
-                    GoalPID.setTargetPosition(beta);
-                    GoalPID.updatePosition(follower.getHeading());
-                    driveInputs[2] = Math.min(Math.max(GoalPID.run(),-1),1);
-                }
-
-                if(alliance == ComponentShell.Alliance.BLUE){
-                    follower.setTeleOpDrive(
-                        -driveInputs[1],
-                        -driveInputs[0],
-                        driveInputs[2],
-                        false // Robot Centric
-                    );
-                }
-                else if(alliance == ComponentShell.Alliance.RED){
-                    follower.setTeleOpDrive(
-                        driveInputs[1],
-                        driveInputs[0],
-                        driveInputs[2],
-                        false // Robot Centric
-                    );
-                }
+            }
+            else if(alliance == ComponentShell.Alliance.RED){
+                follower.setTeleOpDrive(
+                    driveInputs[1],
+                    driveInputs[0],
+                    driveInputs[2],
+                    false // Robot Centric
+                );
             }
         }
+
 		Comps.updateTeleop(gamepad1, gamepad2);
 
 		if (Comps.floodgate.floodgateCurrent > 17) {
