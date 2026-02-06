@@ -130,8 +130,8 @@ public class PedroTeleop extends OpMode {
         );
 
         if(gamepad1.right_bumper) {
-            double dy = Goal.getY() - (follower.getPose().getY() - Math.cos(follower.getHeading() * offsetX));
-            double dx = Goal.getX() - (follower.getPose().getX() + Math.sin(follower.getHeading() * offsetX));
+            double dy = Goal.getY() - (follower.getPose().getY() - Math.cos(follower.getHeading()) * offsetX);
+            double dx = Goal.getX() - (follower.getPose().getX() + Math.sin(follower.getHeading()) * offsetX);
             double alpha = Math.atan2(dy, dx);
             double beta = alpha - Math.PI;
 
