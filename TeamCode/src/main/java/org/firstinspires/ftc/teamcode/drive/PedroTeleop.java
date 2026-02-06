@@ -28,8 +28,8 @@ public class PedroTeleop extends OpMode {
     private ComponentShell Comps;
     public PIDFController GoalPID = new PIDFController(new PIDFCoefficients(0,0,0,0));
 	public static double offsetX = 1.5748;
-	public static double blueAngleOffset = 0;
-	public static double redAngleOffset = 0;
+	public static double blueAngleOffset = 3;
+	public static double redAngleOffset = 3;
     static public double kp = 1.35;
     static public double kd = 0.12;
     static public double kf = 0.1;
@@ -135,10 +135,14 @@ public class PedroTeleop extends OpMode {
             double alpha = Math.atan2(dy, dx);
             double beta = alpha - Math.PI;
 
-			if (alliance == ComponentShell.Alliance.BLUE) {
-				GoalPID.setTargetPosition(beta + blueAngleOffset);
+			if (follower.getPose().getY() < 48) {
+				if (alliance == ComponentShell.Alliance.BLUE) {
+					GoalPID.setTargetPosition(beta + blueAngleOffset);
+				} else {
+					GoalPID.setTargetPosition(beta + redAngleOffset);
+				}
 			} else {
-				GoalPID.setTargetPosition(beta + redAngleOffset);
+				GoalPID.setTargetPosition(beta);
 			}
             GoalPID.updatePosition(follower.getHeading());
             driveInputs[2] = Math.min(Math.max(GoalPID.run(),-1),1);
