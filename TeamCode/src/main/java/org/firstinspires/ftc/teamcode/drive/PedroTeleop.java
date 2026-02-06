@@ -28,8 +28,8 @@ public class PedroTeleop extends OpMode {
     private ComponentShell Comps;
     public PIDFController GoalPID = new PIDFController(new PIDFCoefficients(0,0,0,0));
 	public static double offsetX = 1.5748;
-	public static double blueAngleOffset = 3;
-	public static double redAngleOffset = 3;
+	public static double blueAngleOffset = -0.06;
+	public static double redAngleOffset = -0.015;
     static public double kp = 1.35;
     static public double kd = 0.12;
     static public double kf = 0.1;

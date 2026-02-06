@@ -20,32 +20,34 @@ import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
-@Autonomous(name = "RedGoal_p12u", group = "Example")
-public class RedGoal_p12u extends OpMode {
+@Autonomous(name = "BlueGoal_p2u1", group = "Examples")
+public class BlueGoal_p2u1 extends OpMode {
     private Follower follower;
     public ElapsedTime Timer = new ElapsedTime();
     private Timer pathTimer, actionTimer, opmodeTimer;
     public static double gateTime = 4;
     private int pathState;
-    private final Pose startPose = new Pose(126, 121, Math.toRadians(216)); // Starting pose for our robot
-    private final Pose scorePosePreload = new Pose(100, 96, Math.toRadians(226)); // Scoring Pose of our robot for the preload. It is facing the goal at a -45 degree angle.
-    private final Pose pickup1Setup = new Pose(98, 81, Math.toRadians(0)); // Setup to pickup the highest set of balls
-    private final Pose pickup1Pose = new Pose(118, 81, Math.toRadians(0));// Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose gateSetup = new Pose(114, 58, Math.toRadians(33)); // Stand infront of the gate
-    private final Pose gateOpen = new Pose(134, 58, Math.toRadians(33)); // Open the gate
-    private final Pose scoreControlGate = new Pose(94, 65); // score the balls from the gate
-    private final Pose scoreGate = new Pose(96, 90, Math.toRadians(222)); // score the balls from the gate
-    private final Pose scorePose1 = new Pose(100, 96, Math.toRadians(225)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a -45 degree angle.
-    private final Pose pickup2Setup = new Pose(100, 56, Math.toRadians(0)); // Setup to pickup the middle set of balls
-    private final Pose pickup2Pose = new Pose(122, 56, Math.toRadians(0)); // Middle (Second Set) of Artifacts from the Spike Mark.
-    private final Pose scorePose2 = new Pose(106, 99, Math.toRadians(228)); // Scoring Pose of our robot for the second pickup. It is facing the goal at a -36 degree angle.
-    private final Pose pickup3Setup = new Pose(96, 34, Math.toRadians(0)); // Setup to pickup the lowest set of balls
-    private final Pose pickup3Pose = new Pose(121, 34, Math.toRadians(0)); // Lowest (Third Set) of Artifacts from the Spike Mark.
-    private final Pose scorePose3 = new Pose(93, 89, Math.toRadians(226)); // Scoring Pose of our robot for the third pickup. It is facing the goal at a -36 degree angle.
-    private final Pose leaveTrianglePose = new Pose(94,60, Math.toRadians(226)); // Pose for leaving to triangle
+    private final Pose startPose = new Pose(18, 121, Math.toRadians(-36)); // Starting pose for our robot
+    private final Pose scorePosePreload = new Pose(42, 102, Math.toRadians(-46)); // Scoring Pose of our robot for the preload. It is facing the goal at a -45 degree angle.
+    private final Pose pickup1Setup = new Pose(42, 83, Math.toRadians(180)); // Setup to pickup the highest set of balls
+    private final Pose pickup1Pose = new Pose(20, 83, Math.toRadians(180));// Highest (First Set) of Artifacts from the Spike Mark.
+    private final Pose gateSetup = new Pose(30, 60, Math.toRadians(147)); // Stand infront of the gate
+    private final Pose avoid1Control = new Pose(70, 77);
+    private final Pose gateOpen = new Pose(10, 60, Math.toRadians(147)); // Open the gate
+    private final Pose scoreGate = new Pose(48, 90, Math.toRadians(-48)); // score the balls from the gate
+    private final Pose scoreControlGate = new Pose(50, 65); // score the balls from the gate
+    private final Pose scorePose1 = new Pose(54, 90, Math.toRadians(-45)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a -45 degree angle.
+    private final Pose pickup2Setup = new Pose(48, 60, Math.toRadians(180)); // Setup to pickup the middle set of balls
+    private final Pose pickup2SetupControl = new Pose(50, 77);
+    private final Pose pickup2Pose = new Pose(18, 60, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark.
+    private final Pose scorePose2 = new Pose(48, 90, Math.toRadians(-48)); // Scoring Pose of our robot for the second pickup. It is facing the goal at a -36 degree angle.
+    private final Pose pickup3Setup = new Pose(42, 38, Math.toRadians(180)); // Setup to pickup the lowest set of balls
+    private final Pose pickup3Pose = new Pose(17, 38, Math.toRadians(180)); // Lowest (Third Set) of Artifacts from the Spike Mark.
+    private final Pose scorePose3 = new Pose(55, 89, Math.toRadians(-46)); // Scoring Pose of our robot for the third pickup. It is facing the goal at a -36 degree angle.
+    private final Pose leaveTrianglePose = new Pose(50,60, Math.toRadians(-46)); // Pose for leaving to triangle
     public Path scorePreload;
     public ComponentShell comps;
-    public PathChain grabPickup1, openGate, grabPickup2, grabPickup3, scoreGatePickup, scorePickup1, scorePickup2, scorePickup3, grabPickupSetup1, grabPickupSetup2, grabPickupSetup3, leave;
+    public PathChain grabPickup1, openGate, scoreGatePickup, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3, grabPickupSetup1, grabPickupSetup2, grabPickupSetup3, leave;
     public int Shots = 0;
     private TelemetryManager telemetryM;
 
@@ -66,14 +68,14 @@ public class RedGoal_p12u extends OpMode {
                 .build();
 
         openGate = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose2, gateSetup))
+                .addPath(new BezierCurve(scorePose2, avoid1Control, gateSetup))
                 .setLinearHeadingInterpolation(scorePose2.getHeading(), gateSetup.getHeading())
                 .addPath(new BezierLine(gateSetup, gateOpen))
                 .setLinearHeadingInterpolation(gateSetup.getHeading(), gateOpen.getHeading())
                 .build();
 
         scoreGatePickup = follower.pathBuilder()
-                .addPath(new BezierCurve(gateOpen, scoreControlGate, scoreGate))
+                .addPath(new BezierCurve(gateOpen, avoid1Control, scoreGate))
                 .setLinearHeadingInterpolation(gateOpen.getHeading(), scoreGate.getHeading())
                 .build();
 
@@ -84,7 +86,7 @@ public class RedGoal_p12u extends OpMode {
                 .build();
 
         grabPickupSetup2 = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose1, pickup2Setup))
+                .addPath(new BezierCurve(scorePose1, pickup2SetupControl, pickup2Setup))
                 .setLinearHeadingInterpolation(scorePose1.getHeading(), pickup2Pose.getHeading())
                 .build();
 
@@ -94,7 +96,7 @@ public class RedGoal_p12u extends OpMode {
                 .build();
 
         scorePickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(pickup2Pose, scorePose2))
+                .addPath(new BezierCurve(pickup2Pose, avoid1Control, scorePose2))
                 .setLinearHeadingInterpolation(pickup2Pose.getHeading(), scorePose2.getHeading())
                 .build();
 
@@ -143,13 +145,13 @@ public class RedGoal_p12u extends OpMode {
                 if(comps.FinishedShooting(3) && (comps.pusher.state == Pusher.PushState.WAITING || comps.pusher.state == Pusher.PushState.RELOADING))
                 {
                     setPathState(3);
-                    comps.shooter.PreTargetTo(scorePose1);
+                    comps.shooter.PreTargetTo(scorePose2);
                 }
                 break;
 
             case 3:
                 if(!follower.isBusy()){
-                    follower.followPath(grabPickupSetup1,true);
+                    follower.followPath(grabPickupSetup2,true);
                     setPathState(4);
                 }
                 break;
@@ -157,14 +159,14 @@ public class RedGoal_p12u extends OpMode {
             case 4:
                 if(!follower.isBusy()){
                     comps.intake.TakeIn(comps);
-                    follower.followPath(grabPickup1, 1, true);
+                    follower.followPath(grabPickup2, 1, true);
                     setPathState(5);
                 }
                 break;
 
             case 5:
                 if(!follower.isBusy()){
-                    follower.followPath(scorePickup1, true);
+                    follower.followPath(scorePickup2, true);
                     setPathState(6);
                 }
                 break;
@@ -180,30 +182,26 @@ public class RedGoal_p12u extends OpMode {
             case 7:
                 comps.AutoShooterStart();
                 if(comps.FinishedShooting(3) && (comps.pusher.state == Pusher.PushState.WAITING || comps.pusher.state == Pusher.PushState.RELOADING)){
-                    comps.shooter.PreTargetTo(scorePose2);
+                    comps.shooter.PreTargetTo(scoreGate);
                     setPathState(8);
                 }
                 break;
 
             case 8:
-                if(!follower.isBusy()){
-                    follower.followPath(grabPickupSetup2,true);
-                    setPathState(9);
-                }
+                follower.followPath(openGate, true);
+                setPathState(9);
                 break;
 
             case 9:
-                if(!follower.isBusy()){
-                    comps.intake.TakeIn(comps);
-                    follower.followPath(grabPickup2, 1, true);
-                    setPathState(10);
-                }
+                Timer.reset();
+                comps.intake.TakeIn(comps);
+                setPathState(10);
                 break;
 
             case 10:
-                if(!follower.isBusy()) {
+                if(Timer.seconds() > gateTime){
                     comps.intake.StaticIntake();
-                    follower.followPath(scorePickup2, true);
+                    follower.followPath(scoreGatePickup, true);
                     setPathState(11);
                 }
                 break;
@@ -219,26 +217,30 @@ public class RedGoal_p12u extends OpMode {
             case 12:
                 comps.AutoShooterStart();
                 if(comps.FinishedShooting(3) && (comps.pusher.state == Pusher.PushState.WAITING || comps.pusher.state == Pusher.PushState.RELOADING)){
-                    comps.shooter.PreTargetTo(scoreGate);
+                    comps.shooter.PreTargetTo(scorePose3);
                     setPathState(13);
                 }
                 break;
 
             case 13:
-                follower.followPath(openGate, true);
-                setPathState(14);
+                if(!follower.isBusy()){
+                    follower.followPath(grabPickupSetup1,true);
+                    setPathState(14);
+                }
                 break;
 
             case 14:
-                Timer.reset();
-                comps.intake.TakeIn(comps);
-                setPathState(15);
+                if(!follower.isBusy()){
+                    comps.intake.TakeIn(comps);
+                    follower.followPath(grabPickup1, 1, true);
+                    setPathState(15);
+                }
                 break;
 
             case 15:
-                if(Timer.seconds() > gateTime){
+                if(!follower.isBusy()) {
                     comps.intake.StaticIntake();
-                    follower.followPath(scoreGatePickup, true);
+                    follower.followPath(scorePickup1, true);
                     setPathState(16);
                 }
                 break;
@@ -251,15 +253,14 @@ public class RedGoal_p12u extends OpMode {
                 }
                 break;
 
-            case 17:
+            case 18:
                 comps.AutoShooterStart();
                 if(comps.FinishedShooting(3) && (comps.pusher.state == Pusher.PushState.WAITING || comps.pusher.state == Pusher.PushState.RELOADING)){
-                    comps.shooter.PreTargetTo(scorePose3);
-                    setPathState(18);
+                    setPathState(19);
                 }
                 break;
 
-            case 18:
+            case 19:
                 follower.followPath(leave, true);
                 setPathState(-1);
                 break;
@@ -278,7 +279,7 @@ public class RedGoal_p12u extends OpMode {
         buildPaths();
         follower.setStartingPose(startPose);
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
-        comps = new ComponentShell(hardwareMap, follower, telemetryM, ComponentShell.Alliance.RED, true);
+        comps = new ComponentShell(hardwareMap, follower, telemetryM, ComponentShell.Alliance.BLUE, true);
     }
 
     public void setPathState(int pState) {
@@ -315,6 +316,6 @@ public class RedGoal_p12u extends OpMode {
 
     @Override
     public void stop() {
-        Storage.write(ComponentShell.Alliance.RED, follower.getPose());
+        Storage.write(ComponentShell.Alliance.BLUE, follower.getPose());
     }
 }

@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 @Configurable
 public class Pusher {
 	public Servo pusher;
-    public static double wait = 0.02; //make higher
+    public static double wait = 0.035; //make higher
     public static double push = 0.28;
     public ElapsedTime lastShot = new ElapsedTime();
 
@@ -19,8 +19,8 @@ public class Pusher {
     public static double waitTime = 1;
 	public static double maxSpeed = 0.2;
     public double pusherAngle = 0;
-    public static double restAngle = 335; // make lower
-    public static double arriveAngle = 265; // make higher
+    public static double restAngle = 280; // make lower
+    public static double arriveAngle = 300; // make higher
     AnalogInput pusherEnc;
     public enum PushState {
         WAITING,
