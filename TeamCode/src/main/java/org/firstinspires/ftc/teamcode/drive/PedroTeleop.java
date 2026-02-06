@@ -30,10 +30,10 @@ public class PedroTeleop extends OpMode {
     static public double kp = 1.35;
     static public double kd = 0.12;
     static public double kf = 0.1;
-    static public int blueX = 0;
-    static public int blueY = 144;
-    static public int redX = 144;
-    static public int redY = 144;
+    static public int blueX = 3;
+    static public int blueY = 141;
+    static public int redX = 141;
+    static public int redY = 141;
     static class PedroInputScaler {
         // TODO: Tune these values for your application
         // This does NOT create any mechanical advantage, it is purely for control
