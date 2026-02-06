@@ -27,6 +27,9 @@ public class PedroTeleop extends OpMode {
     private final PedroInputScaler scaler = new PedroInputScaler();
     private ComponentShell Comps;
     public PIDFController GoalPID;
+	public static double offsetX = 1.5748;
+	public static double blueAngleOffset = 0;
+	public static double redAngleOffset = 0;
     static public double kp = 1.35;
     static public double kd = 0.12;
     static public double kf = 0.1;
@@ -99,40 +102,44 @@ public class PedroTeleop extends OpMode {
 
 	@Override
     public void loop() {
-        if (gamepad1.rightBumperWasPressed()){
-            GoalPID = new PIDFController(new PIDFCoefficients(kp,0,kd,kf));
-            if (singlePlayer) {
-                if (gamepad1.left_stick_button) {
-                    scaler.gear = 1;
-                } else {
-                    scaler.gear = 3;
-                }
+        if (gamepad1.rightBumperWasPressed()) {
+			GoalPID = new PIDFController(new PIDFCoefficients(kp, 0, kd, kf));
+		}
+		if (singlePlayer) {
+			if (gamepad1.left_stick_button) {
+				scaler.gear = 1;
+			} else {
+				scaler.gear = 3;
+			}
             } else {
-                if (gamepad1.a) {
-                    scaler.gear = 3;
-                } else if (gamepad1.b) {
-                    scaler.gear = 0;
-                }
-            }
+			if (gamepad1.a) {
+				scaler.gear = 3;
+			} else if (gamepad1.b) {
+				scaler.gear = 0;
+			}
+		}
 
-            if (gamepad1.dpadDownWasPressed()) {
-                robotCentric = !robotCentric;
-            }
-        }
+		if (gamepad1.dpadDownWasPressed()) {
+			robotCentric = !robotCentric;
+		}
 
         double[] driveInputs = scaler.getScaledInput(
             -gamepad1.left_stick_x,
             -gamepad1.left_stick_y,
             -gamepad1.right_stick_x
-
         );
 
         if(gamepad1.right_bumper) {
-            double dy = Goal.getY() - follower.getPose().getY();
-            double dx = Goal.getX() - follower.getPose().getX();
+            double dy = Goal.getY() - (follower.getPose().getY() - Math.cos(follower.getHeading() * offsetX));
+            double dx = Goal.getX() - (follower.getPose().getX() + Math.sin(follower.getHeading() * offsetX));
             double alpha = Math.atan2(dy, dx);
             double beta = alpha - Math.PI;
-            GoalPID.setTargetPosition(beta);
+
+			if (alliance == ComponentShell.Alliance.BLUE) {
+				GoalPID.setTargetPosition(beta + blueAngleOffset);
+			} else {
+				GoalPID.setTargetPosition(beta + redAngleOffset);
+			}
             GoalPID.updatePosition(follower.getHeading());
             driveInputs[2] = Math.min(Math.max(GoalPID.run(),-1),1);
         }
@@ -145,22 +152,24 @@ public class PedroTeleop extends OpMode {
                 true // Robot Centric
             );
         } else {
-            if(alliance == ComponentShell.Alliance.BLUE){
-                follower.setTeleOpDrive(
-                    -driveInputs[1],
-                    -driveInputs[0],
-                    driveInputs[2],
-                    false // Robot Centric
-                );
-            }
-            else if(alliance == ComponentShell.Alliance.RED){
-                follower.setTeleOpDrive(
-                    driveInputs[1],
-                    driveInputs[0],
-                    driveInputs[2],
-                    false // Robot Centric
-                );
-            }
+			switch (alliance) {
+				case BLUE:
+					follower.setTeleOpDrive(
+							-driveInputs[1],
+							-driveInputs[0],
+							driveInputs[2],
+							false // Robot Centric
+					);
+					break;
+				case RED:
+					follower.setTeleOpDrive(
+							driveInputs[1],
+							driveInputs[0],
+							driveInputs[2],
+							false // Robot Centric
+					);
+					break;
+			}
         }
 
 		Comps.updateTeleop(gamepad1, gamepad2);
@@ -176,5 +185,6 @@ public class PedroTeleop extends OpMode {
 
 		follower.update();
 		telemetryM.update();
+		telemetryM.debug("heading error", GoalPID.getError());
     }
 }
