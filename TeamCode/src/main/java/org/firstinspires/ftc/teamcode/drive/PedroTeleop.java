@@ -191,4 +191,10 @@ public class PedroTeleop extends OpMode {
 		telemetryM.update();
 		telemetryM.debug("heading error", GoalPID.getError());
     }
+
+
+    @Override
+    public void stop() {
+        Storage.write(alliance, follower.getPose());
+    }
 }

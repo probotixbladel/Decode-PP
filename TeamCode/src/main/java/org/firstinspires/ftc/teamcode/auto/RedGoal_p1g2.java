@@ -10,6 +10,7 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.components.ComponentShell;
 import org.firstinspires.ftc.teamcode.components.Pusher;
 import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+@Disabled
 @Configurable
 @Autonomous(name = "RedGoal_p1g2", group = "Examples")
 public class RedGoal_p1g2 extends OpMode {
@@ -27,10 +29,10 @@ public class RedGoal_p1g2 extends OpMode {
     private int pathState;
     private final Pose startPose = new Pose(126, 121, Math.toRadians(216)); // Starting pose for our robot
     private final Pose scorePosePreload = new Pose(100, 96, Math.toRadians(226)); // Scoring Pose of our robot for the preload. It is facing the goal at a -45 degree angle.
-    private final Pose pickup1Setup = new Pose(98, 81, Math.toRadians(0)); // Setup to pickup the highest set of balls
+    private final Pose pickup1Setup = new Pose(93, 81, Math.toRadians(0)); // Setup to pickup the highest set of balls
     private final Pose pickup1Pose = new Pose(118, 81, Math.toRadians(0));// Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose gateSetup = new Pose(118, 76, Math.toRadians(0)); // Stand infront of the gate
-    private final Pose gateOpen = new Pose(128, 76, Math.toRadians(0)); // Open the gate
+    private final Pose gateSetup = new Pose(118, 75, Math.toRadians(0)); // Stand infront of the gate
+    private final Pose gateOpen = new Pose(128, 75, Math.toRadians(0)); // Open the gate
     private final Pose scorePose1 = new Pose(100, 96, Math.toRadians(225)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a -45 degree angle.
     private final Pose pickup2Setup = new Pose(92, 58, Math.toRadians(0)); // Setup to pickup the middle set of balls
     private final Pose pickup2Pose = new Pose(118, 58, Math.toRadians(0)); // Middle (Second Set) of Artifacts from the Spike Mark.

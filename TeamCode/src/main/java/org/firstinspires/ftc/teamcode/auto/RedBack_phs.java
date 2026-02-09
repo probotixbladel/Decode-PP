@@ -10,6 +10,7 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.components.ComponentShell;
 import org.firstinspires.ftc.teamcode.components.Pusher;
 import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+@Disabled
 @Configurable
 @Autonomous(name = "RedBack_phs", group = "Example")
 public class RedBack_phs extends OpMode {
@@ -26,15 +28,15 @@ public class RedBack_phs extends OpMode {
     public static double scoopTime = 2;
     private int pathState;
     private final Pose startPose = new Pose(88, 7, Math.toRadians(-90)); // Starting pose for our robot
-    private final Pose scorePosePreload = new Pose(85, 10, Math.toRadians(-114)); // Scoring Pose of our robot for the preload. It is facing the goal at a 290 degree angle.
-    private final Pose pickup1Setup = new Pose(133, 21, Math.toRadians(-20)); // Setup to pickup balls in the hp zone
-    private final Pose pickup1Pose = new Pose(133, 12, Math.toRadians(-20));// balls in the hp zone
+    private final Pose scorePosePreload = new Pose(85, 10, Math.toRadians(-111)); // Scoring Pose of our robot for the preload. It is facing the goal at a 290 degree angle.
+    private final Pose pickup1Setup = new Pose(136, 23, Math.toRadians(-90)); // Setup to pickup balls in the hp zone
+    private final Pose pickup1Pose = new Pose(136, 8, Math.toRadians(-90));// balls in the hp zone
     private final Pose scorePose1 = new Pose(85, 10, Math.toRadians(-114)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a 290 degree angle.
-    private final Pose pickup2Setup = new Pose(102, 32, Math.toRadians(0)); // Setup to pickup the lowest set of balls
+    private final Pose pickup2Setup = new Pose(118, 32, Math.toRadians(0)); // Setup to pickup the lowest set of balls
     private final Pose pickup2Pose = new Pose(125, 32, Math.toRadians(0)); // Lowest (Third Set) of Artifacts from the Spike Mark.
     private final Pose scorePose2 = new Pose(85, 10, Math.toRadians(-114)); // Scoring Pose of our robot for the second pickup. It is facing the goal at a 290 degree angle.
-    private final Pose scoopSetup = new Pose(130, 50, Math.toRadians(-60)); // Setup to scoop remaining balls in the hp zone
-    private final Pose scoopPose = new Pose(130, 14, Math.toRadians(-60)); // Pose to scoop remaining balls in the hp zone
+    private final Pose scoopSetup = new Pose(136, 50, Math.toRadians(-90)); // Setup to scoop remaining balls in the hp zone
+    private final Pose scoopPose = new Pose(136, 8, Math.toRadians(-90)); // Pose to scoop remaining balls in the hp zone
     private final Pose scorePose3 = new Pose(85, 10, Math.toRadians(-114)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a 290 degree angle.
     private final Pose leaveTriangle = new Pose(84, 35, Math.toRadians(180)); // Leave small triangle
     public Path scorePreload;

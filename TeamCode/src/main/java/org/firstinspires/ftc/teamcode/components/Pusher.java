@@ -20,7 +20,7 @@ public class Pusher {
 	public static double maxSpeed = 0.2;
     public double pusherAngle = 0;
     public static double restAngle = 280; // make lower
-    public static double arriveAngle = 300; // make higher
+    public static double arriveAngle = 285; // make higher
     AnalogInput pusherEnc;
     public enum PushState {
         WAITING,
@@ -34,7 +34,7 @@ public class Pusher {
         pusherEnc = hwm.get(AnalogInput.class, "PusherEnc");
     }
 
-    public boolean AttemptPush(ComponentShell Comps) {
+    public synchronized boolean AttemptPush(ComponentShell Comps) {
         if (!Shooter.PreTargeting & Comps.follower.getAngularVelocity() < 0.314 & Comps.follower.getVelocity().getMagnitude() < maxSpeed) {
             if (state == PushState.WAITING && Comps.shooter.state == Shooter.ShooterState.READY) {
                 pusher.setPosition(push);

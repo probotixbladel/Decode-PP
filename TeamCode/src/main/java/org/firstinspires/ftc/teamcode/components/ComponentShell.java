@@ -105,10 +105,16 @@ public class ComponentShell {
 
             if (gamepad2.x) {
                 through.InThrough();
-            } else if (gamepad2.left_bumper) {
-                through.OutThrough();
+            //} else if (gamepad2.left_bumper) {    //zorgt voor aflopende belt
+                //through.OutThrough();
             } else {
                 through.StaticThrough();
+            }
+
+            if (gamepad2.left_bumper) {
+                pusher.state = Pusher.PushState.SHOOTING;
+                pusher.pusher.setPosition(pusher.push);
+                pusher.lastShot.reset();
             }
         }
     }
