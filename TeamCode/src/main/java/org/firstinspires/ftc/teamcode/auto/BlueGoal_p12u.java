@@ -19,7 +19,6 @@ import org.firstinspires.ftc.teamcode.components.ComponentShell;
 import org.firstinspires.ftc.teamcode.components.Pusher;
 import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-@Disabled
 @Configurable
 @Autonomous(name = "BlueGoal_p12u", group = "Examples")
 public class BlueGoal_p12u extends OpMode {

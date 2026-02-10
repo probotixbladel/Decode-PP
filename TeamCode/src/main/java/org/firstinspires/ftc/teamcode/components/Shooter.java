@@ -17,7 +17,7 @@ public class Shooter {
     public static double MaxSpeed = 1300;
     public static double MinSpeed = 1200;
     public double CurrentVel = 0;
-    public static boolean PreTargeting = false;
+    public boolean PreTargeting = false;
     public static double[][] MinPoints = {  // data min speed
             {60,1000},
             {70,1000},
