@@ -17,9 +17,12 @@ public class LimeLight {
         switch (al){
             case BLUE:
                 limeLight.pipelineSwitch(0);
+                break;
             case RED:
-                limeLight.pipelineSwitch(0);
+                limeLight.pipelineSwitch(1);
+                break;
         }
+
         limeLight.start();
     }
 
@@ -27,17 +30,17 @@ public class LimeLight {
         LLStatus status = limeLight.getStatus();
         telemetryM.debug("P Index: ", status.getPipelineIndex(), "P Type: ", status.getPipelineType());
 
-        Pose3D botPoseMt2;
+        Pose3D botPoseMt1;
         Pose pos = new Pose();
         limeLight.updateRobotOrientation(robotYaw);
         LLResult result = limeLight.getLatestResult();
 
         if (result != null && result.isValid()) {
             if (result.getStaleness() < 100) {
-                botPoseMt2 = result.getBotpose();
-                if (botPoseMt2 != null) {
-                    pos = pos.withX(botPoseMt2.getPosition().x);
-                    pos = pos.withY(botPoseMt2.getPosition().y);
+                botPoseMt1 = result.getBotpose();
+                if (botPoseMt1 != null) {
+                    pos = pos.withX(botPoseMt1.getPosition().x * 39.3701);
+                    pos = pos.withY(botPoseMt1.getPosition().y * 39.3701);
                 }
             }
         }

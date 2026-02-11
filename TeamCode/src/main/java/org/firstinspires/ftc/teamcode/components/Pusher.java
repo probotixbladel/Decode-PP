@@ -20,7 +20,7 @@ public class Pusher {
 	public static double maxSpeed = 0.2;
     public double pusherAngle = 0;
     public static double restAngle = 280; // make lower
-    public static double arriveAngle = 285; // make higher
+    public static double arriveAngle = 310; // make higher
     AnalogInput pusherEnc;
     public enum PushState {
         WAITING,
