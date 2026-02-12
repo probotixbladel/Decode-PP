@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Configurable
 @TeleOp(name="PedroTeleop", group="Linear OpMode")
 public class PedroTeleop extends OpMode {
-    private Pose Goal;
     public static boolean singlePlayer = false;
     private Follower follower;
     public static Pose startingPose;
@@ -84,14 +83,6 @@ public class PedroTeleop extends OpMode {
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         alliance = data.storedAlliance;
         Comps = new ComponentShell(hardwareMap, follower, telemetryM, alliance, singlePlayer);
-        switch (alliance) {
-            case RED:
-                Goal = new Pose(redX, redY);
-                break;
-            case BLUE:
-                Goal = new Pose(blueX, blueY);
-                break;
-        }
     }
 
     @Override
@@ -102,9 +93,6 @@ public class PedroTeleop extends OpMode {
 
 	@Override
     public void loop() {
-        if (gamepad1.rightBumperWasPressed()) {
-			GoalPID = new PIDFController(new PIDFCoefficients(kp, 0, kd, kf));
-		}
 		if (singlePlayer) {
 			if (gamepad1.left_stick_button) {
 				scaler.gear = 1;
@@ -128,25 +116,6 @@ public class PedroTeleop extends OpMode {
             -gamepad1.left_stick_y,
             -gamepad1.right_stick_x
         );
-
-        if(gamepad1.right_bumper) {
-            double dy = Goal.getY() - (follower.getPose().getY() - Math.cos(follower.getHeading()) * offsetX);
-            double dx = Goal.getX() - (follower.getPose().getX() + Math.sin(follower.getHeading()) * offsetX);
-            double alpha = Math.atan2(dy, dx);
-            double beta = alpha - Math.PI;
-
-			if (follower.getPose().getY() < 48) {
-				if (alliance == ComponentShell.Alliance.BLUE) {
-					GoalPID.setTargetPosition(beta + blueAngleOffset);
-				} else {
-					GoalPID.setTargetPosition(beta + redAngleOffset);
-				}
-			} else {
-				GoalPID.setTargetPosition(beta);
-			}
-            GoalPID.updatePosition(follower.getHeading());
-            driveInputs[2] = Math.min(Math.max(GoalPID.run(),-1),1);
-        }
 
         if (robotCentric) {
             follower.setTeleOpDrive(
