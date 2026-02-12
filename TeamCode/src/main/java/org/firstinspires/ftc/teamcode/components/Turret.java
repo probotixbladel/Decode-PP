@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.components;
 
-import com.pedropathing.follower.Follower;
-
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.control.PIDFController;
@@ -13,12 +11,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 @Configurable
 public class Turret {
     public DcMotorEx turret;
-    public Follower follower;
     private PIDFController GoalPID;
     static public double kp = 1.35;
     static public double kd = 0.12;
     static public double kf = 0.1;
-    private double offsetX = 1.5748;
     private Pose Goal = new Pose(3, 141);
 
     public Turret(HardwareMap hwm){
@@ -29,22 +25,23 @@ public class Turret {
     }
 
     public void Update(ComponentShell comps){
-        double deltaY = Goal.getY() - (follower.getPose().getY() - Math.cos(follower.getHeading()) * offsetX);
-        double deltaX = Goal.getX() - (follower.getPose().getX() + Math.sin(follower.getHeading()) * offsetX);
+        double deltaY = Goal.getY() - comps.follower.getPose().getY();
+        double deltaX = Goal.getX() - comps.follower.getPose().getX();
         double alpha = Math.atan2(deltaY, deltaX);
         double goalAngle = alpha - Math.PI;
 
         double turretAngle = ticksToRadians(turret.getCurrentPosition());
         GoalPID.updatePosition(turretAngle);
-        double deltaAngle = goalAngle - follower.getHeading();
+        double deltaAngle = goalAngle - comps.follower.getHeading();
         GoalPID.setTargetPosition(deltaAngle);
 
         turret.setPower(Math.min(Math.max(GoalPID.run(),-1),1));
     }
     private double ticksToRadians(int ticks) {
         // Depends on your gear ratio and encoder CPR
-        // Example: if one full rotation = 2000 ticks
-        return (ticks / 2000.0) * 2 * Math.PI;
+        // if one full rotation = 145.6 ticks
+        // and gear ratio is 1:0.0923
+        return ((ticks / 145.6) * 2 * Math.PI) * 0.0923;
     }
 
 }
