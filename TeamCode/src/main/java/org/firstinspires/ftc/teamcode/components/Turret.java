@@ -12,6 +12,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Turret {
     public DcMotorEx turret;
     private PIDFController GoalPID;
+    public int tDriven = 130;
+    public int tDriving = 10;
+    public double motorRatio = (1+(46/11));
     static public double kp = 1.35;
     static public double kd = 0.12;
     static public double kf = 0.1;
@@ -41,7 +44,7 @@ public class Turret {
         // Depends on your gear ratio and encoder CPR
         // if one full rotation = 145.6 ticks
         // and gear ratio is 1:0.0923
-        return ((ticks / 145.6) * 2 * Math.PI) * 0.0923;
+        return ((ticks / 145.6) * 2 * Math.PI) * tDriving/tDriven;
     }
 
 }
