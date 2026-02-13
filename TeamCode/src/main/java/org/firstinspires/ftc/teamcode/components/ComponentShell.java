@@ -110,7 +110,7 @@ public class ComponentShell {
 
             if (gamepad2.x) {
                 through.InThrough();
-            //} else if (gamepad2.left_bumper) {    //zorgt voor aflopende belt
+            //} else if (gamepad2.left_bumper) {    //Will destroy belt
                 //through.OutThrough();
             } else {
                 through.StaticThrough();
