@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.components;
+package org.firstinspires.ftc.teamcode.components.Shooter;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,9 +7,11 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.pedropathing.geometry.Pose;
 
+import org.firstinspires.ftc.teamcode.components.ComponentShell;
+
 
 @Configurable
-public class Shooter {
+public class FlyWheel {
 	public DcMotorEx ShooterLeft;
     //public DcMotorEx ShooterRight;
     public ShooterState state = ShooterState.LOW;
@@ -104,7 +106,7 @@ public class Shooter {
         LOW,
     }
 
-    public Shooter(HardwareMap hwm, ComponentShell.Alliance al) {
+    public FlyWheel(HardwareMap hwm, ComponentShell.Alliance al) {
 		ShooterLeft = hwm.get(DcMotorEx.class, "shooterLeft");
         ShooterLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         ShooterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

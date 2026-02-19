@@ -7,11 +7,14 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.bylazar.telemetry.TelemetryManager;
 
+import org.firstinspires.ftc.teamcode.common.CommonData;
+import org.firstinspires.ftc.teamcode.components.Shooter.FlyWheel;
+
 @Configurable
 public class ComponentShell {
     public HardwareMap hardwareMap;
     public final Intake intake;
-    public final Shooter shooter;
+    public final FlyWheel shooter;
     public Pusher pusher;
     public Through through;
 	public Floodgate floodgate;
@@ -24,6 +27,7 @@ public class ComponentShell {
     public Alliance alliance;
     public boolean SinglePlayer;
     public int shootNum;
+	public CommonData commonData;
 
     public enum Alliance {
         BLUE,
@@ -31,11 +35,12 @@ public class ComponentShell {
     }
 
     public ComponentShell(HardwareMap hwm, Follower flw, TelemetryManager Tm, Alliance al, boolean single) {
+		this.commonData = new CommonData();
         this.alliance = al;
         this.hardwareMap = hwm;
         this.detector = new ArtifactDetector(hardwareMap);
         this.intake = new Intake(hardwareMap);
-        this.shooter = new Shooter(hardwareMap, alliance);
+        this.shooter = new FlyWheel(hardwareMap, alliance);
         this.pusher = new Pusher(hardwareMap);
         this.through = new Through(hardwareMap);
         //this.limeLight = new LimeLight(hardwareMap, alliance);
@@ -47,6 +52,7 @@ public class ComponentShell {
     }
 
 	public void update() {
+		commonData.update();
 		floodgate.update();
 		//Pose pos = limeLight.update(this, telemetryM, Math.toDegrees(follower.getHeading()));
         detector.update();
@@ -64,7 +70,7 @@ public class ComponentShell {
         telemetryM.debug("Number of shots left", shootNum);
         telemetryM.debug("follower pos: ", follower.getPose());
         telemetryM.debug("through state: ", through.state);
-        telemetryM.debug("Vel: ", shooter.CurrentVel, Shooter.TargetVel, "dist", shooter.setSpeeds(follower.getPose()));
+        telemetryM.debug("Vel: ", shooter.CurrentVel, FlyWheel.TargetVel, "dist", shooter.setSpeeds(follower.getPose()));
         telemetryM.debug("shooter state: ", shooter.state);
         telemetryM.debug("FloodgateCurrent", floodgate.floodgateCurrent);
 

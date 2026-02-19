@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 
+import org.firstinspires.ftc.teamcode.components.Shooter.FlyWheel;
+
 @Configurable
 public class Pusher {
 	public Servo pusher;
@@ -36,7 +38,7 @@ public class Pusher {
 
     public synchronized boolean AttemptPush(ComponentShell Comps) {
         if (!Comps.shooter.PreTargeting & Comps.follower.getAngularVelocity() < 0.314 & Comps.follower.getVelocity().getMagnitude() < maxSpeed) {
-            if (state == PushState.WAITING && Comps.shooter.state == Shooter.ShooterState.READY) {
+            if (state == PushState.WAITING && Comps.shooter.state == FlyWheel.ShooterState.READY) {
                 pusher.setPosition(push);
                 lastShot.reset();
                 state = PushState.SHOOTING;

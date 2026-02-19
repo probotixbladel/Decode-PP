@@ -13,9 +13,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.components.ComponentShell;
+import org.firstinspires.ftc.teamcode.components.Shooter.FlyWheel;
 import org.firstinspires.ftc.teamcode.components.Intake;
 import org.firstinspires.ftc.teamcode.components.Pusher;
-import org.firstinspires.ftc.teamcode.components.Shooter;
 import org.firstinspires.ftc.teamcode.components.Through;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
@@ -37,7 +37,7 @@ public class BlueGoalAuto extends OpMode {
 
     public PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
     public Path scorePreload;
-    public Shooter shooter;
+    public FlyWheel shooter;
     public Pusher pusher;
     public Intake intake;
     public Through through;
