@@ -21,7 +21,11 @@ public class Turret {
 	private final TurretControlSystems controlSystems;
 	private TurretState state = TurretState.HOMING;
 	private final RobotMath.AngleTracker targetTracker;
-	private Pose[] poseHistory;
+
+	private double homingStartTime = 0;
+	private boolean homingDirectionReversed = false;
+	public static double HOMING_TIMEOUT_MS = 3000;
+	public static double HOMING_POWER = 0.1;
 
 	public enum TurretState {
 		HOMING,
@@ -51,7 +55,7 @@ public class Turret {
 				break;
 			case CHASING:
 				setPower(controlSystems.update(getTargetAngle(), targetTracker.getAngularVelocity(), targetTracker.getAngularAcceleration()));
-
+				break;
 		}
 	}
 
@@ -60,13 +64,25 @@ public class Turret {
 			turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 			turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 			state = TurretState.CHASING;
+			homingDirectionReversed = false;
 			return;
 		}
 
 		if (state == TurretState.HOMING) {
-			setPower(0.1);
-		}
+			if (homingStartTime == 0) {
+				homingStartTime = comps.commonData.getTime();
+			}
 
+			double elapsedTime = comps.commonData.getTime() - homingStartTime;
+
+			if (!homingDirectionReversed && elapsedTime > HOMING_TIMEOUT_MS) {
+				homingDirectionReversed = true;
+				homingStartTime = comps.commonData.getTime();
+			}
+
+			double power = homingDirectionReversed ? -HOMING_POWER : HOMING_POWER;
+			setPower(power);
+		}
 	}
 
 	private void setPower(double power) {
@@ -82,7 +98,6 @@ public class Turret {
 	private double getSpeedFromTPS(double ticksPerSecond) { //Degrees per second
 		return ticksPerSecond * TurretConstants.DEGREE_PER_TICK;
 	}
-
 
 	private double getTargetAngle() {
 		return Math.min((Math.max(Math.toDegrees(comps.follower.getHeading()), TurretConstants.REACH_MIN)), TurretConstants.REACH_MAX);
