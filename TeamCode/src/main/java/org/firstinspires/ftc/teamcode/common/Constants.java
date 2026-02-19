@@ -6,6 +6,7 @@ import com.pedropathing.geometry.Pose;
 @Configurable
 public class Constants {
 	public static class GeneralConstants {
+		public static boolean DEBUG = false;
 		public static Pose GOAL_BLUE = new Pose(3, 141);
 		public static Pose GOAL_RED = new Pose(141, 141);
 	}

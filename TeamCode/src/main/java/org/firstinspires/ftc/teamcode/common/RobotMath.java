@@ -73,7 +73,7 @@ public class RobotMath {
 
 
 
-	private double angleWrapDeg(double degrees) {
+	private static double angleWrapDeg(double degrees) {
 		int i = 0; // infinite loop prevention
 		while (degrees < -180.0 && i < 10) {
 			degrees += 360.0;
