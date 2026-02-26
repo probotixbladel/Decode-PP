@@ -37,8 +37,10 @@ public class Turret {
         double goalAngle = alpha - 0.5 * Math.PI;
 
         double turretAngle = ticksToRadians(turret.getCurrentPosition()) + comps.follower.getHeading() + startRot;
-        if(turretAngle < 0){
-            turretAngle += 360;
+        if((goalAngle < 0 && turretAngle > 0) ||(goalAngle > 0 && turretAngle < 0)){
+            if(Math.abs(goalAngle - turretAngle) > Math.abs(goalAngle - (turretAngle + 2 * Math.PI))){
+                turretAngle += 2 * Math.PI;
+            }
         }
         GoalPID.updatePosition(turretAngle);
         GoalPID.setTargetPosition(goalAngle);
