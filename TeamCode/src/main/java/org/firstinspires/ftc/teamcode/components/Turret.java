@@ -15,10 +15,11 @@ public class Turret {
     private PIDFController GoalPID;
     public int tDriven = 130;
     public int tDriving = 10;
-    public double motorRatio = (1+(46/11));
     static public double kp = 1.8;
     static public double kd = 0.1;
     static public double kf = 10;
+    static private double deadZone1 = 40;
+    static private double deadZone2 = 80;
     private Pose Goal = new Pose(3, 141);
     private double startRot = 0.5 * Math.PI;
 
@@ -37,11 +38,20 @@ public class Turret {
         double goalAngle = alpha - 0.5 * Math.PI;
 
         double turretAngle = ticksToRadians(turret.getCurrentPosition()) + comps.follower.getHeading() + startRot;
-        if((goalAngle < 0 && turretAngle > 0) ||(goalAngle > 0 && turretAngle < 0)){
-            if(Math.abs(goalAngle - turretAngle) > Math.abs(goalAngle - (turretAngle + 2 * Math.PI))){
-                turretAngle += 2 * Math.PI;
-            }
+        if(Math.abs(goalAngle - turretAngle) > Math.abs(goalAngle - (turretAngle - 2 * Math.PI))){
+            turretAngle -= 2 * Math.PI;
         }
+        else if(Math.abs(goalAngle - turretAngle) > Math.abs((goalAngle - 2 * Math.PI) - turretAngle)){
+            goalAngle -= 2 * Math.PI;
+        }
+
+        if(goalAngle <= deadDegreesToTotalRadians(deadZone1, comps.follower.getHeading()) && turretAngle >= deadDegreesToTotalRadians(deadZone2, comps.follower.getHeading())){
+            goalAngle = (turretAngle - goalAngle)/2 - turretAngle;
+        }
+        else if(goalAngle >= deadDegreesToTotalRadians(deadZone1, comps.follower.getHeading()) && turretAngle <= deadDegreesToTotalRadians(deadZone2, comps.follower.getHeading())){
+            goalAngle = (goalAngle - turretAngle)/2 + turretAngle;
+        }
+
         GoalPID.updatePosition(turretAngle);
         GoalPID.setTargetPosition(goalAngle);
 
@@ -53,4 +63,7 @@ public class Turret {
         return ((ticks / 145.6) * 2 * Math.PI) * tDriving/tDriven;
     }
 
+    private double deadDegreesToTotalRadians(double dead, double heading){
+        return Math.toRadians(dead) + heading + startRot;
+    }
 }
