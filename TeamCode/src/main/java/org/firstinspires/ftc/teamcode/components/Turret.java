@@ -18,8 +18,9 @@ public class Turret {
     static public double kp = 1.8;
     static public double kd = 0.1;
     static public double kf = 10;
-    static private double deadZone1 = 40;
-    static private double deadZone2 = 80;
+    //TODO: tune deadzones!
+    static private double deadZone1 = -110;
+    static private double deadZone2 = -70;
     private Pose Goal = new Pose(3, 141);
     private double startRot = 0.5 * Math.PI;
 
@@ -36,24 +37,14 @@ public class Turret {
         double deltaX = Goal.getX() - comps.follower.getPose().getX();
         double alpha = Math.atan2(deltaY, deltaX);
         double goalAngle = alpha - 0.5 * Math.PI;
+        double normGoalAngle = Math.max(NormalizeAngleToDeadzone(goalAngle), Math.toRadians(deadZone2) + comps.follower.getHeading() + startRot);
 
         double turretAngle = ticksToRadians(turret.getCurrentPosition()) + comps.follower.getHeading() + startRot;
-        if(Math.abs(goalAngle - turretAngle) > Math.abs(goalAngle - (turretAngle - 2 * Math.PI))){
-            turretAngle -= 2 * Math.PI;
-        }
-        else if(Math.abs(goalAngle - turretAngle) > Math.abs((goalAngle - 2 * Math.PI) - turretAngle)){
-            goalAngle -= 2 * Math.PI;
-        }
+        double normTurretAngle = NormalizeAngleToDeadzone(turretAngle);
 
-        if(goalAngle <= deadDegreesToTotalRadians(deadZone1, comps.follower.getHeading()) && turretAngle >= deadDegreesToTotalRadians(deadZone2, comps.follower.getHeading())){
-            goalAngle = (turretAngle - goalAngle)/2 - turretAngle;
-        }
-        else if(goalAngle >= deadDegreesToTotalRadians(deadZone1, comps.follower.getHeading()) && turretAngle <= deadDegreesToTotalRadians(deadZone2, comps.follower.getHeading())){
-            goalAngle = (goalAngle - turretAngle)/2 + turretAngle;
-        }
 
-        GoalPID.updatePosition(turretAngle);
-        GoalPID.setTargetPosition(goalAngle);
+        GoalPID.updatePosition(normTurretAngle);
+        GoalPID.setTargetPosition(normGoalAngle);
 
         turret.setPower(Math.min(Math.max(GoalPID.run(),-1),1));
     }
@@ -63,7 +54,8 @@ public class Turret {
         return ((ticks / 145.6) * 2 * Math.PI) * tDriving/tDriven;
     }
 
-    private double deadDegreesToTotalRadians(double dead, double heading){
-        return Math.toRadians(dead) + heading + startRot;
+    private double NormalizeAngleToDeadzone(double input){
+        return input -Math.toRadians(deadZone1);
     }
+
 }
