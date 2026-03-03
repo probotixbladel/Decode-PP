@@ -19,8 +19,8 @@ public class Turret {
     static public double kd = 0.1;
     static public double kf = 10;
     //TODO: tune deadzones!
-    static private double deadZone1 = -110;
-    static private double deadZone2 = -70;
+    static private double deadZone1 = 85;
+    static private double deadZone2 = 75;
     private Pose Goal = new Pose(3, 141);
     private double startRot = 0.5 * Math.PI;
 
@@ -37,7 +37,7 @@ public class Turret {
         double deltaX = Goal.getX() - comps.follower.getPose().getX();
         double alpha = Math.atan2(deltaY, deltaX);
         double goalAngle = alpha - 0.5 * Math.PI;
-        double normGoalAngle = Math.max(NormalizeAngleToDeadzone(goalAngle), Math.toRadians(deadZone2) + comps.follower.getHeading() + startRot);
+        double normGoalAngle = Math.min(NormalizeAngleToDeadzone(goalAngle), NormalizeAngleToDeadzone(Math.toRadians(deadZone2) + comps.follower.getHeading() + startRot));
 
         double turretAngle = ticksToRadians(turret.getCurrentPosition()) + comps.follower.getHeading() + startRot;
         double normTurretAngle = NormalizeAngleToDeadzone(turretAngle);
@@ -55,7 +55,7 @@ public class Turret {
     }
 
     private double NormalizeAngleToDeadzone(double input){
-        return input -Math.toRadians(deadZone1);
+        return input - Math.toRadians(deadZone1);
     }
 
 }
