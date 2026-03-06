@@ -37,25 +37,49 @@ public class Turret {
         double deltaX = Goal.getX() - comps.follower.getPose().getX();
         double alpha = Math.atan2(deltaY, deltaX);
         double goalAngle = alpha - 0.5 * Math.PI;
-        double normGoalAngle = Math.min(NormalizeAngleToDeadzone(goalAngle), NormalizeAngleToDeadzone(Math.toRadians(deadZone2) + comps.follower.getHeading() + startRot));
 
         double turretAngle = ticksToRadians(turret.getCurrentPosition()) + comps.follower.getHeading() + startRot;
-        double normTurretAngle = NormalizeAngleToDeadzone(turretAngle);
 
+        double dzLow  = Math.toRadians(Math.min(deadZone1, deadZone2)) + comps.follower.getHeading() + startRot;
+        double dzHigh = Math.toRadians(Math.max(deadZone1, deadZone2)) + comps.follower.getHeading() + startRot;
 
-        GoalPID.updatePosition(normTurretAngle);
-        GoalPID.setTargetPosition(normGoalAngle);
+        goalAngle = turretAngle + Math.IEEEremainder(goalAngle - turretAngle, 2 * Math.PI);
+        if(goalAngle >= dzLow && goalAngle <= dzHigh){
+            double distToLow = Math.abs(goalAngle - dzLow);
+            double distToHigh = Math.abs(goalAngle - dzHigh);
+            goalAngle = (distToLow < distToHigh) ? dzLow : dzHigh;
+        }
+        if (turretAngle >= dzLow && turretAngle <= dzHigh){
+            double distToLow = Math.abs(turretAngle - dzLow);
+            double disToHigh = Math.abs(turretAngle - dzHigh);
+            if(distToLow < disToHigh && goalAngle >= dzHigh) {
+                //CW
+                goalAngle -= 2 * Math.PI;
+            }else if(goalAngle <= dzLow){
+                //CCW
+                goalAngle += 2 * Math.PI;
+            }
+        }else if ((turretAngle <= dzLow && goalAngle >= dzHigh)
+                || (turretAngle >= dzHigh && goalAngle <= dzLow)){
+            // Path crosses deadzone, go the long way around
+            if (goalAngle > turretAngle) {
+                //CW
+                goalAngle -= 2 * Math.PI;
+            } else {
+                //CCW
+                goalAngle += 2 * Math.PI;
+            }
+        }
 
-        turret.setPower(Math.min(Math.max(GoalPID.run(),-1),1));
+        GoalPID.updatePosition(turretAngle);
+        GoalPID.setTargetPosition(goalAngle);
+
+        turret.setPower(Math.min(Math.max(GoalPID.run(), -1), 1));
     }
     private double ticksToRadians(int ticks) {
         // Depends on your gear ratio and encoder CPR
         // if one full rotation = 145.6 ticks tDriving/tDriven;
         return ((ticks / 145.6) * 2 * Math.PI) * tDriving/tDriven;
-    }
-
-    private double NormalizeAngleToDeadzone(double input){
-        return input - Math.toRadians(deadZone1);
     }
 
 }
