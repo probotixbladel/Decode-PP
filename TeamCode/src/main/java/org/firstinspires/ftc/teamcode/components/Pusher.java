@@ -37,8 +37,8 @@ public class Pusher {
     }
 
     public synchronized boolean AttemptPush(ComponentShell Comps) {
-        if (!Comps.shooter.PreTargeting & Comps.follower.getAngularVelocity() < 0.314 & Comps.follower.getVelocity().getMagnitude() < maxSpeed) {
-            if (state == PushState.WAITING && Comps.shooter.state == FlyWheel.ShooterState.READY) {
+        if (!Comps.flyWheel.PreTargeting & Comps.follower.getAngularVelocity() < 0.314 & Comps.follower.getVelocity().getMagnitude() < maxSpeed) {
+            if (state == PushState.WAITING && Comps.flyWheel.state == FlyWheel.ShooterState.READY) {
                 pusher.setPosition(push);
                 lastShot.reset();
                 state = PushState.SHOOTING;

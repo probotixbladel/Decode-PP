@@ -108,7 +108,7 @@ public class BlueBack_phs extends OpMode {
         switch (pathState) {
             case 0:
                 comps.through.InThrough();
-                comps.shooter.PreTargetTo(scorePosePreload);
+                comps.flyWheel.PreTargetTo(scorePosePreload);
                 follower.followPath(scorePreload);
                 setPathState(1);
                 break;
@@ -116,7 +116,7 @@ public class BlueBack_phs extends OpMode {
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if (!follower.isBusy()) {
                     comps.ResetShootNum();
-                    comps.shooter.Arrived();
+                    comps.flyWheel.Arrived();
                     setPathState(2);
                 }
                 break;
@@ -126,7 +126,7 @@ public class BlueBack_phs extends OpMode {
                 if(comps.FinishedShooting(3) && (comps.pusher.state == Pusher.PushState.WAITING || comps.pusher.state == Pusher.PushState.RELOADING))
                 {
                     setPathState(3);
-                    comps.shooter.PreTargetTo(scorePose1);
+                    comps.flyWheel.PreTargetTo(scorePose1);
                 }
                 break;
 
@@ -155,7 +155,7 @@ public class BlueBack_phs extends OpMode {
             case 6:
                 if(!follower.isBusy()){
                     comps.ResetShootNum();
-                    comps.shooter.Arrived();
+                    comps.flyWheel.Arrived();
                     setPathState(7);
                 }
                 break;
@@ -163,7 +163,7 @@ public class BlueBack_phs extends OpMode {
             case 7:
                 comps.AutoShooterStart();
                 if(comps.FinishedShooting(3) && (comps.pusher.state == Pusher.PushState.WAITING || comps.pusher.state == Pusher.PushState.RELOADING)){
-                    comps.shooter.PreTargetTo(scorePose2);
+                    comps.flyWheel.PreTargetTo(scorePose2);
                     setPathState(8);
                 }
                 break;
@@ -193,7 +193,7 @@ public class BlueBack_phs extends OpMode {
             case 11:
                 if(!follower.isBusy()){
                     comps.ResetShootNum();
-                    comps.shooter.Arrived();
+                    comps.flyWheel.Arrived();
                     setPathState(12);
                 }
                 break;

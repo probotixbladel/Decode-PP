@@ -120,7 +120,7 @@ public class RedGoal_pg1 extends OpMode {
                 if(Timer.seconds() > waitTime) {
                     follower.followPath(scorePreload);
                     comps.through.InThrough();
-                    comps.shooter.PreTargetTo(scorePosePreload);
+                    comps.flyWheel.PreTargetTo(scorePosePreload);
                     setPathState(1);
 
                 }
@@ -129,7 +129,7 @@ public class RedGoal_pg1 extends OpMode {
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if (!follower.isBusy()) {
                     comps.ResetShootNum();
-                    comps.shooter.Arrived();
+                    comps.flyWheel.Arrived();
                     setPathState(2);
                 }
                 break;
@@ -139,7 +139,7 @@ public class RedGoal_pg1 extends OpMode {
                 if(comps.FinishedShooting(3) && (comps.pusher.state == Pusher.PushState.WAITING || comps.pusher.state == Pusher.PushState.RELOADING))
                 {
                     setPathState(3);
-                    comps.shooter.PreTargetTo(scorePose1);
+                    comps.flyWheel.PreTargetTo(scorePose1);
                 }
                 break;
 
@@ -181,7 +181,7 @@ public class RedGoal_pg1 extends OpMode {
             case 8:
                 if(!follower.isBusy()){
                     comps.ResetShootNum();
-                    comps.shooter.Arrived();
+                    comps.flyWheel.Arrived();
                     setPathState(9);
                 }
                 break;

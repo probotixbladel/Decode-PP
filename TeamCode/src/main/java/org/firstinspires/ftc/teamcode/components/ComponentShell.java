@@ -8,13 +8,18 @@ import com.pedropathing.geometry.Pose;
 import com.bylazar.telemetry.TelemetryManager;
 
 import org.firstinspires.ftc.teamcode.common.CommonData;
+import org.firstinspires.ftc.teamcode.common.Constants;
 import org.firstinspires.ftc.teamcode.components.Shooter.FlyWheel;
+import org.firstinspires.ftc.teamcode.components.Shooter.Shooter;
+import org.firstinspires.ftc.teamcode.components.Shooter.Turret;
 
 @Configurable
 public class ComponentShell {
     public HardwareMap hardwareMap;
     public final Intake intake;
-    public final FlyWheel shooter;
+    public final FlyWheel flyWheel;
+	public final Turret turret;
+	public final Shooter shooter;
     public Pusher pusher;
     public Through through;
 	public Floodgate floodgate;
@@ -40,9 +45,11 @@ public class ComponentShell {
         this.hardwareMap = hwm;
         this.detector = new ArtifactDetector(hardwareMap);
         this.intake = new Intake(hardwareMap);
-        this.shooter = new FlyWheel(hardwareMap, alliance);
+        this.flyWheel = new FlyWheel(hardwareMap, alliance);
         this.pusher = new Pusher(hardwareMap);
         this.through = new Through(hardwareMap);
+		this.shooter = new Shooter();
+		this.turret = new Turret(hwm,this);
         //this.limeLight = new LimeLight(hardwareMap, alliance);
         this.blinky = new Blinky(hardwareMap);
         this.follower = flw;
@@ -57,10 +64,15 @@ public class ComponentShell {
 		//Pose pos = limeLight.update(this, telemetryM, Math.toDegrees(follower.getHeading()));
         detector.update();
         blinky.update(this);
-        shooter.update(this);
+        flyWheel.update(this);
         pusher.update(this);
         through.update(this);
+		turret.update();
 
+		if (Constants.GeneralConstants.DEBUG) {
+			telemetryM.debug(turret.str());
+		}
+		/*
 		telemetryM.debug("alliance: ", alliance);
         telemetryM.debug("Pusher angle:", pusher.pusherAngle);
         telemetryM.debug("Pusher state:", pusher.state);
@@ -73,7 +85,7 @@ public class ComponentShell {
         telemetryM.debug("Vel: ", shooter.CurrentVel, FlyWheel.TargetVel, "dist", shooter.setSpeeds(follower.getPose()));
         telemetryM.debug("shooter state: ", shooter.state);
         telemetryM.debug("FloodgateCurrent", floodgate.floodgateCurrent);
-
+		*/
 
     }
 

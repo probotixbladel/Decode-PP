@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import org.firstinspires.ftc.teamcode.common.Constants;
 import org.firstinspires.ftc.teamcode.common.Constants.TurretConstants;
 import org.firstinspires.ftc.teamcode.common.RobotMath;
 import org.firstinspires.ftc.teamcode.components.ComponentShell;
@@ -24,8 +25,9 @@ public class Turret {
 
 	private double homingStartTime = 0;
 	private boolean homingDirectionReversed = false;
+	private TurretTracker turretTracker = new TurretTracker();
 	public static double HOMING_TIMEOUT_MS = 3000;
-	public static double HOMING_POWER = 0.1;
+	public static double HOMING_POWER = 0.05;
 
 	public enum TurretState {
 		HOMING,
@@ -57,6 +59,9 @@ public class Turret {
 				setPower(controlSystems.update(getTargetAngle(), targetTracker.getAngularVelocity(), targetTracker.getAngularAcceleration()));
 				break;
 		}
+		if (Constants.GeneralConstants.DEBUG) {
+			turretTracker.update(getTargetAngle(), getAnleFromTicks(turretMotor.getCurrentPosition()), targetTracker.getAngularVelocity());
+		}
 	}
 
 	public void home() {
@@ -83,6 +88,10 @@ public class Turret {
 			double power = homingDirectionReversed ? -HOMING_POWER : HOMING_POWER;
 			setPower(power);
 		}
+	}
+
+	public String str() {
+		return turretTracker.getDebugString(getTargetAngle(), getAnleFromTicks(turretMotor.getCurrentPosition()), targetTracker.getAngularVelocity());
 	}
 
 	private void setPower(double power) {

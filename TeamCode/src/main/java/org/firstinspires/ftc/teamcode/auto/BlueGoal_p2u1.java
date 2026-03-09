@@ -129,14 +129,14 @@ public class BlueGoal_p2u1 extends OpMode {
             case 0:
                 follower.followPath(scorePreload);
                 comps.through.InThrough();
-                comps.shooter.PreTargetTo(scorePosePreload);
+                comps.flyWheel.PreTargetTo(scorePosePreload);
                 setPathState(1);
                 break;
             case 1:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if (!follower.isBusy()) {
                     comps.ResetShootNum();
-                    comps.shooter.Arrived();
+                    comps.flyWheel.Arrived();
                     setPathState(2);
                 }
                 break;
@@ -146,7 +146,7 @@ public class BlueGoal_p2u1 extends OpMode {
                 if(comps.FinishedShooting(3) && (comps.pusher.state == Pusher.PushState.WAITING || comps.pusher.state == Pusher.PushState.RELOADING))
                 {
                     setPathState(3);
-                    comps.shooter.PreTargetTo(scorePose2);
+                    comps.flyWheel.PreTargetTo(scorePose2);
                 }
                 break;
 
@@ -175,7 +175,7 @@ public class BlueGoal_p2u1 extends OpMode {
             case 6:
                 if(!follower.isBusy()){
                     comps.ResetShootNum();
-                    comps.shooter.Arrived();
+                    comps.flyWheel.Arrived();
                     setPathState(7);
                 }
                 break;
@@ -183,7 +183,7 @@ public class BlueGoal_p2u1 extends OpMode {
             case 7:
                 comps.AutoShooterStart();
                 if(comps.FinishedShooting(3) && (comps.pusher.state == Pusher.PushState.WAITING || comps.pusher.state == Pusher.PushState.RELOADING)){
-                    comps.shooter.PreTargetTo(scoreGate);
+                    comps.flyWheel.PreTargetTo(scoreGate);
                     setPathState(8);
                 }
                 break;
@@ -210,7 +210,7 @@ public class BlueGoal_p2u1 extends OpMode {
             case 11:
                 if(!follower.isBusy()){
                     comps.ResetShootNum();
-                    comps.shooter.Arrived();
+                    comps.flyWheel.Arrived();
                     setPathState(12);
                 }
                 break;
@@ -218,7 +218,7 @@ public class BlueGoal_p2u1 extends OpMode {
             case 12:
                 comps.AutoShooterStart();
                 if(comps.FinishedShooting(3) && (comps.pusher.state == Pusher.PushState.WAITING || comps.pusher.state == Pusher.PushState.RELOADING)){
-                    comps.shooter.PreTargetTo(scorePose3);
+                    comps.flyWheel.PreTargetTo(scorePose3);
                     setPathState(13);
                 }
                 break;
@@ -249,7 +249,7 @@ public class BlueGoal_p2u1 extends OpMode {
             case 16:
                 if(!follower.isBusy()){
                     comps.ResetShootNum();
-                    comps.shooter.Arrived();
+                    comps.flyWheel.Arrived();
                     setPathState(17);
                 }
                 break;
