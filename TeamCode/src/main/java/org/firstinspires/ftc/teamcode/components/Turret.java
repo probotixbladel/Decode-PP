@@ -40,6 +40,9 @@ public class Turret {
         double alpha = Math.atan2(deltaY, deltaX);
         //double goalAngle = Math.toDegrees(-alpha);
         double goalAngle = 45;
+        if(goalAngle < 0){
+            goalAngle += 360;
+        }
 
         dzLow = Math.min(deadZone1, deadZone2);
         dzHigh = 360 - Math.max(deadZone1, deadZone2);
@@ -51,14 +54,21 @@ public class Turret {
         );
 
         // Wrap goal into [0, dzHigh] — if it's outside, snap to nearest boundary
-        normalizedGoal = Math.min(Math.max(normalizedGoal, 0), dzHigh);
+        if(normalizedGoal > dzHigh){
+            if(Math.abs(normalizedGoal - 360) < Math.abs(normalizedGoal - dzHigh)){
+                normalizedGoal = 0;
+            }
+            else{
+                normalizedGoal = dzHigh;
+            }
+        }
 
         GoalPID.updatePosition(Math.toRadians(normalizedTurret));
         GoalPID.setTargetPosition(Math.toRadians(normalizedGoal));
 
         turret.setPower(Math.min(Math.max(GoalPID.run(), -1), 1));
     }
-    private double ticksToRadians(int ticks) {
+        private double ticksToRadians(int ticks) {
         // Depends on your gear ratio and encoder CPR
         // if one full rotation = 145.6 ticks tDriving/tDriven;
         return ((ticks / 145.6) * 2 * Math.PI) * tDriving/tDriven;
@@ -66,6 +76,9 @@ public class Turret {
 
     private double NormalizeAngleToDeadZone(double angle) {
         double shifted = angle - dzLow;
+        if(shifted < 0){
+            shifted += 360;
+        }
         return shifted;
     }
 
