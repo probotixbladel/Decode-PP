@@ -19,10 +19,12 @@ public class Turret {
     static public double kd = 0.1;
     static public double kf = 10;
     //TODO: tune deadzones!
-    static private double deadZone1 = 85;
-    static private double deadZone2 = 75;
+    static private double deadZone1 = 100;
+    static private double deadZone2 = 80;
+    private double dzLow;
+    private double dzHigh;
     private Pose Goal = new Pose(3, 141);
-    private double startRot = 0.5 * Math.PI;
+    private double startRot = 90;
 
     public Turret(HardwareMap hwm){
         turret = hwm.get(DcMotorEx.class, "turret");
@@ -32,47 +34,27 @@ public class Turret {
         GoalPID = new PIDFController(new PIDFCoefficients(kp,0,kd,kf));
     }
 
-    public void Update(ComponentShell comps){
+    public void Update(ComponentShell comps) {
         double deltaY = Goal.getY() - comps.follower.getPose().getY();
         double deltaX = Goal.getX() - comps.follower.getPose().getX();
         double alpha = Math.atan2(deltaY, deltaX);
-        double goalAngle = alpha - 0.5 * Math.PI;
+        //double goalAngle = Math.toDegrees(-alpha);
+        double goalAngle = 45;
 
-        double turretAngle = ticksToRadians(turret.getCurrentPosition()) + comps.follower.getHeading() + startRot;
+        dzLow = Math.min(deadZone1, deadZone2);
+        dzHigh = 360 - Math.max(deadZone1, deadZone2);
 
-        double dzLow  = Math.toRadians(Math.min(deadZone1, deadZone2)) + comps.follower.getHeading() + startRot;
-        double dzHigh = Math.toRadians(Math.max(deadZone1, deadZone2)) + comps.follower.getHeading() + startRot;
+        // Normalize both into dead-zone space
+        double normalizedGoal   = NormalizeAngleToDeadZone(goalAngle);
+        double normalizedTurret = NormalizeAngleToDeadZone(
+                Math.toDegrees(ticksToRadians(turret.getCurrentPosition()) + comps.follower.getHeading()) + startRot
+        );
 
-        goalAngle = turretAngle + Math.IEEEremainder(goalAngle - turretAngle, 2 * Math.PI);
-        if(goalAngle >= dzLow && goalAngle <= dzHigh){
-            double distToLow = Math.abs(goalAngle - dzLow);
-            double distToHigh = Math.abs(goalAngle - dzHigh);
-            goalAngle = (distToLow < distToHigh) ? dzLow : dzHigh;
-        }
-        if (turretAngle >= dzLow && turretAngle <= dzHigh){
-            double distToLow = Math.abs(turretAngle - dzLow);
-            double disToHigh = Math.abs(turretAngle - dzHigh);
-            if(distToLow < disToHigh && goalAngle >= dzHigh) {
-                //CW
-                goalAngle -= 2 * Math.PI;
-            }else if(goalAngle <= dzLow){
-                //CCW
-                goalAngle += 2 * Math.PI;
-            }
-        }else if ((turretAngle <= dzLow && goalAngle >= dzHigh)
-                || (turretAngle >= dzHigh && goalAngle <= dzLow)){
-            // Path crosses deadzone, go the long way around
-            if (goalAngle > turretAngle) {
-                //CW
-                goalAngle -= 2 * Math.PI;
-            } else {
-                //CCW
-                goalAngle += 2 * Math.PI;
-            }
-        }
+        // Wrap goal into [0, dzHigh] — if it's outside, snap to nearest boundary
+        normalizedGoal = Math.min(Math.max(normalizedGoal, 0), dzHigh);
 
-        GoalPID.updatePosition(turretAngle);
-        GoalPID.setTargetPosition(goalAngle);
+        GoalPID.updatePosition(Math.toRadians(normalizedTurret));
+        GoalPID.setTargetPosition(Math.toRadians(normalizedGoal));
 
         turret.setPower(Math.min(Math.max(GoalPID.run(), -1), 1));
     }
@@ -80,6 +62,11 @@ public class Turret {
         // Depends on your gear ratio and encoder CPR
         // if one full rotation = 145.6 ticks tDriving/tDriven;
         return ((ticks / 145.6) * 2 * Math.PI) * tDriving/tDriven;
+    }
+
+    private double NormalizeAngleToDeadZone(double angle) {
+        double shifted = angle - dzLow;
+        return shifted;
     }
 
 }
