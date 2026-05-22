@@ -10,7 +10,8 @@ import com.pedropathing.geometry.Pose;
 
 @Configurable
 public class Shooter {
-	public DcMotorEx ShooterLeft;
+	public DcMotorEx FlyWheel;
+    public DcMotorEx AntiBackspin;
     //public DcMotorEx ShooterRight;
     public ShooterState state = ShooterState.LOW;
     public static double TargetVel = 1250;
@@ -105,11 +106,17 @@ public class Shooter {
     }
 
     public Shooter(HardwareMap hwm, ComponentShell.Alliance al) {
-		ShooterLeft = hwm.get(DcMotorEx.class, "shooterLeft");
-        ShooterLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        ShooterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        ShooterLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        ShooterLeft.setVelocityPIDFCoefficients(P, 0, D, F);
+        FlyWheel = hwm.get(DcMotorEx.class, "flyWheel");
+        FlyWheel.setDirection(DcMotorSimple.Direction.REVERSE);
+        FlyWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FlyWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FlyWheel.setVelocityPIDFCoefficients(P, 0, D, F);
+
+        AntiBackspin = hwm.get(DcMotorEx.class, "antiBackspin");
+        AntiBackspin.setDirection(DcMotorSimple.Direction.FORWARD);
+        AntiBackspin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        AntiBackspin.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        AntiBackspin.setVelocityPIDFCoefficients(P, 0, D, F);
         switch (al) {
             case RED:
                 ShootTo = new Pose(133,135);
@@ -160,20 +167,25 @@ public class Shooter {
     }
 
     public void update(ComponentShell Comps){
-		this.setSpeeds(Comps.follower.getPose());
+		//this.setSpeeds(Comps.follower.getPose());
         if (P != lP | D != lD | F != lF){
-            ShooterLeft.setVelocityPIDFCoefficients( P, 0, D, F);
+            FlyWheel.setVelocityPIDFCoefficients( P, 0, D, F);
+            AntiBackspin.setVelocityPIDFCoefficients( P, 0, D, F);
             lP = P;
             lD = D;
             lF = F;
         }
 
-        ShooterLeft.setVelocity(TargetVel);
-        CurrentVel = ShooterLeft.getVelocity();
+        FlyWheel.setVelocity(TargetVel);
+        AntiBackspin.setVelocity(TargetVel);
+        CurrentVel = FlyWheel.getVelocity();
         if (CurrentVel < MinSpeed) {
-            state = ShooterState.LOW;
+            //state = ShooterState.LOW;
+            // make shooter always ready for tuning the shooterspeeds TODO: uncomment debug phrases that are commented and remove all these readies
+            state = ShooterState.READY;
         } else if (CurrentVel > MaxSpeed) {
-            state = ShooterState.HIGH;
+            //state = ShooterState.HIGH;
+            state = ShooterState.READY;
         } else {
             state = ShooterState.READY;
         }

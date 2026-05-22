@@ -64,7 +64,7 @@ public class ComponentShell {
         telemetryM.debug("Number of shots left", shootNum);
         telemetryM.debug("follower pos: ", follower.getPose());
         telemetryM.debug("through state: ", through.state);
-        telemetryM.debug("Vel: ", shooter.CurrentVel, Shooter.TargetVel, "dist", shooter.setSpeeds(follower.getPose()));
+        telemetryM.debug("Vel: ", shooter.CurrentVel, Shooter.TargetVel/*, "dist", shooter.setSpeeds(follower.getPose())*/);
         telemetryM.debug("shooter state: ", shooter.state);
         telemetryM.debug("FloodgateCurrent", floodgate.floodgateCurrent);
 
