@@ -20,75 +20,71 @@ public class Shooter {
     public double CurrentVel = 0;
     public boolean PreTargeting = false;
     public static double[][] MinPoints = {  // data min speed
-            {60,1000},
-            {70,1000},
-            {80,960},
-            {90,950},
-            {100,960},
-            {110,960},
-            {120,980},
-            {130,1010},
-            {140,1020},
-            {150,1040},
-            {160,1060},
-            {170,1080},
-            {180,1120},
-            {190,1140},
-            {200,1160},
-            {210,1190},
-            {220,1210},
-            {230,1230},
-            {240,1270},
-            {250,1280},
-            {260,1300},
-            {270,1340},
-            {280,1360},
-            {290,1380},
-            {300,1390},
-            {310,1395}
-            //{320,1440},
-            //{330,1480},
-            //{340,1510},
-            //{350,1520},
-            //{360,1520},
-            //{370,1525},
-            //{380,1530}
+            {60,670},
+            {70,670},
+            {80,640},
+            {90,620},
+            {100,620},
+            {110,630},
+            {120,630},
+            {130,630},
+            {140,640},
+            {150,660},
+            {160,670},
+            {170,700},
+            {180,710},
+            {190,730},
+            {200,750},
+            {210,770},
+            {220,780},
+            {230,800},
+            {240,840},
+            {250,860},
+            {260,880},
+            {270,900},
+            {280,910},
+            {290,940},
+            {300,950},
+            {310,970},
+            {320,1000},
+            {330,1010},
+            {340,1010},
+            {350,1020},
+            {360,1030}
     };
 
     public static double[][] MaxPoints = { // data max speed
-            {60,1060},
-            {70,1070},
-            {80,1080},
-            {90,1070},
-            {100,1070},
-            {110,1110},
-            {120,1120},
-            {130,1140},
-            {140,1150},
-            {150,1200},
-            {160,1210},
-            {170,1220},
-            {180,1240},
-            {190,1260},
-            {200,1280},
-            {210,1300},
-            {220,1310},
-            {230,1340},
-            {240,1360},
-            {250,1380},
-            {260,1400}, //1420
-            {270,1430},
-            {280,1430},
-            {290,1440},
-            {300,1440},
-            {310,1445}
-            //{320,1520},
-            //{330,1550},
-            //{340,1560},
-            //{350,1570},
-            //{360,1570},
-            //{370,1570},
-            //{380,1570}
+            {60,750},
+            {70,760},
+            {80,750},
+            {90,750},
+            {100,740},
+            {110,750},
+            {120,750},
+            {130,750},
+            {140,760},
+            {150,790},
+            {160,780},
+            {170,790},
+            {180,790},
+            {190,840},
+            {200,860},
+            {210,870},
+            {220,870},
+            {230,900},
+            {240,920},
+            {250,930},
+            {260,960},
+            {270,980},
+            {280,990},
+            {290,1000},
+            {300,990},
+            {310,1010},
+            {320,1070},
+            {330,1070},
+            {340,1070},
+            {350,1090},
+            {360,1120}
     };
     public static double P = 500.0;
     public static double D = 0.0;
@@ -96,7 +92,7 @@ public class Shooter {
     private double lP = P;
     private double lD = D;
     private double lF = F;
-    public static double MinToMax = 0.15; //percentage min-max
+    public static double MinToMax = 0.3; //percentage min-max
     private Pose ShootTo;
 
     public enum ShooterState {
@@ -148,7 +144,7 @@ public class Shooter {
 
     public double setSpeeds(Pose RobotPos) {
         if (!PreTargeting) {
-            double distance = (Math.sqrt(Math.pow(RobotPos.getY() - ShootTo.getY(), 2) + Math.pow(RobotPos.getX() - ShootTo.getX(), 2)) - 16) * 2.54;
+            double distance = (Math.sqrt(Math.pow(RobotPos.getY() - ShootTo.getY(), 2) + Math.pow(RobotPos.getX() - ShootTo.getX(), 2)) - 8) * 2.54;
             MaxSpeed = interpolate(MaxPoints, distance) - 5;
             MinSpeed = interpolate(MinPoints, distance) + 5;
             TargetVel = MinSpeed + (MaxSpeed - MinSpeed) * MinToMax;
@@ -167,7 +163,7 @@ public class Shooter {
     }
 
     public void update(ComponentShell Comps){
-		//this.setSpeeds(Comps.follower.getPose());
+		this.setSpeeds(Comps.follower.getPose());
         if (P != lP | D != lD | F != lF){
             FlyWheel.setVelocityPIDFCoefficients( P, 0, D, F);
             AntiBackspin.setVelocityPIDFCoefficients( P, 0, D, F);
@@ -180,12 +176,9 @@ public class Shooter {
         AntiBackspin.setVelocity(TargetVel);
         CurrentVel = FlyWheel.getVelocity();
         if (CurrentVel < MinSpeed) {
-            //state = ShooterState.LOW;
-            // make shooter always ready for tuning the shooterspeeds TODO: uncomment debug phrases that are commented and remove all these readies
-            state = ShooterState.READY;
+            state = ShooterState.LOW;
         } else if (CurrentVel > MaxSpeed) {
-            //state = ShooterState.HIGH;
-            state = ShooterState.READY;
+            state = ShooterState.HIGH;
         } else {
             state = ShooterState.READY;
         }
