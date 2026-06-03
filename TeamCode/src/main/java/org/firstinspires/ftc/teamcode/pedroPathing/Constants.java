@@ -34,16 +34,16 @@ public class Constants {
                     0.02
             ))*/
             .headingPIDFCoefficients(new PIDFCoefficients(
-                    1.5,
+                    1.3,
                     0,
                     0.04,
-                    0.025
+                    0.03
             ))
             .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(
-                    2.5,
+                    2.7,
                     0,
-                    0.01,
-                    0.025
+                    0.05,
+                    0.02
             ))
             /*.drivePIDFCoefficients(new FilteredPIDFCoefficients(
                     0.01,
@@ -54,7 +54,7 @@ public class Constants {
             ))*/
             //.centripetalScaling(0.005);
             .centripetalScaling(0)
-            .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.1, 0.06477510386832544, 0.0018096089505678144)); // (kP, kLinear, kQuadratic)
+            .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.1, 0.07136429870649195, 0.0018010546328987576)); // (kP, kLinear, kQuadratic)
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
@@ -93,9 +93,9 @@ public class Constants {
             0.1,
             0.009,
             50,
-            0.5,
+            1,
             10,
-            10
+            2
     );
 
     //Add custom localizers or drivetrains here
