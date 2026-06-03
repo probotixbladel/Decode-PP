@@ -14,7 +14,7 @@ public class Shooter {
     public DcMotorEx AntiBackspin;
     //public DcMotorEx ShooterRight;
     public ShooterState state = ShooterState.LOW;
-    public static double TargetVel = 1250;
+    public static double TargetVel = 900;
     public static double MaxSpeed = 1300;
     public static double MinSpeed = 1200;
     public double CurrentVel = 0;
