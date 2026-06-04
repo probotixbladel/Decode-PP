@@ -177,8 +177,10 @@ public class Shooter {
         CurrentVel = FlyWheel.getVelocity();
         if (CurrentVel < MinSpeed) {
             state = ShooterState.LOW;
+            //state = ShooterState.READY;
         } else if (CurrentVel > MaxSpeed) {
             state = ShooterState.HIGH;
+            //state = ShooterState.READY;
         } else {
             state = ShooterState.READY;
         }
