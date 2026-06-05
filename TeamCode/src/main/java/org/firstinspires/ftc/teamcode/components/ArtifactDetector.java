@@ -12,9 +12,9 @@ public class ArtifactDetector {
 	public double distance = 0;
 	public double distance2 = 0;
     static public double minThreshold = 0.025;
-    static public double maxThreshold = 2.0;
+    static public double maxThreshold = 1.5;
     static public double minThreshold2 = 0.04;
-    static public double maxThreshold2 = 2.0;
+    static public double maxThreshold2 = 1.5;
     public boolean detecting = false;
 
 

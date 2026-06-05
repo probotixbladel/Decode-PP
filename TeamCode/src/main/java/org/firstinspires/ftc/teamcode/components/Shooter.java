@@ -92,7 +92,7 @@ public class Shooter {
     private double lP = P;
     private double lD = D;
     private double lF = F;
-    public static double MinToMax = 0.3; //percentage min-max
+    public static double MinToMax = 0.7; //percentage min-max
     private Pose ShootTo;
 
     public enum ShooterState {
@@ -147,6 +147,7 @@ public class Shooter {
             double distance = (Math.sqrt(Math.pow(RobotPos.getY() - ShootTo.getY(), 2) + Math.pow(RobotPos.getX() - ShootTo.getX(), 2)) - 8) * 2.54;
             MaxSpeed = interpolate(MaxPoints, distance) - 5;
             MinSpeed = interpolate(MinPoints, distance) + 5;
+            MinToMax = -5.05 * Math.pow(10, -4) * distance + 0.945;
             TargetVel = MinSpeed + (MaxSpeed - MinSpeed) * MinToMax;
             return distance;
         }

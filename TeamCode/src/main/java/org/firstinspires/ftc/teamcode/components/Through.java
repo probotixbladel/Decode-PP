@@ -12,7 +12,7 @@ public class Through {
 	public static double inPowerOverCurrent = 0.6;
     public static double outPower = -1;
     public static double staticPower = 0;
-    public static double loosenPower = -0.2;
+    public static double loosenPower = -0.4;
     public ThroughState state = ThroughState.OFF;
     public enum ThroughState {
         IN_THROUGH,
