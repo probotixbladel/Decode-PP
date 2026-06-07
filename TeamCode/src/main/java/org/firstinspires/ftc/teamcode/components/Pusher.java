@@ -35,13 +35,11 @@ public class Pusher {
     }
 
     public synchronized boolean AttemptPush(ComponentShell Comps) {
-        if (!Comps.shooter.PreTargeting & Comps.follower.getAngularVelocity() < 0.314 & Comps.follower.getVelocity().getMagnitude() < maxSpeed) {
-            if (state == PushState.WAITING && Comps.shooter.state == Shooter.ShooterState.READY) {
-                pusher.setPosition(push);
-                lastShot.reset();
-                state = PushState.SHOOTING;
-                return true;
-            }
+		if (state == PushState.WAITING && Comps.shooter.state == Shooter.ShooterState.READY) {
+            pusher.setPosition(push);
+            lastShot.reset();
+			state = PushState.SHOOTING;
+			return true;
         }
         return false;
     }

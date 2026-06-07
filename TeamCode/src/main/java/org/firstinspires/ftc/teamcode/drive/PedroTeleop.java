@@ -96,7 +96,6 @@ public class PedroTeleop extends OpMode {
 
     @Override
     public void start() {
-
         follower.startTeleopDrive();
     }
 
@@ -130,12 +129,12 @@ public class PedroTeleop extends OpMode {
         );
 
         if(gamepad1.right_bumper) {
-            double dy = Goal.getY() - (follower.getPose().getY() - Math.cos(follower.getHeading()) * offsetX);
-            double dx = Goal.getX() - (follower.getPose().getX() + Math.sin(follower.getHeading()) * offsetX);
+            double dy = Comps.shooter.ShootTo.getY() - (follower.getPose().getY() - Math.cos(follower.getHeading()) * offsetX);
+            double dx = Comps.shooter.ShootTo.getX() - (follower.getPose().getX() + Math.sin(follower.getHeading()) * offsetX);
             double alpha = Math.atan2(dy, dx);
             double beta = alpha - Math.PI;
 
-			if (follower.getPose().getY() < 48) {
+			/* if (follower.getPose().getY() < 48) {
 				if (alliance == ComponentShell.Alliance.BLUE) {
 					GoalPID.setTargetPosition(beta + blueAngleOffset);
 				} else {
@@ -143,7 +142,8 @@ public class PedroTeleop extends OpMode {
 				}
 			} else {
 				GoalPID.setTargetPosition(beta);
-			}
+			} */
+			GoalPID.setTargetPosition(beta);
             GoalPID.updatePosition(follower.getHeading());
             driveInputs[2] = Math.min(Math.max(GoalPID.run(),-1),1);
         }
