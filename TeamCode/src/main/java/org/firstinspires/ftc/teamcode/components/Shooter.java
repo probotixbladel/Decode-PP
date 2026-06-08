@@ -159,18 +159,18 @@ public class Shooter {
 		double airTime;
 		this.setSpeeds(comps.follower.getPose());
 		for (int i = 0; i < 5; i++) {
-			airTime = -3.74 + 8.89 * Math.pow(10, -3) * TargetVel + 4.12 * Math.pow(10, -6) * TargetVel;
+			airTime = -3.74 + 8.89e-3 * TargetVel + 4.12e-6 * Math.pow(TargetVel, 2);
 			goalVec = goalVec.minus(comps.follower.getVelocity().times(airTime));
-			this.setSpeeds(new Pose(goalVec.getXComponent(), goalVec.getYComponent()));
+			ShootTo = new Pose(goalVec.getXComponent(), goalVec.getYComponent());
+			this.setSpeeds(comps.follower.getPose());
 		}
-		ShootTo = new Pose(goalVec.getXComponent(), goalVec.getYComponent());
 	}
 
-    public void setSpeeds(Pose AimPos) {
-        double distance = (Math.sqrt(Math.pow(AimPos.getY() - ShootTo.getY(), 2) + Math.pow(AimPos.getX() - ShootTo.getX(), 2)) - 8) * 2.54;
+    public void setSpeeds(Pose robotPose) {
+        double distance = (Math.sqrt(Math.pow(robotPose.getY() - ShootTo.getY(), 2) + Math.pow(robotPose.getX() - ShootTo.getX(), 2)) - 8) * 2.54;
         MaxSpeed = interpolate(MaxPoints, distance) - 5;
         MinSpeed = interpolate(MinPoints, distance) + 5;
-        MinToMax = -5.05 * Math.pow(10, -4) * distance + 0.945;
+        MinToMax = -5.05e-4 * distance + 0.945;
         TargetVel = MinSpeed + (MaxSpeed - MinSpeed) * MinToMax;
 	}
 
