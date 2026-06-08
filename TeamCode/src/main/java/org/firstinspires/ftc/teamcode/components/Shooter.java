@@ -158,11 +158,12 @@ public class Shooter {
 		Vector goalVec = new Vector(goal);
 		double airTime;
 		this.setSpeeds(comps.follower.getPose());
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 3; i++) {
 			airTime = -3.74 + 8.89e-3 * TargetVel + 4.12e-6 * Math.pow(TargetVel, 2);
 			goalVec = goalVec.minus(comps.follower.getVelocity().times(airTime));
 			ShootTo = new Pose(goalVec.getXComponent(), goalVec.getYComponent());
 			this.setSpeeds(comps.follower.getPose());
+			comps.telemetryM.debug("air time, goalVec, shootTo, targetVel", airTime, goalVec, ShootTo, TargetVel);
 		}
 	}
 
