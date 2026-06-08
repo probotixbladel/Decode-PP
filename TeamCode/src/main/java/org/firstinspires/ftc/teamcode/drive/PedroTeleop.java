@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Configurable
 @TeleOp(name="PedroTeleop", group="Linear OpMode")
 public class PedroTeleop extends OpMode {
-    private Pose Goal;
     public static boolean singlePlayer = false;
     private Follower follower;
     public static Pose startingPose;
@@ -28,15 +27,12 @@ public class PedroTeleop extends OpMode {
     private ComponentShell Comps;
     public PIDFController GoalPID = new PIDFController(new PIDFCoefficients(0,0,0,0));
 	public static double offsetX = 1.5748;
-	public static double blueAngleOffset = -0.03;
-	public static double redAngleOffset = -0.015;
+	//public static double blueAngleOffset = -0.03;
+	//public static double redAngleOffset = -0.015;
+    private volatile boolean started = false;
     static public double kp = 1;
     static public double kd = 0.08;
     static public double kf = 1;
-    static public int blueX = 3;
-    static public int blueY = 141;
-    static public int redX = 141;
-    static public int redY = 141;
     static class PedroInputScaler {
         // TODO: Tune these values for your application
         // This does NOT create any mechanical advantage, it is purely for control
@@ -84,14 +80,6 @@ public class PedroTeleop extends OpMode {
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         alliance = data.storedAlliance;
         Comps = new ComponentShell(hardwareMap, follower, telemetryM, alliance, singlePlayer);
-        switch (alliance) {
-            case RED:
-                Goal = new Pose(redX, redY);
-                break;
-            case BLUE:
-                Goal = new Pose(blueX, blueY);
-                break;
-        }
     }
 
     @Override
@@ -101,6 +89,13 @@ public class PedroTeleop extends OpMode {
 
 	@Override
     public void loop() {
+        if (gamepad2.aWasPressed()) {
+            started = true;
+        }
+        if (!started) {
+            return;
+        }
+
         if (gamepad1.rightBumperWasPressed()) {
 			GoalPID = new PIDFController(new PIDFCoefficients(kp, 0, kd, kf));
 		}
