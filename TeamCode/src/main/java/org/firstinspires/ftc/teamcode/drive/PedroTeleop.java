@@ -89,7 +89,7 @@ public class PedroTeleop extends OpMode {
 
 	@Override
     public void loop() {
-        if (gamepad2.aWasPressed()) {
+        if (gamepad2.xWasPressed()) {
             started = true;
         }
         if (!started) {

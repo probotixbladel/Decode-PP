@@ -63,6 +63,7 @@ public class ComponentShell {
 			follower.setPose(limePos.linearCombination(follower.getPose(), camCertanty, 1 - camCertanty));
 		}*/
 
+        telemetryM.debug("aimpos", shooter.ShootTo);
 		telemetryM.debug("alliance: ", alliance);
         telemetryM.debug("Pusher angle:", pusher.pusherAngle);
         telemetryM.debug("Pusher state:", pusher.state);
@@ -76,6 +77,7 @@ public class ComponentShell {
         telemetryM.debug("MinToMax: ", shooter.MinToMax);
         telemetryM.debug("shooter state: ", shooter.state);
         telemetryM.debug("FloodgateCurrent", floodgate.floodgateCurrent);
+
     }
 
     public void updateTeleop(Gamepad gamepad1, Gamepad gamepad2) {
