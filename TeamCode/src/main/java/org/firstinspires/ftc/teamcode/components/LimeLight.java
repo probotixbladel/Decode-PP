@@ -8,10 +8,13 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.bylazar.telemetry.TelemetryManager;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import com.pedropathing.ftc.FTCCoordinates;
+import com.pedropathing.geometry.PedroCoordinates;
 
 @Configurable
 public class LimeLight {
 	public Limelight3A limeLight;
+	public static double angleOffset = 0;
     public LimeLight(HardwareMap hwm, ComponentShell.Alliance al) {
 		limeLight = hwm.get(Limelight3A.class, "limelight");
         switch (al){
@@ -29,18 +32,19 @@ public class LimeLight {
 
         Pose3D botPoseMt2;
         Pose pos = new Pose();
-        limeLight.updateRobotOrientation(robotYaw);
+        limeLight.updateRobotOrientation(robotYaw + angleOffset);
         LLResult result = limeLight.getLatestResult();
 
         if (result != null && result.isValid()) {
             if (result.getStaleness() < 100) {
-                botPoseMt2 = result.getBotpose();
+                botPoseMt2 = result.getBotpose_MT2();
                 if (botPoseMt2 != null) {
                     pos = pos.withX(botPoseMt2.getPosition().x);
                     pos = pos.withY(botPoseMt2.getPosition().y);
+					pos = pos.withHeading(Math.toRadians(botPoseMt2.getOrientation().getYaw()));
                 }
             }
         }
-        return pos;
+        return new Pose(pos.getX(), pos.getY(), pos.getHeading(), FTCCoordinates.INSTANCE).getAsCoordinateSystem(PedroCoordinates.INSTANCE);
     }
 }

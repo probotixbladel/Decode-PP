@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.control.KalmanFilter;
+import com.pedropathing.control.KalmanFilterParameters;
 
 @Configurable
 public class ComponentShell {
@@ -19,11 +21,12 @@ public class ComponentShell {
     public ArtifactDetector detector;
     public Follower follower;
     public TelemetryManager telemetryM;
-    //public LimeLight limeLight;
+    public LimeLight limeLight;
     public Pose limePos = new Pose();
     public Alliance alliance;
     public boolean SinglePlayer;
     public int shootNum;
+    public static double camCertanty = 0.10;
 
     public enum Alliance {
         BLUE,
@@ -38,7 +41,7 @@ public class ComponentShell {
         this.shooter = new Shooter(hardwareMap, alliance);
         this.pusher = new Pusher(hardwareMap);
         this.through = new Through(hardwareMap);
-        //this.limeLight = new LimeLight(hardwareMap, alliance);
+        this.limeLight = new LimeLight(hardwareMap, alliance);
         this.blinky = new Blinky(hardwareMap);
         this.follower = flw;
         this.telemetryM = Tm;
@@ -48,13 +51,19 @@ public class ComponentShell {
 
 	public void update() {
 		floodgate.update();
-		//Pose pos = limeLight.update(this, telemetryM, Math.toDegrees(follower.getHeading()));
+		limePos = limeLight.update(telemetryM, Math.toDegrees(follower.getHeading()));
         detector.update();
         blinky.update(this);
         shooter.update(this);
         pusher.update(this);
         through.update(this);
 
+		/*
+		if (limePos.getX() != 0) {
+			follower.setPose(limePos.linearCombination(follower.getPose(), camCertanty, 1 - camCertanty));
+		}*/
+
+        telemetryM.debug("aimpos", shooter.ShootTo);
 		telemetryM.debug("alliance: ", alliance);
         telemetryM.debug("Pusher angle:", pusher.pusherAngle);
         telemetryM.debug("Pusher state:", pusher.state);
@@ -64,10 +73,10 @@ public class ComponentShell {
         telemetryM.debug("Number of shots left", shootNum);
         telemetryM.debug("follower pos: ", follower.getPose());
         telemetryM.debug("through state: ", through.state);
-        telemetryM.debug("Vel: ", shooter.CurrentVel, Shooter.TargetVel/*, "dist", shooter.setSpeeds(follower.getPose())*/);
+        telemetryM.debug("Vel: ", shooter.CurrentVel, Shooter.TargetVel);
+        telemetryM.debug("MinToMax: ", shooter.MinToMax);
         telemetryM.debug("shooter state: ", shooter.state);
         telemetryM.debug("FloodgateCurrent", floodgate.floodgateCurrent);
-
 
     }
 
@@ -142,4 +151,3 @@ public class ComponentShell {
 
 
 }
-

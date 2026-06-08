@@ -6,10 +6,12 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Vector;
 
 
 @Configurable
 public class Shooter {
+    public static double airTimeMultiplier = 0.4;
 	public DcMotorEx FlyWheel;
     public DcMotorEx AntiBackspin;
     //public DcMotorEx ShooterRight;
@@ -92,9 +94,9 @@ public class Shooter {
     private double lP = P;
     private double lD = D;
     private double lF = F;
-    public static double MinToMax = 0.3; //percentage min-max
-    private Pose ShootTo;
-
+    public static double MinToMax = 0.7; //percentage min-max
+    public Pose ShootTo;
+	private ComponentShell.Alliance alliance;
     public enum ShooterState {
         READY,
         HIGH,
@@ -113,6 +115,7 @@ public class Shooter {
         AntiBackspin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         AntiBackspin.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         AntiBackspin.setVelocityPIDFCoefficients(P, 0, D, F);
+		alliance = al;
         switch (al) {
             case RED:
                 ShootTo = new Pose(133,135);
@@ -142,16 +145,36 @@ public class Shooter {
         return y0 + (x - x0) * (y1 - y0) / (x1 - x0);
     }
 
-    public double setSpeeds(Pose RobotPos) {
-        if (!PreTargeting) {
-            double distance = (Math.sqrt(Math.pow(RobotPos.getY() - ShootTo.getY(), 2) + Math.pow(RobotPos.getX() - ShootTo.getX(), 2)) - 8) * 2.54;
-            MaxSpeed = interpolate(MaxPoints, distance) - 5;
-            MinSpeed = interpolate(MinPoints, distance) + 5;
-            TargetVel = MinSpeed + (MaxSpeed - MinSpeed) * MinToMax;
-            return distance;
-        }
-        return 0;
-    }
+	public void updateShootTo(ComponentShell comps) {
+		Pose goal = new Pose();
+		switch (alliance) {
+			case RED:
+				goal = new Pose(133,135);
+				break;
+			case BLUE:
+				goal = new Pose(11,135);
+				break;
+		}
+
+		Vector goalVec = new Vector(goal);
+		double airTime;
+		this.setSpeeds(comps.follower.getPose());
+		for (int i = 0; i < 3; i++) {
+			airTime = -3.74 + 8.89e-3 * TargetVel - 4.12e-6 * Math.pow(TargetVel, 2);
+			goalVec = goalVec.minus(comps.follower.getVelocity().times(airTime * airTimeMultiplier));
+			ShootTo = new Pose(goalVec.getXComponent(), goalVec.getYComponent());
+			this.setSpeeds(comps.follower.getPose());
+			comps.telemetryM.debug("air time, goalVec, shootTo, targetVel", airTime, goalVec, ShootTo, TargetVel, comps.follower.getVelocity());
+		}
+	}
+
+    public void setSpeeds(Pose robotPose) {
+        double distance = (Math.sqrt(Math.pow(robotPose.getY() - ShootTo.getY(), 2) + Math.pow(robotPose.getX() - ShootTo.getX(), 2)) - 8) * 2.54;
+        MaxSpeed = interpolate(MaxPoints, distance) - 5;
+        MinSpeed = interpolate(MinPoints, distance) + 5;
+        MinToMax = -5.05e-4 * distance + 0.945;
+        TargetVel = MinSpeed + (MaxSpeed - MinSpeed) * MinToMax;
+	}
 
     public void PreTargetTo(Pose RobotPos) {
         setSpeeds(RobotPos);
@@ -163,7 +186,7 @@ public class Shooter {
     }
 
     public void update(ComponentShell Comps){
-		this.setSpeeds(Comps.follower.getPose());
+		this.updateShootTo(Comps);
         if (P != lP | D != lD | F != lF){
             FlyWheel.setVelocityPIDFCoefficients( P, 0, D, F);
             AntiBackspin.setVelocityPIDFCoefficients( P, 0, D, F);
@@ -177,8 +200,10 @@ public class Shooter {
         CurrentVel = FlyWheel.getVelocity();
         if (CurrentVel < MinSpeed) {
             state = ShooterState.LOW;
+            //state = ShooterState.READY;
         } else if (CurrentVel > MaxSpeed) {
             state = ShooterState.HIGH;
+            //state = ShooterState.READY;
         } else {
             state = ShooterState.READY;
         }
