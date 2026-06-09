@@ -6,6 +6,8 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 @Configurable
 public class ArtifactDetector {
 	public OpticalDistanceSensor firstArtifactSensor1;  // Hardware Device Object
@@ -33,10 +35,28 @@ public class ArtifactDetector {
 		this.firstArtifactSensor2 = hwm.get(OpticalDistanceSensor.class, "DistSens2");
     }
 
-	public void update(ComponentShell Comps) {
+	public void update(ComponentShell comps) {
 		firstDistance = firstArtifactSensor1.getLightDetected();
 		firstDistance2 = firstArtifactSensor2.getLightDetected();
         firstDetecting = (firstDistance > firstMinThreshold && firstDistance < firstMaxThreshold) || (firstDistance2 > firstMinThreshold2 && firstDistance2 < firstMaxThreshold2);
+		comps.telemetryM.debug(
+				"secondArtifact R G B",
+				secondArtifactSensor.red(),
+				secondArtifactSensor.green(),
+				secondArtifactSensor.blue(),
+				secondArtifactSensor.getDistance(DistanceUnit.MM)
+		);
+		comps.telemetryM.debug("thirdArtifact, mm, raw ultrasonic, raw optical",
+				thirdArtifactSensor.getDistance(DistanceUnit.MM),
+				thirdArtifactSensor.rawUltrasonic(),
+				thirdArtifactSensor.rawOptical()
+		);
+		comps.telemetryM.debug("fourthArtifact, mm, raw ultrasonic, raw optical",
+				fourthArtifactSensor.getDistance(DistanceUnit.MM),
+				fourthArtifactSensor.rawUltrasonic(),
+				fourthArtifactSensor.rawOptical()
+		);
+
     }
 
 }

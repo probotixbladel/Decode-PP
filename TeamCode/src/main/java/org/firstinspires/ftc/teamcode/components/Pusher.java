@@ -12,7 +12,6 @@ public class Pusher {
     public static double wait = 0.02;
     public static double push = 0.4;
     public ElapsedTime lastShot = new ElapsedTime();
-
     public PushState state = PushState.RETURNING;
     public static double shootTime = 0.5;
     public static double returnTime = 0.25;
