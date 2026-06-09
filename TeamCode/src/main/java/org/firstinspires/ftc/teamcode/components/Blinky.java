@@ -26,7 +26,7 @@ public class Blinky {
     }
 
     public void update(ComponentShell comps){
-		if (comps.detector.detecting) {
+		if (comps.detector.firstDetecting) {
 			detectorTimer.reset();
 		}
 

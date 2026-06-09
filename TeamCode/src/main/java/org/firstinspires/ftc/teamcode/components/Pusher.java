@@ -63,7 +63,7 @@ public class Pusher {
                 break;
             case RELOADING:
                 pusher.setPosition(wait);
-                if(lastShot.seconds() > waitTime || Comps.detector.detecting) {
+                if(lastShot.seconds() > waitTime || Comps.detector.firstDetecting) {
                     state = PushState.WAITING;
                 }
                 break;

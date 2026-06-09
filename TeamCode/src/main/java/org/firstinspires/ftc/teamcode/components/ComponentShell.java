@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.components;
 
+import android.annotation.SuppressLint;
+
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.bylazar.telemetry.TelemetryManager;
-import com.pedropathing.control.KalmanFilter;
-import com.pedropathing.control.KalmanFilterParameters;
 
 @Configurable
 public class ComponentShell {
@@ -49,10 +49,11 @@ public class ComponentShell {
         this.floodgate = new Floodgate(hardwareMap);
     }
 
-	public void update() {
+	@SuppressLint("SuspiciousIndentation")
+    public void update() {
 		floodgate.update();
 		limePos = limeLight.update(telemetryM, Math.toDegrees(follower.getHeading()));
-        detector.update();
+        detector.update(this);
         blinky.update(this);
         shooter.update(this);
         pusher.update(this);
@@ -67,8 +68,8 @@ public class ComponentShell {
 		telemetryM.debug("alliance: ", alliance);
         telemetryM.debug("Pusher angle:", pusher.pusherAngle);
         telemetryM.debug("Pusher state:", pusher.state);
-        telemetryM.debug("detector dist", detector.distance);
-        telemetryM.debug("Detecting:", detector.detecting);
+        // telemetryM.debug("detector dist", detector.distance);
+        telemetryM.debug("Detecting:", detector.firstDetecting);
         telemetryM.debug("lime pos: ", limePos);
         telemetryM.debug("Number of shots left", shootNum);
         telemetryM.debug("follower pos: ", follower.getPose());
