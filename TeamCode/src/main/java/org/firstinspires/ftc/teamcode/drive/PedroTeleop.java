@@ -94,6 +94,7 @@ public class PedroTeleop extends OpMode {
         }
         if (!started) {
             Comps.detector.update(Comps);
+			telemetryM.update();
             return;
         }
 
