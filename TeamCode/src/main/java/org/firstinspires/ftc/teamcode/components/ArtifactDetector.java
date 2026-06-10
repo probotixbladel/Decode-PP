@@ -3,16 +3,16 @@ package org.firstinspires.ftc.teamcode.components;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @Configurable
 public class ArtifactDetector {
 	public OpticalDistanceSensor firstArtifactSensor1;  // Hardware Device Object
 	public OpticalDistanceSensor firstArtifactSensor2;  // Hardware Device Object
-    public RevColorSensorV3 secondArtifactSensor;
+    public ColorRangeSensor secondArtifactSensor;
     public ModernRoboticsI2cRangeSensor thirdArtifactSensor;
     public ModernRoboticsI2cRangeSensor fourthArtifactSensor;
 	public double firstDistance = 0;
@@ -28,7 +28,7 @@ public class ArtifactDetector {
         //Distance sensor left intake - control hub i2c 3 RangeInlong
         //Distance sensor intake up - control hub i2c 2 RangeInUp
         //ColSens v2 - control hub i2c 0 ColSens
-        this.secondArtifactSensor = hwm.get(RevColorSensorV3.class, "ColSens");
+		this.secondArtifactSensor = hwm.get(ColorRangeSensor.class, "ColSens");
         this.thirdArtifactSensor  = hwm.get(ModernRoboticsI2cRangeSensor.class, "RangeInUp");
         this.fourthArtifactSensor = hwm.get(ModernRoboticsI2cRangeSensor.class, "RangeInLong");
 		this.firstArtifactSensor1 = hwm.get(OpticalDistanceSensor.class, "DistSens");
