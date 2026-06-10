@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode.util;
 
-import com.pedropathing.control.PIDFCoefficients;
-import com.pedropathing.control.PIDFController;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.bylazar.configurables.annotations.Configurable;
 import com.ThermalEquilibrium.homeostasis.Systems.PositionVelocitySystem;
+import com.ThermalEquilibrium.homeostasis.Filters.Estimators.RawValue;
+import com.ThermalEquilibrium.homeostasis.Controllers.Feedforward.BasicFeedforward;
+import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.BasicPID;
+import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficients;
+import com.ThermalEquilibrium.homeostasis.Parameters.FeedforwardCoefficients;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.components.ComponentShell;
 
@@ -16,7 +20,10 @@ public class DriveByWire {
 	private final double[] rotationGears = { 0.3, 0.4, 0.6, 0.75 };
 
 	public int gear = 3; // the index of the gear in use
-
+	public Double lastAimAngle;
+	public double angularVelocity = 0;
+	public ElapsedTime angularVelocityTimer = new ElapsedTime();
+	public double lastAngularVelocity = 0;
 
 	// Curves exponents
 	// higher: more control when slow, less control at speed
@@ -29,15 +36,19 @@ public class DriveByWire {
 	private static final double rotationCurveExponent = 1.2;
 
 	private final ComponentShell comps;
-
-	static public double kp = 1;
-	static public double kd = 0.08;
-	static public double kf = 1;
+	public static double FF_KV = 0;
+	public static double FF_KA = 0;
+	public static double FF_KS = 0;
+	public static double VelKP = 0;
+	public static double VelKI = 0;
+	public static double VelKD = 0;
+	public static double PosKP = 0;
+	public static double PosKI = 0;
+	public static double PosKD = 0;
 
 	public static double offsetX = 1.5748;
 
-	public PIDFController GoalPID = new PIDFController(new PIDFCoefficients(0,0,0,0));
-
+	public PositionVelocitySystem aimSystem;
 	public DriveByWire(ComponentShell Comps) {
 		this.comps = Comps;
 	}
@@ -60,11 +71,32 @@ public class DriveByWire {
 
 	}
 
+	public double angleWrap(double radians) {
+		while (radians > Math.PI) {
+			radians -= 2 * Math.PI;
+		}
+		while (radians < -Math.PI) {
+			radians += 2 * Math.PI;
+		}
+
+		return radians;
+	}
+
+	public void resetAimSystem() {
+		aimSystem = new PositionVelocitySystem(
+				new RawValue(() -> this.lastAimAngle),
+				new RawValue(() -> this.angularVelocity),
+				new BasicFeedforward(new FeedforwardCoefficients(FF_KV, FF_KA, FF_KS)),
+				new BasicPID(new PIDCoefficients(PosKP, PosKI, PosKD)),
+				new BasicPID(new PIDCoefficients(VelKP, VelKI, VelKD))
+		);
+	}
+
 	public double[] adjustInputs(double x, double y, double yaw, Gamepad gamepad1) {
 		double[] driveInputs = scaledInput(x, y, yaw);
 
 		if (gamepad1.rightBumperWasPressed()) {
-			GoalPID = new PIDFController(new PIDFCoefficients(kp, 0, kd, kf));
+			resetAimSystem();
 		}
 
 
@@ -72,14 +104,39 @@ public class DriveByWire {
 			double dy = comps.shooter.ShootTo.getY() - (comps.follower.getPose().getY() - Math.cos(comps.follower.getHeading()) * offsetX);
 			double dx = comps.shooter.ShootTo.getX() - (comps.follower.getPose().getX() + Math.sin(comps.follower.getHeading()) * offsetX);
 			double alpha = Math.atan2(dy, dx);
-			double beta = alpha - Math.PI;
+			double beta = angleWrap(alpha - Math.PI);
+			if (lastAimAngle == null) {
+				lastAimAngle = beta;
+			}
 
-			GoalPID.setTargetPosition(beta);
-			GoalPID.updatePosition(comps.follower.getHeading());
-			driveInputs[2] = Math.min(Math.max(GoalPID.run(),-1),1);
+			if (angularVelocityTimer.seconds() >= 0) {
+				angularVelocity = angleWrap(lastAimAngle - beta) / angularVelocityTimer.seconds();
+
+				driveInputs[2] = Math.min(Math.max(
+					aimSystem.update(
+						comps.follower.getHeading(),
+						comps.follower.getAngularVelocity(),
+						(lastAngularVelocity - comps.follower.getAngularVelocity()) / angularVelocityTimer.seconds()
+					),
+					-1),
+					1
+				);
+			} else {
+				angularVelocity = 0;
+				driveInputs[2] = Math.min(Math.max(
+					aimSystem.update(
+						comps.follower.getHeading(), 0, 0
+					),
+					-1),
+					1
+				);
+				aimSystem.update(comps.follower.getHeading(), 0, 0);
+			}
+
+			angularVelocityTimer.reset();
 		}
 
-		comps.telemetryM.debug("heading error", GoalPID.getError());
+		comps.telemetryM.debug("heading error, angular velocity error", angleWrap(lastAimAngle - comps.follower.getHeading()), angularVelocity - comps.follower.getAngularVelocity());
 
 		return driveInputs;
 	}
