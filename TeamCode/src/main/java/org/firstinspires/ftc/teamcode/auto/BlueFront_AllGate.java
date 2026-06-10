@@ -27,19 +27,28 @@ public class BlueFront_AllGate extends OpMode {
     public static double gateTime = 2;
     private int pathState;
     private final Pose startPose = new Pose(17.4, 120.3, Math.toRadians(-36)); // Starting pose for our robot
-    private final Pose scorePosePreload = new Pose(42, 102, Math.toRadians(-46)); // Scoring Pose of our robot for the preload. It is facing the goal at a -45 degree angle.
-    private final Pose pickup1Setup = new Pose(47, 84, Math.toRadians(180)); // Setup to pickup the highest set of balls
-    private final Pose pickup1Pose = new Pose(20, 84, Math.toRadians(180));// Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose gateSetup = new Pose(25, 75, Math.toRadians(180)); // Stand infront of the gate
-    private final Pose gateOpen = new Pose(14, 75, Math.toRadians(180)); // Open the gate
-    private final Pose scorePose1 = new Pose(54, 90, Math.toRadians(-45)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a -45 degree angle.
-    private final Pose pickup2Setup = new Pose(48, 60, Math.toRadians(180)); // Setup to pickup the middle set of balls
-    private final Pose pickup2Pose = new Pose(17, 60, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark.
-    private final Pose scorePose2 = new Pose(48, 90, Math.toRadians(-48)); // Scoring Pose of our robot for the second pickup. It is facing the goal at a -36 degree angle.
-    private final Pose pickup3Setup = new Pose(42, 38, Math.toRadians(180)); // Setup to pickup the lowest set of balls
-    private final Pose pickup3Pose = new Pose(17, 38, Math.toRadians(180)); // Lowest (Third Set) of Artifacts from the Spike Mark.
-    private final Pose scorePose3 = new Pose(55, 89, Math.toRadians(-46)); // Scoring Pose of our robot for the third pickup. It is facing the goal at a -36 degree angle.
-    private final Pose leaveTrianglePose = new Pose(50,60, Math.toRadians(-46)); // Pose for leaving to triangle
+    private final Pose scorePreloadSetupPose = new Pose(37.1, 107.0, Math.toRadians(-44)); // Pose for setting up scoring preload (with SOTM)
+
+    private final Pose scorePreloadFinalPose = new Pose(57.8, 86, Math.toRadians(-46)); // Final pose for scoring preload (with SOTM)
+    private final Pose pickup2Pose = new Pose(17.8, 59.9, Math.toRadians(180)); // Pose for picking up second row of artifacts
+    private final Pose pickup2ControlPoint = new Pose(81.7, 60); // Control point for pickup 2 for an arc path
+    private final Pose scorePose = new Pose(47.4, 95.5, Math.toRadians(-46)); // Score pose
+    private final Pose scoreControlPoint = new Pose(59.6, 73); // Control point for score pose for an arc path
+    private final Pose gatePickupPose = new Pose(11.4, 60.2, Math.toRadians(148)); // Pose for pickup up artifacts from the gate
+    private final Pose gatePickupControlPoint = new Pose(62.4, 53.7); // Control point for gate pickup
+    private final Pose scorePosePreload = new Pose(37.1, 107.0, Math.toRadians(-44));
+    private final Pose pickup1Setup = new Pose(47, 84, Math.toRadians(180));
+    private final Pose pickup1Pose = new Pose(20, 84, Math.toRadians(180));
+    private final Pose gateSetup = new Pose(25, 75, Math.toRadians(180));
+    private final Pose gateOpen = new Pose(14, 75, Math.toRadians(180));
+    private final Pose scorePose1 = new Pose(54, 90, Math.toRadians(-45));
+    private final Pose pickup2Setup = new Pose(48, 60, Math.toRadians(180));
+    //private final Pose pickup2Pose = new Pose(17, 60, Math.toRadians(180));
+    private final Pose scorePose2 = new Pose(48, 90, Math.toRadians(-48));
+    private final Pose pickup3Setup = new Pose(42, 38, Math.toRadians(180));
+    private final Pose pickup3Pose = new Pose(17, 38, Math.toRadians(180));
+    private final Pose scorePose3 = new Pose(55, 89, Math.toRadians(-46));
+    private final Pose leaveTrianglePose = new Pose(50,60, Math.toRadians(-46));
     public Path scorePreload;
     public ComponentShell comps;
     public PathChain grabPickup1, openGate, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3, grabPickupSetup1, grabPickupSetup2, grabPickupSetup3, leave;
