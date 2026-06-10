@@ -6,7 +6,6 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @Configurable
@@ -26,10 +25,10 @@ public class ArtifactDetector {
 
 
     public ArtifactDetector(HardwareMap hwm) {
-        //Distance sensor left intake - control hub i2c 3 RangeInlong
+        //Distance sensor left intake - control hub i2c 3 RangeInLong
         //Distance sensor intake up - control hub i2c 2 RangeInUp
         //ColSens v2 - control hub i2c 0 ColSens
-		ColorRangeSensor colorSensor = hwm.get(ColorRangeSensor.class, "ColSens");
+		this.secondArtifactSensor = hwm.get(ColorRangeSensor.class, "ColSens");
         this.thirdArtifactSensor  = hwm.get(ModernRoboticsI2cRangeSensor.class, "RangeInUp");
         this.fourthArtifactSensor = hwm.get(ModernRoboticsI2cRangeSensor.class, "RangeInLong");
 		this.firstArtifactSensor1 = hwm.get(OpticalDistanceSensor.class, "DistSens");
