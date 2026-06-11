@@ -59,7 +59,6 @@ public class PedroTeleop extends OpMode {
             return;
         }
 
-
 		if (singlePlayer) {
 			if (gamepad1.left_stick_button) {
 				driveByWire.gear = 1;
@@ -78,16 +77,16 @@ public class PedroTeleop extends OpMode {
 			robotCentric = !robotCentric;
 		}
 
-        double[] driveInputs = driveByWire.adjustInputs(
-            -gamepad1.left_stick_x,
-            -gamepad1.left_stick_y,
-            -gamepad1.right_stick_x,
-			gamepad1
-        );
+		double[] driveInputs = driveByWire.adjustInputs(
+				-gamepad1.left_stick_x,
+				-gamepad1.left_stick_y,
+				-gamepad1.right_stick_x,
+				gamepad1
+		);
 
+		telemetryM.debug("drive inputs", driveInputs[0], driveInputs[1], driveInputs[2]);
 
-
-        if (robotCentric) {
+		if (robotCentric) {
             follower.setTeleOpDrive(
                 -driveInputs[1],
                 -driveInputs[0],
