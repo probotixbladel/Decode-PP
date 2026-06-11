@@ -33,7 +33,7 @@ public class DriveByWire {
 
 	private final ComponentShell comps;
 	public static double FF_KV = 0;
-	public static double FF_KA = 0;
+	public static double FF_KA = 0.05;
 	public static double FF_KS = 0;
 	public static double VelKP = 0;
 	public static double VelKI = 0;
@@ -88,7 +88,7 @@ public class DriveByWire {
 		aimVelPID.updateError(angularVelocity - comps.follower.getAngularVelocity());
 		aimPosPID.updateError(headingError);
 		double feedForward = Math.copySign(FF_KS, headingError) + angularVelocity * FF_KV + angularAcceleration * FF_KA;
-		return -(aimPosPID.run() + aimVelPID.run() + feedForward);
+		return aimPosPID.run() + aimVelPID.run() + feedForward;
 	}
 
 	public double[] adjustInputs(double x, double y, double yaw, Gamepad gamepad1) {
@@ -113,6 +113,8 @@ public class DriveByWire {
 			}
 			angularVelocityTimer.reset();
 		}
+		lastAngularVelocity = comps.follower.getAngularVelocity();
+		lastAimAngle = angleWrap(comps.follower.getHeading());
 
 		comps.telemetryM.debug(
                 "heading error, angular velocity error",
