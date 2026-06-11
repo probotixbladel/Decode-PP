@@ -28,13 +28,7 @@ public class PedroTeleop extends OpMode {
     private TelemetryManager telemetryM;
     private DriveByWire driveByWire;
     private ComponentShell Comps;
-	public static double offsetX = 1.5748;
-	//public static double blueAngleOffset = -0.03;
-	//public static double redAngleOffset = -0.015;
     private volatile boolean started = false;
-    static public double kp = 1;
-    static public double kd = 0.08;
-    static public double kf = 1;
 
 
     @Override

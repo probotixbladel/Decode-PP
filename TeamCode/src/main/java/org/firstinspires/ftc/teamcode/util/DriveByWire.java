@@ -20,7 +20,7 @@ public class DriveByWire {
 	private final double[] rotationGears = { 0.3, 0.4, 0.6, 0.75 };
 
 	public int gear = 3; // the index of the gear in use
-	public Double lastAimAngle;
+	public double lastAimAngle = 0;
 	public double angularVelocity = 0;
 	public ElapsedTime angularVelocityTimer = new ElapsedTime();
 	public double lastAngularVelocity = 0;
@@ -105,38 +105,37 @@ public class DriveByWire {
 			double dx = comps.shooter.ShootTo.getX() - (comps.follower.getPose().getX() + Math.sin(comps.follower.getHeading()) * offsetX);
 			double alpha = Math.atan2(dy, dx);
 			double beta = angleWrap(alpha - Math.PI);
-			if (lastAimAngle == null) {
-				lastAimAngle = beta;
-			}
 
 			if (angularVelocityTimer.seconds() >= 0) {
 				angularVelocity = angleWrap(lastAimAngle - beta) / angularVelocityTimer.seconds();
 
-				driveInputs[2] = Math.min(Math.max(
+				driveInputs[2] = Math.min(1,Math.max(-1,
 					aimSystem.update(
 						comps.follower.getHeading(),
 						comps.follower.getAngularVelocity(),
 						(lastAngularVelocity - comps.follower.getAngularVelocity()) / angularVelocityTimer.seconds()
-					),
-					-1),
-					1
-				);
+					    )
+				    )
+                );
 			} else {
 				angularVelocity = 0;
-				driveInputs[2] = Math.min(Math.max(
+
+                driveInputs[2] = Math.min(1,Math.max(-1,
 					aimSystem.update(
 						comps.follower.getHeading(), 0, 0
-					),
-					-1),
-					1
+					    )
+					)
 				);
-				aimSystem.update(comps.follower.getHeading(), 0, 0);
 			}
 
 			angularVelocityTimer.reset();
 		}
 
-		comps.telemetryM.debug("heading error, angular velocity error", angleWrap(lastAimAngle - comps.follower.getHeading()), angularVelocity - comps.follower.getAngularVelocity());
+		comps.telemetryM.debug(
+                "heading error, angular velocity error",
+                angleWrap(lastAimAngle - comps.follower.getHeading()),
+                angularVelocity - comps.follower.getAngularVelocity()
+        );
 
 		return driveInputs;
 	}
