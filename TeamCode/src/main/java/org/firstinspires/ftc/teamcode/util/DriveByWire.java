@@ -2,14 +2,9 @@ package org.firstinspires.ftc.teamcode.util;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.bylazar.configurables.annotations.Configurable;
-import com.ThermalEquilibrium.homeostasis.Systems.PositionVelocitySystem;
-import com.ThermalEquilibrium.homeostasis.Filters.Estimators.RawValue;
-import com.ThermalEquilibrium.homeostasis.Controllers.Feedforward.BasicFeedforward;
-import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.BasicPID;
-import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficients;
-import com.ThermalEquilibrium.homeostasis.Parameters.FeedforwardCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.AngleController;
+import com.pedropathing.control.PIDFCoefficients;
+import com.pedropathing.control.PIDFController;
 
 import org.firstinspires.ftc.teamcode.components.ComponentShell;
 
@@ -46,10 +41,10 @@ public class DriveByWire {
 	public static double PosKP = 0;
 	public static double PosKI = 0;
 	public static double PosKD = 0;
-
 	public static double offsetX = 1.5748;
+	public PIDFController aimPosPID;
+	public PIDFController aimVelPID;
 
-	public PositionVelocitySystem aimSystem;
 	public DriveByWire(ComponentShell Comps) {
 		this.comps = Comps;
 	}
@@ -84,13 +79,16 @@ public class DriveByWire {
 	}
 
 	public void resetAimSystem() {
-		aimSystem = new PositionVelocitySystem(
-				new RawValue(() -> this.lastAimAngle),
-				new RawValue(() -> this.angularVelocity),
-				new BasicFeedforward(new FeedforwardCoefficients(FF_KV, FF_KA, FF_KS)),
-                new AngleController(new BasicPID(new PIDCoefficients(PosKP, PosKI, PosKD))),
-                new AngleController(new BasicPID(new PIDCoefficients(VelKP, VelKI, VelKD)))
-		);
+		aimPosPID = new PIDFController(new PIDFCoefficients(PosKP, PosKI, PosKD, 0));
+		aimVelPID = new PIDFController(new PIDFCoefficients(VelKP, VelKI, VelKD, 0));
+	}
+
+	public double getSteeringValue(double angle, double angularVelocity, double angularAcceleration) {
+		double headingError = angleWrap(angle - comps.follower.getHeading());
+		aimVelPID.updateError(angularVelocity - comps.follower.getAngularVelocity());
+		aimPosPID.updateError(headingError);
+		double feedForward = Math.copySign(FF_KS, headingError) + angularVelocity * FF_KV + angularAcceleration * FF_KA;
+		return -(aimPosPID.run() + aimVelPID.run() + feedForward);
 	}
 
 	public double[] adjustInputs(double x, double y, double yaw, Gamepad gamepad1) {
@@ -100,7 +98,6 @@ public class DriveByWire {
 			resetAimSystem();
 		}
 
-
 		if(gamepad1.right_bumper) {
 			double dy = comps.shooter.ShootTo.getY() - (comps.follower.getPose().getY() - Math.cos(comps.follower.getHeading()) * offsetX);
 			double dx = comps.shooter.ShootTo.getX() - (comps.follower.getPose().getX() + Math.sin(comps.follower.getHeading()) * offsetX);
@@ -109,26 +106,11 @@ public class DriveByWire {
 
 			if (angularVelocityTimer.seconds() >= 0) {
 				angularVelocity = angleWrap(lastAimAngle - beta) / angularVelocityTimer.seconds();
-
-				driveInputs[2] = Math.min(1,Math.max(-1,
-					aimSystem.update(
-						comps.follower.getHeading(),
-						comps.follower.getAngularVelocity(),
-						(lastAngularVelocity - comps.follower.getAngularVelocity()) / angularVelocityTimer.seconds()
-					    )
-				    )
-                );
+				driveInputs[2] = getSteeringValue(beta, angularVelocity, (lastAngularVelocity - comps.follower.getAngularVelocity()) / angularVelocityTimer.seconds());
 			} else {
 				angularVelocity = 0;
-
-                driveInputs[2] = Math.min(1,Math.max(-1,
-					aimSystem.update(
-						comps.follower.getHeading(), 0, 0
-					    )
-					)
-				);
+				driveInputs[2] = getSteeringValue(beta, angularVelocity, 0);
 			}
-
 			angularVelocityTimer.reset();
 		}
 
