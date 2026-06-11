@@ -9,6 +9,7 @@ import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.BasicPID;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficients;
 import com.ThermalEquilibrium.homeostasis.Parameters.FeedforwardCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.AngleController;
 
 import org.firstinspires.ftc.teamcode.components.ComponentShell;
 
@@ -87,8 +88,8 @@ public class DriveByWire {
 				new RawValue(() -> this.lastAimAngle),
 				new RawValue(() -> this.angularVelocity),
 				new BasicFeedforward(new FeedforwardCoefficients(FF_KV, FF_KA, FF_KS)),
-				new BasicPID(new PIDCoefficients(PosKP, PosKI, PosKD)),
-				new BasicPID(new PIDCoefficients(VelKP, VelKI, VelKD))
+                new AngleController(new BasicPID(new PIDCoefficients(PosKP, PosKI, PosKD))),
+                new AngleController(new BasicPID(new PIDCoefficients(VelKP, VelKI, VelKD)))
 		);
 	}
 
