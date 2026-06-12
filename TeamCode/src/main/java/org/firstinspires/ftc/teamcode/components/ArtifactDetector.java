@@ -33,8 +33,8 @@ public class ArtifactDetector {
     public static double thirdDetectingSince = 0;
     public static double fourthDetectingSince = 0;
     public static double secondDistance = 330;
-    public static double thirdDistance = 50;
-    public static double fourthDistance = 80;
+    public static double thirdDistance = 83;
+    public static double fourthDistance = 90;
     public static double thirdDetectingTime = 300;
     public static double fourthDetectingTime = 300;
     public boolean firstDetecting = false;
