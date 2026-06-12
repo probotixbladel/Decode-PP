@@ -21,11 +21,9 @@ public class ArtifactDetector {
     public ModernRoboticsI2cRangeSensor fourthArtifactSensor;
 	public double firstDistance = 0;
 	public double firstDistance2 = 0;
-    private double[] distanceBuffer = new double[instances];
-    private double runningSum1 = 0;
-    private int bufferIndex1 = 0;
-    private double runningSum2 = 0;
-    private int bufferIndex2 = 0;
+    private final double[] distanceBuffer = new double[instances];
+    private double runningSum = 0;
+    private int bufferIndex = 0;
     static public int instances = 5;
     static public double firstMinThreshold = 0.025;
     static public double firstMaxThreshold = 1.5;
@@ -54,15 +52,14 @@ public class ArtifactDetector {
         timer = new ElapsedTime();
     }
     private double getSmoothedDistance1() {
-        double newReading1 = secondArtifactSensor.getDistance(DistanceUnit.MM);
-        double newReading2 = fourthArtifactSensor.getDistance(DistanceUnit.MM);
-        if (Double.isNaN(newReading1) || newReading1 > 400) newReading1 = 400; // clamp invalid readings
+        double newReading = secondArtifactSensor.getDistance(DistanceUnit.MM);
+        if (Double.isNaN(newReading) || newReading > 400) newReading = 400; // clamp invalid readings
 
-        runningSum1 -= distanceBuffer[bufferIndex1];
-        runningSum1 += newReading1;
-        distanceBuffer[bufferIndex1] = newReading1;
-        bufferIndex1 = (bufferIndex1 + 1) % distanceBuffer.length;
-        return runningSum1 / distanceBuffer.length;
+        runningSum -= distanceBuffer[bufferIndex];
+        runningSum += newReading;
+        distanceBuffer[bufferIndex] = newReading;
+        bufferIndex = (bufferIndex + 1) % distanceBuffer.length;
+        return runningSum / distanceBuffer.length;
 
 
     }
@@ -84,7 +81,10 @@ public class ArtifactDetector {
             thirdDetectingSince = timer.milliseconds();
         }
 
-        if (fourthArtifactSensor.getDistance(DistanceUnit.MM) < fourthDistance) {
+		if (fourthArtifactSensor.getDistance(DistanceUnit.MM) < 1 || fourthArtifactSensor.getDistance(DistanceUnit.MM) == 255) {
+			fourthDetecting = false;
+			fourthDetectingSince = timer.milliseconds();
+		} if (fourthArtifactSensor.getDistance(DistanceUnit.MM) < fourthDistance ) {
             if (timer.milliseconds() - fourthDetectingSince > fourthDetectingTime) {
                 fourthDetecting = true;
             } else fourthDetecting = thirdDetecting;
