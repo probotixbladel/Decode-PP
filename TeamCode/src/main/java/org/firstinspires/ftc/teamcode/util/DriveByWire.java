@@ -46,6 +46,7 @@ public class DriveByWire {
 	public static double offsetX = 1.5748;
     public static double brakeVelScaler = 0;
     public static double brakeDistScaler = 0;
+	public static double stickOrientation = 0;
 	public PIDFController aimPosPID;
 	public PIDFController aimVelPID;
 
@@ -78,7 +79,6 @@ public class DriveByWire {
 		while (radians < -Math.PI) {
 			radians += 2 * Math.PI;
 		}
-
 		return radians;
 	}
 
@@ -115,12 +115,20 @@ public class DriveByWire {
 		if (gamepad1.rightBumperWasPressed()) {
 			resetAimSystem();
 		}
+		double beta = 0;
 
-		if(gamepad1.right_bumper & gamepad1.right_trigger > 0.2) {
+		if (gamepad1.right_bumper || gamepad1.right_trigger > 0.2 || gamepad1.left_bumper) {
 			double dy = comps.shooter.ShootTo.getY() - (comps.follower.getPose().getY() - Math.cos(comps.follower.getHeading()) * offsetX);
 			double dx = comps.shooter.ShootTo.getX() - (comps.follower.getPose().getX() + Math.sin(comps.follower.getHeading()) * offsetX);
 			double alpha = Math.atan2(dy, dx);
-			double beta = angleWrap(alpha - Math.PI);
+			beta = angleWrap(alpha - Math.PI);
+
+			if (gamepad1.left_bumper) {
+				if (new Vector(new Pose(gamepad1.right_stick_x, gamepad1.right_stick_y)).getMagnitude() > 0.1) {
+					stickOrientation = new Vector(new Pose(gamepad1.right_stick_x, gamepad1.right_stick_y)).getTheta();
+				}
+				beta = stickOrientation;
+			}
 
 			if (angularVelocityTimer.seconds() >= 0) {
 				angularVelocity = angleWrap(lastAimAngle - beta) / angularVelocityTimer.seconds();
@@ -129,10 +137,10 @@ public class DriveByWire {
 				angularVelocity = 0;
 				driveInputs[2] = getSteeringValue(beta, angularVelocity, 0);
 			}
+			lastAimAngle = angleWrap(beta);
 			angularVelocityTimer.reset();
 		}
 		lastAngularVelocity = comps.follower.getAngularVelocity();
-		lastAimAngle = angleWrap(comps.follower.getHeading());
 
         if (gamepad1.right_trigger > 0.2) {
             if (comps.follower.getPose().getX() < 72) {
@@ -146,6 +154,18 @@ public class DriveByWire {
             }
         }
 
+		if (gamepad1.left_bumper) {
+			if (new Vector(new Pose(gamepad1.right_stick_x, gamepad1.right_stick_y)).getMagnitude() > 0.1) {
+				stickOrientation = new Vector(new Pose(gamepad1.right_stick_x, gamepad1.right_stick_y)).getMagnitude();
+				beta = stickOrientation;
+			}
+		}
+
+
+		comps.telemetryM.addData("heading", comps.follower.getHeading());
+		comps.telemetryM.addData("target angle", beta);
+		comps.telemetryM.addData("angular velocity", comps.follower.getAngularVelocity());
+		comps.telemetryM.addData("target angular velocity", angularVelocity);
 
 		comps.telemetryM.debug(
                 "heading error, angular velocity error",
