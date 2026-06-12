@@ -21,6 +21,9 @@ public class ArtifactDetector {
     public ModernRoboticsI2cRangeSensor fourthArtifactSensor;
 	public double firstDistance = 0;
 	public double firstDistance2 = 0;
+    private double[] distanceBuffer = new double[5];
+    private double runningSum = 0;
+    private int bufferIndex = 0;
     static public double firstMinThreshold = 0.025;
     static public double firstMaxThreshold = 1.5;
     static public double firstMinThreshold2 = 0.04;
@@ -47,12 +50,21 @@ public class ArtifactDetector {
 		this.firstArtifactSensor2 = hwm.get(OpticalDistanceSensor.class, "DistSens2");
         timer = new ElapsedTime();
     }
+    private double getSmoothedDistance() {
+        double newReading = secondArtifactSensor.getDistance(DistanceUnit.MM);
+        runningSum -= distanceBuffer[bufferIndex];
+        runningSum += newReading;
+        distanceBuffer[bufferIndex] = newReading;
+        bufferIndex = (bufferIndex + 1) % distanceBuffer.length;
+        return runningSum / distanceBuffer.length;
+    }
 
 	public void update(ComponentShell comps) {
+        double secondAverage = getSmoothedDistance();
 		firstDistance = firstArtifactSensor1.getLightDetected();
 		firstDistance2 = firstArtifactSensor2.getLightDetected();
         firstDetecting = (firstDistance > firstMinThreshold && firstDistance < firstMaxThreshold) || (firstDistance2 > firstMinThreshold2 && firstDistance2 < firstMaxThreshold2);
-        secondDetecting = (firstDetecting & secondArtifactSensor.getDistance(DistanceUnit.MM) < secondDistance);
+        secondDetecting = (firstDetecting & secondAverage < secondDistance);
 
         if (thirdArtifactSensor.getDistance(DistanceUnit.MM) < thirdDistance) {
             if (timer.milliseconds() - thirdDetectingSince > thirdDetectingTime) {
