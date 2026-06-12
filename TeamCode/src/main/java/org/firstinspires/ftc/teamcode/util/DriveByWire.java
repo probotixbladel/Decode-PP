@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -42,6 +44,8 @@ public class DriveByWire {
 	public static double PosKI = 0;
 	public static double PosKD = 0;
 	public static double offsetX = 1.5748;
+    public static double brakeVelScaler = 0;
+    public static double brakeDistScaler = 0;
 	public PIDFController aimPosPID;
 	public PIDFController aimVelPID;
 
@@ -91,6 +95,20 @@ public class DriveByWire {
 		return aimPosPID.run() + aimVelPID.run() + feedForward;
 	}
 
+    public double[] bindToTriangle(double x, double y, double yaw) {
+        double[] translationInputs = {x, y, yaw};
+        double leftBrakeDist  = Math.max(0, comps.follower.getVelocity().projectOnto(new Vector(new Pose(-1, -1))).getMagnitude());
+        double rightBrakeDist = Math.max(0, comps.follower.getVelocity().projectOnto(new Vector(new Pose(1, -1))).getMagnitude());
+        double leftDist  = Math.abs(-72 * comps.follower.getPose().getX() - 72 * comps.follower.getPose().getY() + 10.368) / Math.sqrt(-72 * -72 + -72 * -72);
+        double rightDist = Math.abs(-72 * comps.follower.getPose().getX() + 72 * comps.follower.getPose().getY()) / Math.sqrt(-72 * -72 + -72 * -72);
+        double leftMagnitude  = (leftDist  * brakeDistScaler) * (brakeVelScaler / leftBrakeDist );
+        double rightMagnitude = (rightDist * brakeDistScaler) * (brakeVelScaler / rightBrakeDist);
+        Vector stickVector = new Vector(new Pose(x, y)).plus(new Vector(new Pose(1,1)).times(leftMagnitude)).plus(new Vector(new Pose(-1,1)).times(rightMagnitude));
+        translationInputs[0] = stickVector.getXComponent();
+        translationInputs[1] = stickVector.getYComponent();
+        return translationInputs;
+    }
+
 	public double[] adjustInputs(double x, double y, double yaw, Gamepad gamepad1) {
 		double[] driveInputs = scaledInput(x, y, yaw);
 
@@ -98,7 +116,7 @@ public class DriveByWire {
 			resetAimSystem();
 		}
 
-		if(gamepad1.right_bumper) {
+		if(gamepad1.right_bumper & gamepad1.right_trigger > 0.2) {
 			double dy = comps.shooter.ShootTo.getY() - (comps.follower.getPose().getY() - Math.cos(comps.follower.getHeading()) * offsetX);
 			double dx = comps.shooter.ShootTo.getX() - (comps.follower.getPose().getX() + Math.sin(comps.follower.getHeading()) * offsetX);
 			double alpha = Math.atan2(dy, dx);
@@ -115,6 +133,19 @@ public class DriveByWire {
 		}
 		lastAngularVelocity = comps.follower.getAngularVelocity();
 		lastAimAngle = angleWrap(comps.follower.getHeading());
+
+        if (gamepad1.right_trigger > 0.2) {
+            if (comps.follower.getPose().getX() < 72) {
+                if (72 - comps.follower.getPose().getX() < comps.follower.getPose().getY() - 72) {
+                    driveInputs = bindToTriangle(driveInputs[0], driveInputs[1], driveInputs[2]);
+                }
+            } else {
+                if (comps.follower.getPose().getX() < comps.follower.getPose().getY()) {
+                    driveInputs = bindToTriangle(driveInputs[0], driveInputs[1], driveInputs[2]);
+                }
+            }
+        }
+
 
 		comps.telemetryM.debug(
                 "heading error, angular velocity error",
