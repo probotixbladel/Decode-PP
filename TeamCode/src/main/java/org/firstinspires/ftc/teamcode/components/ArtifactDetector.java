@@ -8,6 +8,8 @@ import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @Configurable
@@ -23,24 +25,54 @@ public class ArtifactDetector {
     static public double firstMaxThreshold = 1.5;
     static public double firstMinThreshold2 = 0.04;
     static public double firstMaxThreshold2 = 1.5;
+    public ElapsedTime timer;
+    public static double thirdDetectingSince = 0;
+    public static double fourthDetectingSince = 0;
+    public static double secondDistance = 500;
+    public static double thirdDistance = 50;
+    public static double fourthDistance = 80;
+    public static double thirdDetectingTime = 300;
+    public static double fourthDetectingTime = 300;
     public boolean firstDetecting = false;
+    public boolean secondDetecting = false;
+    public boolean thirdDetecting = false;
+    public boolean fourthDetecting = false;
 
 
     public ArtifactDetector(HardwareMap hwm) {
-        //Distance sensor left intake - control hub i2c 3 RangeInLong
-        //Distance sensor intake up - control hub i2c 2 RangeInUp
-        //ColSens v2 - control hub i2c 0 ColSens
 		this.secondArtifactSensor = hwm.get(ColorRangeSensor.class, "ColThrough");
         this.thirdArtifactSensor  = hwm.get(RevColorSensorV3.class, "ColIn");
         this.fourthArtifactSensor = hwm.get(ModernRoboticsI2cRangeSensor.class, "RangeIn");
 		this.firstArtifactSensor1 = hwm.get(OpticalDistanceSensor.class, "DistSens");
 		this.firstArtifactSensor2 = hwm.get(OpticalDistanceSensor.class, "DistSens2");
+        timer = new ElapsedTime();
     }
 
 	public void update(ComponentShell comps) {
 		firstDistance = firstArtifactSensor1.getLightDetected();
 		firstDistance2 = firstArtifactSensor2.getLightDetected();
         firstDetecting = (firstDistance > firstMinThreshold && firstDistance < firstMaxThreshold) || (firstDistance2 > firstMinThreshold2 && firstDistance2 < firstMaxThreshold2);
+        secondDetecting = (firstDetecting & secondArtifactSensor.getDistance(DistanceUnit.MM) < secondDistance);
+
+        if (thirdArtifactSensor.getDistance(DistanceUnit.MM) < thirdDistance) {
+            if (timer.milliseconds() - thirdDetectingSince > thirdDetectingTime) {
+                thirdDetecting = true;
+            } else thirdDetecting = secondDetecting;
+        } else {
+            thirdDetecting = false;
+            thirdDetectingSince = timer.milliseconds();
+        }
+
+        if (fourthArtifactSensor.getDistance(DistanceUnit.MM) < fourthDistance) {
+            if (timer.milliseconds() - fourthDetectingSince > fourthDetectingTime) {
+                fourthDetecting = true;
+            } else fourthDetecting = thirdDetecting;
+        } else {
+            fourthDetecting = false;
+            fourthDetectingSince = timer.milliseconds();
+        }
+
+
 		comps.telemetryM.debug(
 				"secondArtifact: R, G, B, A, Distance",
 				secondArtifactSensor.red(),
@@ -63,6 +95,7 @@ public class ArtifactDetector {
 				fourthArtifactSensor.rawUltrasonic(),
 				fourthArtifactSensor.rawOptical()
 		);
+        comps.telemetryM.debug("detecting, first, second, third, fourth", firstDetecting, secondDetecting, thirdDetecting, fourthDetecting);
 
     }
 

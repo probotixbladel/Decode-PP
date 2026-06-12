@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.components;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -20,6 +21,8 @@ public class Pusher {
     public double pusherAngle = 0;
     public static double restAngle = 280; // make lower
     public static double arriveAngle = 285; // make higher
+    public static double closeAngleTolerance = 30;
+    public static double farAngleTolerance = 6;
     AnalogInput pusherEnc;
     public enum PushState {
         WAITING,
@@ -34,6 +37,23 @@ public class Pusher {
     }
 
     public synchronized boolean AttemptPush(ComponentShell Comps) {
+        Pose goal = new Pose();
+        switch (Comps.alliance) {
+            case RED:
+                goal = new Pose(133,135);
+                break;
+            case BLUE:
+                goal = new Pose(11,135);
+                break;
+        }
+
+        double distance = (Math.sqrt(Math.pow(
+                Comps.follower.getPose().getY() - goal.getY(), 2) + Math.pow(Comps.follower.getPose().getX() - goal.getX(), 2)
+        )) * 2.54;
+        double a = (farAngleTolerance /2 - closeAngleTolerance /2) / (35 - 150);
+        double b = closeAngleTolerance /2 - a * 150;
+        double angleTolerance = a * pusherAngle + b;
+
 		if (state == PushState.WAITING && Comps.shooter.state == Shooter.ShooterState.READY) {
             pusher.setPosition(push);
             lastShot.reset();

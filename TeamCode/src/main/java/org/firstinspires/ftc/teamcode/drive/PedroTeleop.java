@@ -10,6 +10,8 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import android.annotation.SuppressLint;
+
 import org.firstinspires.ftc.teamcode.components.ComponentShell;
 import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -70,6 +72,7 @@ public class PedroTeleop extends OpMode {
         }
     }
 
+    @SuppressLint("SuspiciousIndentation")
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
@@ -116,8 +119,8 @@ public class PedroTeleop extends OpMode {
 		}
 
 		if (gamepad1.dpadDownWasPressed()) {
-			robotCentric = !robotCentric;
-		}
+            robotCentric = !robotCentric;
+        }
 
         double[] driveInputs = scaler.getScaledInput(
             -gamepad1.left_stick_x,
@@ -188,7 +191,6 @@ public class PedroTeleop extends OpMode {
 		telemetryM.update();
 		telemetryM.debug("heading error", GoalPID.getError());
     }
-
 
     @Override
     public void stop() {

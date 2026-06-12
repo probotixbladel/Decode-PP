@@ -30,6 +30,19 @@ public class Blinky {
 			detectorTimer.reset();
 		}
 
+        if (comps.detector.fourthDetecting) {
+            Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+        } else if (comps.detector.thirdDetecting) {
+            Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+        } else if (comps.detector.secondDetecting) {
+            Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
+        } else if (comps.detector.firstDetecting) {
+            Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.ORANGE);
+        } else {
+            Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+        }
+
+        /*
 		switch (state) {
 			case DETECTING:
 				if (detectorTimer.seconds() > detectorTimeThreshold) {
@@ -63,5 +76,7 @@ public class Blinky {
 					state = BlinkState.DETECTING;
 				}
 		}
+
+         */
     }
 }
