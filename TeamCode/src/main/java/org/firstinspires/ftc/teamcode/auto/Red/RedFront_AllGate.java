@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.auto.Red;
 
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
@@ -6,51 +6,37 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.bylazar.configurables.annotations.Configurable;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.components.ComponentShell;
-import org.firstinspires.ftc.teamcode.components.Pusher;
 import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Configurable
-@Autonomous(name = "BlueFront_AllGate")
-public class BlueFront_AllGate extends OpMode {
+@Autonomous(name = "RedFront_AllGate")
+public class RedFront_AllGate extends OpMode {
     private Follower follower;
     public ElapsedTime Timer = new ElapsedTime();
     private Timer pathTimer, actionTimer, opmodeTimer;
     public static double gateTime = 2;
     private int pathState;
-    private final Pose startPose = new Pose(17.4, 120.4, Math.toRadians(-36));
-    private final Pose scorePoseStart = new Pose(37.1, 107.0, Math.toRadians(-44));
-    private final Pose scorePoseFinal = new Pose(57.8, 86.0, Math.toRadians(-46));
-    private final Pose pickup2Pose = new Pose(17.8, 59.9, Math.toRadians(180));
-    private final Pose pickup2Controlpoint = new Pose(81.7, 56.1);
-    private final Pose scorePose = new Pose(47.4, 95.5, Math.toRadians(-46));
-    private final Pose scoreControlpoint = new Pose(59.6, 73.0);
-    private final Pose pickupGatePose = new Pose(15.4, 60.2, Math.toRadians(148));
-    private final Pose pickupGateControlpoint = new Pose(62.4, 53.7);
-    private final Pose pickup1Pose = new Pose(17.1, 83.6, Math.toRadians(180));
-    private final Pose pickup1Controlpoint = new Pose(69.5, 86.7);
-    private final Pose leavePose = new Pose(58.3, 53.0, Math.toRadians(-50));
-    private final Pose leaveControlpose = new Pose(77.1, 79.1);
-    private final Pose scorePosePreload = new Pose(42, 102, Math.toRadians(-46)); // shitfuck
-    private final Pose gateSetup = new Pose(25, 75, Math.toRadians(180)); // Stand infront of the gate
-    private final Pose gateOpen = new Pose(14, 75, Math.toRadians(180)); // Open the gate
-    private final Pose scorePose1 = new Pose(54, 90, Math.toRadians(-45)); // Scoring Pose of our robot for the first pickup. It is facing the goal at a -45 degree angle.
-    private final Pose pickup2Setup = new Pose(48, 60, Math.toRadians(180)); // Setup to pickup the middle set of balls
-    private final Pose pickup1Setup = new Pose(17, 60, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark.
-    private final Pose scorePose2 = new Pose(48, 90, Math.toRadians(-48)); // Scoring Pose of our robot for the second pickup. It is facing the goal at a -36 degree angle.
-    private final Pose pickup3Setup = new Pose(42, 38, Math.toRadians(180)); // Setup to pickup the lowest set of balls
-    private final Pose pickup3Pose = new Pose(17, 38, Math.toRadians(180)); // Lowest (Third Set) of Artifacts from the Spike Mark.
-    private final Pose scorePose3 = new Pose(55, 89, Math.toRadians(-46)); // Scoring Pose of our robot for the third pickup. It is facing the goal at a -36 degree angle.
-    private final Pose leaveTrianglePose = new Pose(50,60, Math.toRadians(-46)); // Pose for leaving to triangle
+    private final Pose startPose = new Pose(126.6, 120.4, Math.toRadians(-144));
+    private final Pose scorePoseStart = new Pose(106.9, 107.0, Math.toRadians(-136));
+    private final Pose scorePoseFinal = new Pose(86.2, 86.0, Math.toRadians(-134));
+    private final Pose pickup2Pose = new Pose(126.2, 59.9, Math.toRadians(0));
+    private final Pose pickup2Controlpoint = new Pose(62.3, 56.1);
+    private final Pose scorePose = new Pose(96.6, 95.5, Math.toRadians(-134));
+    private final Pose scoreControlpoint = new Pose(84.4, 73.0);
+    private final Pose pickupGatePose = new Pose(128.6, 60.2, Math.toRadians(32));
+    private final Pose pickupGateControlpoint = new Pose(81.6, 53.7);
+    private final Pose pickup1Pose = new Pose(126.9, 83.6, Math.toRadians(0));
+    private final Pose pickup1Controlpoint = new Pose(74.5, 86.7);
+    private final Pose leavePose = new Pose(85.7, 53.0, Math.toRadians(-130));
+    private final Pose leaveControlpose = new Pose(66.9, 79.1);
     public ComponentShell comps;
     public PathChain scorePreloadStart, scorePreloadFinal, grabGate, scoreGate, grabPickup1, grabPickup2, scorePickup1, scorePickup2, leave;
     public int Shots = 0;
@@ -113,7 +99,7 @@ public class BlueFront_AllGate extends OpMode {
             case 0:
                 follower.followPath(scorePreloadStart);
                 comps.through.InThrough();
-                comps.shooter.PreTargetTo(scorePosePreload);
+                comps.shooter.PreTargetTo(scorePoseStart);
                 nextPathState();
                 break;
             case 1:
