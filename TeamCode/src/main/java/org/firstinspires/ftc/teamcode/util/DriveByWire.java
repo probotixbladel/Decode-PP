@@ -91,7 +91,7 @@ public class DriveByWire {
 		double headingError = angleWrap(angle - comps.follower.getHeading());
 		aimVelPID.updateError(angularVelocity - comps.follower.getAngularVelocity());
 		aimPosPID.updateError(headingError);
-		double feedForward = Math.copySign(FF_KS, headingError) + angularVelocity * FF_KV + angularAcceleration * FF_KA;
+		double feedForward = Math.copySign(FF_KS, headingError) - angularVelocity * FF_KV + angularAcceleration * FF_KA;
 		return aimPosPID.run() + aimVelPID.run() + feedForward;
 	}
 
@@ -112,12 +112,12 @@ public class DriveByWire {
 	public double[] adjustInputs(double x, double y, double yaw, Gamepad gamepad1) {
 		double[] driveInputs = scaledInput(x, y, yaw);
 
-		if (gamepad1.rightBumperWasPressed()) {
+		if (gamepad1.rightBumperWasPressed() || gamepad1.leftBumperWasPressed() || gamepad1.rightTriggerWasPressed()) {
 			resetAimSystem();
 		}
 		double beta = 0;
 
-		if (gamepad1.right_bumper || gamepad1.right_trigger > 0.2 || gamepad1.left_bumper) {
+		if (gamepad1.right_bumper || gamepad1.right_trigger_pressed || gamepad1.left_bumper) {
 			double dy = comps.shooter.ShootTo.getY() - (comps.follower.getPose().getY() - Math.cos(comps.follower.getHeading()) * offsetX);
 			double dx = comps.shooter.ShootTo.getX() - (comps.follower.getPose().getX() + Math.sin(comps.follower.getHeading()) * offsetX);
 			double alpha = Math.atan2(dy, dx);
