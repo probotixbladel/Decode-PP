@@ -26,7 +26,7 @@ public class ComponentShell {
     public Alliance alliance;
     public boolean SinglePlayer;
     public int shootNum;
-    public static boolean useCam = true;
+    public static boolean useCam = false;
     public static double camCertanty = 0.10;
 
     public enum Alliance {
@@ -62,7 +62,8 @@ public class ComponentShell {
 
 
 		if (limePos.getX() != 72 & limePos.getY() != 72 & useCam) {
-			follower.setPose(new Pose(limePos.getY() * camCertanty + follower.getPose().getX() * (1 - camCertanty),limePos.getX() * camCertanty + follower.getPose().getY() * (1 - camCertanty), follower.getHeading()));
+            follower.setX(limePos.getY() * camCertanty + follower.getPose().getX() * (1 - camCertanty));
+			follower.setY(limePos.getX() * camCertanty + follower.getPose().getY() * (1 - camCertanty));
 		}
         /*
         telemetryM.debug("aimpos", shooter.ShootTo);

@@ -13,6 +13,7 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.auto.SOTMInterpolator;
 import org.firstinspires.ftc.teamcode.components.ComponentShell;
 import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -53,7 +54,8 @@ public class BlueFront_AllGate extends OpMode {
 
         scorePreloadFinal = follower.pathBuilder()
                 .addPath(new BezierLine(scorePoseStart, scorePoseFinal))
-                .setLinearHeadingInterpolation(scorePoseStart.getHeading(), scorePoseFinal.getHeading())
+                .setHeadingInterpolation(new SOTMInterpolator().giveInfo(follower, comps).interpolate() )
+                //.setLinearHeadingInterpolation(scorePoseStart.getHeading(), scorePoseFinal.getHeading())
                 .build();
 
         grabPickup2 = follower.pathBuilder()
