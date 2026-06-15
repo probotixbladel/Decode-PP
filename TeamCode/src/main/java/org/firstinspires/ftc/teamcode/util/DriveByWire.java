@@ -34,12 +34,10 @@ public class DriveByWire {
 	private static final double rotationCurveExponent = 1.2;
 
 	private final ComponentShell comps;
-	public static double FF_KV = 0;
-	public static double FF_KA = 0.05;
-	public static double FF_KS = 0;
-	public static double VelKP = 0;
-	public static double VelKI = 0;
-	public static double VelKD = 0;
+    public static double CloseKF = 0;
+	public static double CloseKP = 0;
+	public static double CloseKI = 0;
+	public static double CloseKD = 0;
 	public static double PosKP = 0;
 	public static double PosKI = 0;
 	public static double PosKD = 0;
@@ -47,8 +45,10 @@ public class DriveByWire {
     public static double brakeVelScaler = 0;
     public static double brakeDistScaler = 0;
 	public static double stickOrientation = 0;
+    public static double startClosePID = 0;
+    public static double levelClosePID = 0;
 	public PIDFController aimPosPID;
-	public PIDFController aimVelPID;
+	public PIDFController aimClosePID;
 
 	public DriveByWire(ComponentShell Comps) {
 		this.comps = Comps;
@@ -84,15 +84,15 @@ public class DriveByWire {
 
 	public void resetAimSystem() {
 		aimPosPID = new PIDFController(new PIDFCoefficients(PosKP, PosKI, PosKD, 0));
-		aimVelPID = new PIDFController(new PIDFCoefficients(VelKP, VelKI, VelKD, 0));
+		aimClosePID = new PIDFController(new PIDFCoefficients(CloseKP, CloseKI, CloseKD, CloseKF));
 	}
 
-	public double getSteeringValue(double angle, double angularVelocity, double angularAcceleration) {
+	public double getSteeringValue(double angle) {
 		double headingError = angleWrap(angle - comps.follower.getHeading());
-		aimVelPID.updateError(angularVelocity - comps.follower.getAngularVelocity());
+		aimClosePID.updateError(headingError);
 		aimPosPID.updateError(headingError);
-		double feedForward = Math.copySign(FF_KS, headingError) + angularVelocity * FF_KV + angularAcceleration * FF_KA;
-		return aimPosPID.run() + aimVelPID.run() + feedForward;
+        double closeMult = Math.max(Math.abs(headingError) - startClosePID, 0);
+		return aimPosPID.run() + aimClosePID.run();
 	}
 
     public double[] bindToTriangle(double x, double y, double yaw) {
@@ -131,11 +131,10 @@ public class DriveByWire {
 			}
 
 			if (angularVelocityTimer.seconds() >= 0) {
-				angularVelocity = angleWrap(lastAimAngle - beta) / angularVelocityTimer.seconds();
-				driveInputs[2] = getSteeringValue(beta, angularVelocity, (lastAngularVelocity - comps.follower.getAngularVelocity()) / angularVelocityTimer.seconds());
+				driveInputs[2] = getSteeringValue(beta);
 			} else {
 				angularVelocity = 0;
-				driveInputs[2] = getSteeringValue(beta, angularVelocity, 0);
+				driveInputs[2] = getSteeringValue(beta);
 			}
 			lastAimAngle = angleWrap(beta);
 			angularVelocityTimer.reset();
@@ -166,12 +165,6 @@ public class DriveByWire {
 		comps.telemetryM.addData("target angle", beta);
 		comps.telemetryM.addData("angular velocity", comps.follower.getAngularVelocity());
 		comps.telemetryM.addData("target angular velocity", angularVelocity);
-
-		comps.telemetryM.debug(
-                "heading error, angular velocity error",
-                angleWrap(lastAimAngle - comps.follower.getHeading()),
-                angularVelocity - comps.follower.getAngularVelocity()
-        );
 
 		return driveInputs;
 	}
