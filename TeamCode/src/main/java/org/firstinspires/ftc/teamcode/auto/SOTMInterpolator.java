@@ -23,7 +23,9 @@ public class SOTMInterpolator implements HeadingInterpolator {
         return beta;
     }
 
-    public FUFUFUFUUFUF giveInfo(Follower follower, ComponentShell comps) {
+    public SOTMInterpolator giveInfo(Follower follower, ComponentShell comps) {
         this.follower = follower;
         this.comps = comps;
-        return super.clone();
+        return this;
+    }
+}

@@ -54,7 +54,7 @@ public class BlueFront_AllGate extends OpMode {
 
         scorePreloadFinal = follower.pathBuilder()
                 .addPath(new BezierLine(scorePoseStart, scorePoseFinal))
-                .setHeadingInterpolation(new SOTMInterpolator().giveInfo(follower, comps).interpolate() )
+                .setHeadingInterpolation(new SOTMInterpolator().giveInfo(follower, comps))
                 //.setLinearHeadingInterpolation(scorePoseStart.getHeading(), scorePoseFinal.getHeading())
                 .build();
 
