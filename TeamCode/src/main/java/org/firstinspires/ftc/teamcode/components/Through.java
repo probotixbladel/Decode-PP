@@ -10,9 +10,9 @@ public class Through {
 	public DcMotorEx Through;
     public static double inPower = 1.0;
 	public static double inPowerOverCurrent = 0.6;
-    public static double outPower = -1;
-    public static double staticPower = 0;
-    public static double loosenPower = -0.4;
+    public static double outPower = 1;
+    public static double staticPower = 0.4;
+    public static double loosenPower = 0;
     public ThroughState state = ThroughState.OFF;
     public enum ThroughState {
         IN_THROUGH,
@@ -39,6 +39,10 @@ public class Through {
 	}
 
 	public void update(ComponentShell Comps) {
+        if (Comps.intake.state == Intake.IntakeState.OUTTAKE) {
+            Through.setPower(outPower);
+            return;
+        }
         switch (state) {
             case IN_THROUGH:
                 if (Comps.pusher.state == Pusher.PushState.WAITING || Comps.pusher.state == Pusher.PushState.RELOADING) {

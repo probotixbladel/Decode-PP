@@ -29,17 +29,25 @@ public class Blinky {
 		if (comps.detector.firstDetecting) {
 			detectorTimer.reset();
 		}
+        if (strobeTimer.seconds() > strobeTime) {
+            strobeTimer.reset();
+            strobeLawn = !strobeLawn;
+        }
 
-        if (comps.detector.fourthDetecting) {
-            Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
-        } else if (comps.detector.thirdDetecting) {
-            Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+
+
+        if (comps.detector.thirdDetecting) {
+            if (strobeLawn) {
+                Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+            } else {
+                Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
+            }
         } else if (comps.detector.secondDetecting) {
-            Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
+            Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE);
         } else if (comps.detector.firstDetecting) {
-            Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.ORANGE);
+            Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
         } else {
-            Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+            Blinky.setPattern(RevBlinkinLedDriver.BlinkinPattern.LAWN_GREEN);
         }
 
         /*

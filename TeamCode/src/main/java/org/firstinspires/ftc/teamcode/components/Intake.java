@@ -9,8 +9,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Intake {
 	public DcMotorEx intake;
 	public static double intakePower = 1.0;
+    public static double outTakeTime = 100;
 	public static double intakePowerOverCurrent = 0.6;
-    public static double outtakePower = -0.6;
+    public static double outtakePower = -0.3;
     public static double staticPower = 0.3;
     public IntakeState state = IntakeState.OFF;
     public enum IntakeState {
@@ -25,6 +26,11 @@ public class Intake {
     }
 
     public void TakeIn(ComponentShell Comps) {
+        if (Comps.detector.fourthDetecting) {
+            intake.setPower(outtakePower);
+            state = Intake.IntakeState.OUTTAKE;
+            return;
+        }
 		if (Comps.pusher.state == Pusher.PushState.WAITING || Comps.pusher.state == Pusher.PushState.RELOADING) {
 			state = IntakeState.INTAKE;
 			if (Comps.floodgate.floodgateCurrent > 18) {
@@ -38,11 +44,21 @@ public class Intake {
         }
     }
 
-    public void TakeOut() {
+    public void TakeOut(ComponentShell Comps) {
+        if (Comps.detector.fourthDetecting) {
+            intake.setPower(outtakePower);
+            state = Intake.IntakeState.OUTTAKE;
+            return;
+        }
         state = Intake.IntakeState.OUTTAKE;
         intake.setPower(outtakePower);
     }
-    public void StaticIntake() {
+    public void StaticIntake(ComponentShell Comps) {
+        if (Comps.detector.fourthDetecting) {
+            intake.setPower(outtakePower);
+            state = Intake.IntakeState.OUTTAKE;
+            return;
+        }
         state = Intake.IntakeState.OFF;
         intake.setPower(staticPower);
     }

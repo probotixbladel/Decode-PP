@@ -15,6 +15,8 @@ import com.pedropathing.geometry.PedroCoordinates;
 public class LimeLight {
 	public Limelight3A limeLight;
 	public static double angleOffset = 0;
+    public static double xMul = 39.37;
+    public static double yMul = 39.37;
     public LimeLight(HardwareMap hwm, ComponentShell.Alliance al) {
 		limeLight = hwm.get(Limelight3A.class, "limelight");
         switch (al){
@@ -28,7 +30,7 @@ public class LimeLight {
 
     public Pose update(TelemetryManager telemetryM, double robotYaw) {
         LLStatus status = limeLight.getStatus();
-        telemetryM.debug("P Index: ", status.getPipelineIndex(), "P Type: ", status.getPipelineType());
+        //telemetryM.debug("P Index: ", status.getPipelineIndex(), "P Type: ", status.getPipelineType());
 
         Pose3D botPoseMt2;
         Pose pos = new Pose();
@@ -39,12 +41,12 @@ public class LimeLight {
             if (result.getStaleness() < 100) {
                 botPoseMt2 = result.getBotpose_MT2();
                 if (botPoseMt2 != null) {
-                    pos = pos.withX(botPoseMt2.getPosition().x);
-                    pos = pos.withY(botPoseMt2.getPosition().y);
+                    pos = pos.withX(botPoseMt2.getPosition().x * xMul);
+                    pos = pos.withY(botPoseMt2.getPosition().y * yMul);
 					pos = pos.withHeading(Math.toRadians(botPoseMt2.getOrientation().getYaw()));
                 }
             }
         }
-        return new Pose(pos.getX(), pos.getY(), pos.getHeading(), FTCCoordinates.INSTANCE).getAsCoordinateSystem(PedroCoordinates.INSTANCE);
+        return new Pose(-pos.getX() + 72, pos.getY() + 72, pos.getHeading());//, FTCCoordinates.INSTANCE).getAsCoordinateSystem(PedroCoordinates.INSTANCE);
     }
 }

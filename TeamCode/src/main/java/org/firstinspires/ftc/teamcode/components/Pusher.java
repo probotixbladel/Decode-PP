@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 public class Pusher {
 	public Servo pusher;
     public static double wait = 0.02;
-    public static double push = 0.4;
+    public static double push = 0.2;
     public ElapsedTime lastShot = new ElapsedTime();
     public PushState state = PushState.RETURNING;
     public static double shootTime = 0.5;
@@ -20,7 +20,7 @@ public class Pusher {
 	public static double maxSpeed = 0.2;
     public double pusherAngle = 0;
     public static double restAngle = 280; // make lower
-    public static double arriveAngle = 285; // make higher
+    public static double arriveAngle = 280; // make higher
     public static double closeAngleTolerance = 30;
     public static double farAngleTolerance = 6;
     AnalogInput pusherEnc;

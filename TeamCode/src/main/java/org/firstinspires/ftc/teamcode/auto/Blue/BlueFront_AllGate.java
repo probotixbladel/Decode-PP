@@ -134,7 +134,7 @@ public class BlueFront_AllGate extends OpMode {
 
             case 5:
                 if(!follower.isBusy()){
-                    comps.intake.StaticIntake();
+                    comps.intake.StaticIntake(comps);
                     follower.followPath(scoreGate,true);
                     nextPathState();
                 }

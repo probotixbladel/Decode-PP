@@ -145,7 +145,7 @@ public class RedFront_Ego extends OpMode {
 
             case 5:
                 if(!follower.isBusy()){
-                    comps.intake.StaticIntake();
+                    comps.intake.StaticIntake(comps);
                     follower.followPath(scorePickup2,true);
                     nextPathState();
                 }

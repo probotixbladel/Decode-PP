@@ -113,7 +113,7 @@ public class BlueBack_AllHp_With3 extends OpMode {
 
             case 5:
                 if(!follower.isBusy()){
-                    comps.intake.StaticIntake();
+                    comps.intake.StaticIntake(comps);
                     follower.followPath(leave,true);
                     setPathState(-1);
                 }

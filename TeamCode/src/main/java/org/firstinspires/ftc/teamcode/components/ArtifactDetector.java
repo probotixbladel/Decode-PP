@@ -18,7 +18,7 @@ public class ArtifactDetector {
 	public OpticalDistanceSensor firstArtifactSensor2;  // Hardware Device Object
     public ColorRangeSensor secondArtifactSensor;
     public RevColorSensorV3 thirdArtifactSensor;
-    public ModernRoboticsI2cRangeSensor fourthArtifactSensor;
+    public RevColorSensorV3 fourthArtifactSensor;
 	public double firstDistance = 0;
 	public double firstDistance2 = 0;
     private final double[] distanceBuffer = new double[instances];
@@ -30,13 +30,9 @@ public class ArtifactDetector {
     static public double firstMinThreshold2 = 0.04;
     static public double firstMaxThreshold2 = 1.5;
     public ElapsedTime timer;
-    public static double thirdDetectingSince = 0;
-    public static double fourthDetectingSince = 0;
     public static double secondDistance = 330;
-    public static double thirdDistance = 83;
-    public static double fourthDistance = 90;
-    public static double thirdDetectingTime = 300;
-    public static double fourthDetectingTime = 300;
+    public static double thirdDistance = 85;
+    public static double fourthDistance = 70;
     public boolean firstDetecting = false;
     public boolean secondDetecting = false;
     public boolean thirdDetecting = false;
@@ -46,11 +42,12 @@ public class ArtifactDetector {
     public ArtifactDetector(HardwareMap hwm) {
 		this.secondArtifactSensor = hwm.get(ColorRangeSensor.class, "ColThrough");
         this.thirdArtifactSensor  = hwm.get(RevColorSensorV3.class, "ColIn");
-        this.fourthArtifactSensor = hwm.get(ModernRoboticsI2cRangeSensor.class, "RangeIn");
+        //this.fourthArtifactSensor = hwm.get(RevColorSensorV3.class, "RangeIn");
 		this.firstArtifactSensor1 = hwm.get(OpticalDistanceSensor.class, "DistSens");
 		this.firstArtifactSensor2 = hwm.get(OpticalDistanceSensor.class, "DistSens2");
         timer = new ElapsedTime();
     }
+
     private double getSmoothedDistance1() {
         double newReading = secondArtifactSensor.getDistance(DistanceUnit.MM);
         if (Double.isNaN(newReading) || newReading > 400) newReading = 400; // clamp invalid readings
@@ -60,10 +57,7 @@ public class ArtifactDetector {
         distanceBuffer[bufferIndex] = newReading;
         bufferIndex = (bufferIndex + 1) % distanceBuffer.length;
         return runningSum / distanceBuffer.length;
-
-
     }
-
 
 	public void update(ComponentShell comps) {
         double secondAverage = getSmoothedDistance1();
@@ -72,27 +66,21 @@ public class ArtifactDetector {
         firstDetecting = (firstDistance > firstMinThreshold && firstDistance < firstMaxThreshold) || (firstDistance2 > firstMinThreshold2 && firstDistance2 < firstMaxThreshold2);
         secondDetecting = (firstDetecting & secondAverage < secondDistance);
 
-        if (thirdArtifactSensor.getDistance(DistanceUnit.MM) < thirdDistance) {
-            if (timer.milliseconds() - thirdDetectingSince > thirdDetectingTime) {
-                thirdDetecting = true;
-            } else thirdDetecting = secondDetecting;
+        if (thirdArtifactSensor.getDistance(DistanceUnit.MM) < thirdDistance & secondDetecting) {
+            thirdDetecting = true;
         } else {
             thirdDetecting = false;
-            thirdDetectingSince = timer.milliseconds();
         }
 
+        /*
 		if (fourthArtifactSensor.getDistance(DistanceUnit.MM) < 1 || fourthArtifactSensor.getDistance(DistanceUnit.MM) == 255) {
 			fourthDetecting = false;
-			fourthDetectingSince = timer.milliseconds();
-		} if (fourthArtifactSensor.getDistance(DistanceUnit.MM) < fourthDistance ) {
-            if (timer.milliseconds() - fourthDetectingSince > fourthDetectingTime) {
-                fourthDetecting = true;
-            } else fourthDetecting = thirdDetecting;
+		} if (fourthArtifactSensor.getDistance(DistanceUnit.MM) < fourthDistance & thirdDetecting ) {
+            fourthDetecting = true;
         } else {
             fourthDetecting = false;
-            fourthDetectingSince = timer.milliseconds();
         }
-
+        */
 
 		comps.telemetryM.debug(
 				"secondArtifact: R, G, B, A, Distance",
@@ -103,19 +91,28 @@ public class ArtifactDetector {
                 secondArtifactSensor.getDistance(DistanceUnit.MM)
 
 		);
-		comps.telemetryM.debug("thirdArtifact: R, G, B, A, Distance, rawOptical",
+        comps.telemetryM.debug("thirdArtifact: R, G, B, A, Distance, rawOptical",
 				thirdArtifactSensor.red(),
 				thirdArtifactSensor.green(),
 				thirdArtifactSensor.blue(),
 				thirdArtifactSensor.alpha(),
                 thirdArtifactSensor.getDistance(DistanceUnit.MM),
                 thirdArtifactSensor.rawOptical()
+
 		);
-		comps.telemetryM.debug("fourthArtifact: mm, raw ultrasonic, raw optical",
-				fourthArtifactSensor.getDistance(DistanceUnit.MM),
-				fourthArtifactSensor.rawUltrasonic(),
-				fourthArtifactSensor.rawOptical()
-		);
+        /*
+
+        comps.telemetryM.debug("fourthkkArtifact: R, G, B, A, Distance, rawOptical",
+                fourthArtifactSensor.red(),
+                fourthArtifactSensor.green(),
+                fourthArtifactSensor.blue(),
+                fourthArtifactSensor.alpha(),
+                fourthArtifactSensor.getDistance(DistanceUnit.MM),
+                fourthArtifactSensor.rawOptical()
+        );
+
+
+		*/
         comps.telemetryM.debug("detecting: first, second, third, fourth", firstDetecting, secondDetecting, thirdDetecting, fourthDetecting);
 
     }

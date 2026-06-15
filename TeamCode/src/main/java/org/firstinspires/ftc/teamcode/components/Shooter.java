@@ -164,14 +164,14 @@ public class Shooter {
 			goalVec = goalVec.minus(comps.follower.getVelocity().times(airTime * airTimeMultiplier));
 			ShootTo = new Pose(goalVec.getXComponent(), goalVec.getYComponent());
 			this.setSpeeds(comps.follower.getPose());
-			comps.telemetryM.debug("air time, goalVec, shootTo, targetVel", airTime, goalVec, ShootTo, TargetVel, comps.follower.getVelocity());
+			//comps.telemetryM.debug("air time, goalVec, shootTo, targetVel", airTime, goalVec, ShootTo, TargetVel, comps.follower.getVelocity());
 		}
 	}
 
     public void setSpeeds(Pose robotPose) {
         double distance = (Math.sqrt(Math.pow(robotPose.getY() - ShootTo.getY(), 2) + Math.pow(robotPose.getX() - ShootTo.getX(), 2)) - 8) * 2.54;
-        MaxSpeed = interpolate(MaxPoints, distance) - 5;
-        MinSpeed = interpolate(MinPoints, distance) + 5;
+        MaxSpeed = interpolate(MaxPoints, distance) - 15;
+        MinSpeed = interpolate(MinPoints, distance) + 15;
         MinToMax = -5.05e-4 * distance + 0.945;
         TargetVel = MinSpeed + (MaxSpeed - MinSpeed) * MinToMax;
 	}

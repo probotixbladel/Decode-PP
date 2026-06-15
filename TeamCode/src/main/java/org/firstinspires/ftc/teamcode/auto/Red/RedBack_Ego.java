@@ -129,7 +129,7 @@ public class RedBack_Ego extends OpMode {
 
             case 4:
                 if(!follower.isBusy()){
-                    comps.intake.StaticIntake();
+                    comps.intake.StaticIntake(comps);
                     follower.followPath(scorePickup2,true);
                     nextPathState();
                 }

@@ -26,6 +26,7 @@ public class ComponentShell {
     public Alliance alliance;
     public boolean SinglePlayer;
     public int shootNum;
+    public static boolean useCam = true;
     public static double camCertanty = 0.10;
 
     public enum Alliance {
@@ -59,26 +60,29 @@ public class ComponentShell {
         pusher.update(this);
         through.update(this);
 
-		/*
-		if (limePos.getX() != 0) {
-			follower.setPose(limePos.linearCombination(follower.getPose(), camCertanty, 1 - camCertanty));
-		}*/
 
+		if (limePos.getX() != 72 & limePos.getY() != 72 & useCam) {
+			follower.setPose(new Pose(limePos.getY() * camCertanty + follower.getPose().getX() * (1 - camCertanty),limePos.getX() * camCertanty + follower.getPose().getY() * (1 - camCertanty), follower.getHeading()));
+		}
+        /*
         telemetryM.debug("aimpos", shooter.ShootTo);
 		telemetryM.debug("alliance: ", alliance);
         telemetryM.debug("Pusher angle:", pusher.pusherAngle);
         telemetryM.debug("Pusher state:", pusher.state);
         // telemetryM.debug("detector dist", detector.distance);
         telemetryM.debug("Detecting:", detector.firstDetecting);
+        */
         telemetryM.debug("lime pos: ", limePos);
-        telemetryM.debug("Number of shots left", shootNum);
         telemetryM.debug("follower pos: ", follower.getPose());
+
+        /*
+        telemetryM.debug("Number of shots left", shootNum);
         telemetryM.debug("through state: ", through.state);
         telemetryM.debug("Vel: ", shooter.CurrentVel, Shooter.TargetVel);
         telemetryM.debug("MinToMax: ", shooter.MinToMax);
         telemetryM.debug("shooter state: ", shooter.state);
         telemetryM.debug("FloodgateCurrent", floodgate.floodgateCurrent);
-
+        */
     }
 
     public void updateTeleop(Gamepad gamepad1, Gamepad gamepad2) {
@@ -90,9 +94,9 @@ public class ComponentShell {
             if (gamepad1.right_trigger > 0.2) {
                 intake.TakeIn(this);
             } else if (gamepad1.left_trigger > 0.2) {
-                intake.TakeOut();
+                intake.TakeOut(this);
             } else {
-                intake.StaticIntake();
+                intake.StaticIntake(this);
             }
 
             if (gamepad1.x) {
@@ -100,6 +104,11 @@ public class ComponentShell {
                 intake.TakeIn(this);
             } else {
                 through.StaticThrough();
+            }
+            if (gamepad2.y) {
+                pusher.state = Pusher.PushState.SHOOTING;
+                pusher.pusher.setPosition(pusher.push);
+                pusher.lastShot.reset();
             }
 
         } else {
@@ -109,9 +118,9 @@ public class ComponentShell {
             if (gamepad2.right_trigger > 0.2) {
                 intake.TakeIn(this);
             } else if (gamepad2.left_trigger > 0.2) {
-                intake.TakeOut();
+                intake.TakeOut(this);
             } else {
-                intake.StaticIntake();
+                intake.StaticIntake(this);
             }
 
             if (gamepad2.x) {
@@ -144,7 +153,7 @@ public class ComponentShell {
 
     public boolean FinishedShooting(int num){
         if(shootNum >= num){
-            intake.StaticIntake();
+            intake.StaticIntake(this);
             return true;
         }
         return false;
