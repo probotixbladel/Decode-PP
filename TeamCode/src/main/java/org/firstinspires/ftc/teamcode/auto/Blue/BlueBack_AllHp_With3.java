@@ -6,6 +6,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -14,6 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.components.ComponentShell;
+import org.firstinspires.ftc.teamcode.components.Pusher;
 import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Configurable
@@ -22,14 +24,14 @@ public class BlueBack_AllHp_With3 extends OpMode {
     private Follower follower;
     public ElapsedTime Timer = new ElapsedTime();
     private Timer pathTimer, actionTimer, opmodeTimer;
-    public static double gateTime = 2;
+    public static double HpTime = 6;
     private int pathState;
-    private final Pose startPose = new Pose(55.45, 8.28, Math.toRadians(90));
-    private final Pose scorePose = new Pose(59.65, 16.65, Math.toRadians(-69));
-    private final Pose pickupHpPose = new Pose(20.73, 36.36, Math.toRadians(-180));
+    private final Pose startPose = new Pose(55.45, 8.28, Math.toRadians(-90));
+    private final Pose scorePose = new Pose(59.65, 16.65, Math.toRadians(-66));
+    private final Pose pickupHpPose = new Pose(20.73, 38.36, Math.toRadians(-180));
     private final Pose pickupHpControlpoint = new Pose(64.28, 38.66);
-    private final Pose pickup3Pose = new Pose(8.38, 8.12, Math.toRadians(-180));
-    private final Pose pickup3Controlpoint = new Pose(83.60, 12.68);
+    private final Pose pickup3Pose = new Pose(8.38, 8.12, Math.toRadians(-100));
+    private final Pose pickup3Controlpoint = new Pose(5, 56);
     private final Pose leavePose = new Pose(60.62, 58.97, Math.toRadians(-90));
     public ComponentShell comps;
     public PathChain scorePreload, leave, grabPickup3, scorePickup3, grabPickupHp, scorePickupHp;
@@ -47,7 +49,9 @@ public class BlueBack_AllHp_With3 extends OpMode {
 
         grabPickupHp = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose, pickupHpControlpoint, pickupHpPose))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), pickupHpPose.getHeading())
+                .setHeadingInterpolation(HeadingInterpolator.piecewise(
+                        new HeadingInterpolator.PiecewiseNode(0, 0.4, HeadingInterpolator.linear(scorePose.getHeading(), pickupHpPose.getHeading())),
+                        new HeadingInterpolator.PiecewiseNode(0.4, 1, HeadingInterpolator.constant(pickupHpPose.getHeading()))))
                 .build();
 
         scorePickupHp = follower.pathBuilder()
@@ -57,7 +61,9 @@ public class BlueBack_AllHp_With3 extends OpMode {
 
         grabPickup3 = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose, pickup3Controlpoint, pickup3Pose))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), pickup3Pose.getHeading())
+                .setHeadingInterpolation(HeadingInterpolator.piecewise(
+                        new HeadingInterpolator.PiecewiseNode(0, 0.3, HeadingInterpolator.linear(scorePose.getHeading(), pickup3Pose.getHeading())),
+                        new HeadingInterpolator.PiecewiseNode(0.3, 1, HeadingInterpolator.constant(pickup3Pose.getHeading()))))
                 .build();
 
         scorePickup3 = follower.pathBuilder()
@@ -76,43 +82,64 @@ public class BlueBack_AllHp_With3 extends OpMode {
 
         switch (pathState) {
             case 0:
-                follower.followPath(scorePreload);
+                comps.intake.TakeIn(comps);
+                follower.followPath(scorePreload,1, true);
                 comps.through.InThrough();
-                comps.shooter.PreTargetTo(scorePose);
+                comps.intake.TakeIn(comps);
+                comps.ResetShootNum();
                 nextPathState();
                 break;
+
             case 1:
+                comps.intake.TakeIn(comps);
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if (!follower.isBusy()) {
-                    follower.followPath(grabPickupHp);
-                    nextPathState();
+                if(!follower.isBusy()){
+                    comps.AutoShooterStart();
+                    follower.holdPoint(scorePose);
+                    if(comps.FinishedShooting(3) && comps.pusher.state == Pusher.PushState.RETURNING) {
+                        comps.intake.TakeIn(comps);
+                        follower.followPath(grabPickupHp, 0.6, true);
+
+                        nextPathState();
+
+                    }
                 }
                 break;
 
             case 2:
+                comps.intake.TakeIn(comps);
                 if(!follower.isBusy()){
-                    follower.followPath(scorePickupHp);
+                    comps.ResetShootNum();
+                    follower.followPath(scorePickupHp, 0.9, false);
                     nextPathState();
                 }
                 break;
 
             case 3:
+                comps.intake.TakeIn(comps);
                 if(!follower.isBusy()){
-                    follower.followPath(grabPickup3,true);
-                    nextPathState();
+                    comps.AutoShooterStart();
+                    follower.holdPoint(scorePose);
+                    if(comps.FinishedShooting(3) && comps.pusher.state == Pusher.PushState.RETURNING) {
+                        follower.followPath(grabPickup3,true);
+                        nextPathState();
+                    }
                 }
                 break;
 
             case 4:
+                comps.intake.TakeIn(comps);
                 if(!follower.isBusy()){
                     comps.intake.TakeIn(comps);
-                    follower.followPath(scorePickup3, 1, true);
+                    follower.followPath(scorePickup3);
                     nextPathState();
                 }
                 break;
 
             case 5:
-                if(!follower.isBusy()){
+                comps.intake.TakeIn(comps);
+                if(!follower.isBusy() || actionTimer.getElapsedTimeSeconds() > HpTime){
+
                     comps.intake.StaticIntake(comps);
                     follower.followPath(leave,true);
                     setPathState(-1);

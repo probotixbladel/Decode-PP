@@ -65,25 +65,25 @@ public class ComponentShell {
             follower.setX(limePos.getY() * camCertanty + follower.getPose().getX() * (1 - camCertanty));
 			follower.setY(limePos.getX() * camCertanty + follower.getPose().getY() * (1 - camCertanty));
 		}
-        /*
+
         telemetryM.debug("aimpos", shooter.ShootTo);
 		telemetryM.debug("alliance: ", alliance);
         telemetryM.debug("Pusher angle:", pusher.pusherAngle);
         telemetryM.debug("Pusher state:", pusher.state);
         // telemetryM.debug("detector dist", detector.distance);
         telemetryM.debug("Detecting:", detector.firstDetecting);
-        */
+
         telemetryM.debug("lime pos: ", limePos);
         telemetryM.debug("follower pos: ", follower.getPose());
 
-        /*
+
         telemetryM.debug("Number of shots left", shootNum);
         telemetryM.debug("through state: ", through.state);
         telemetryM.debug("Vel: ", shooter.CurrentVel, Shooter.TargetVel);
         telemetryM.debug("MinToMax: ", shooter.MinToMax);
         telemetryM.debug("shooter state: ", shooter.state);
         telemetryM.debug("FloodgateCurrent", floodgate.floodgateCurrent);
-        */
+
     }
 
     public void updateTeleop(Gamepad gamepad1, Gamepad gamepad2) {

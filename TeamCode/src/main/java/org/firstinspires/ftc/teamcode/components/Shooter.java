@@ -170,9 +170,9 @@ public class Shooter {
 
     public void setSpeeds(Pose robotPose) {
         double distance = (Math.sqrt(Math.pow(robotPose.getY() - ShootTo.getY(), 2) + Math.pow(robotPose.getX() - ShootTo.getX(), 2)) - 8) * 2.54;
-        MaxSpeed = interpolate(MaxPoints, distance) - 15;
+        MaxSpeed = interpolate(MaxPoints, distance) - 5;
         MinSpeed = interpolate(MinPoints, distance) + 15;
-        MinToMax = -5.05e-4 * distance + 0.945;
+        MinToMax = -5.05e-4 * distance + 0.950;
         TargetVel = MinSpeed + (MaxSpeed - MinSpeed) * MinToMax;
 	}
 
