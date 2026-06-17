@@ -89,6 +89,16 @@ public class Shooter {
             {360,1120}
     };
     public static double P = 500.0;
+    public static double MAXTOLERANCE;
+    public static double MINTOLERANCE;
+    public static double MAXSTART = 717;
+    public static double MAX_A = 0.0276;
+    public static double MAX_B = 3.13e-3;
+    public static double MINSTART = 603;
+    public static double MIN_A = 4.9e-3;
+    public static double MIN_B = 3.67e-3;
+    public static double MINTOMAXSTART = 0.945;
+    public static double MINTOMAX_A = -5.05e-4;
     public static double D = 0.0;
     public static double F = 14.0;
     private double lP = P;
@@ -170,9 +180,9 @@ public class Shooter {
 
     public void setSpeeds(Pose robotPose) {
         double distance = (Math.sqrt(Math.pow(robotPose.getY() - ShootTo.getY(), 2) + Math.pow(robotPose.getX() - ShootTo.getX(), 2)) - 8) * 2.54;
-        MaxSpeed = interpolate(MaxPoints, distance) - 5;
-        MinSpeed = interpolate(MinPoints, distance) + 5;
-        MinToMax = -5.05e-4 * distance + 0.945;
+        MaxSpeed = MAXSTART + MAX_A * distance + MAX_B * Math.pow(distance, 2) - MAXTOLERANCE;//interpolate(MaxPoints, distance) - 5;
+        MinSpeed = MINSTART + MIN_A * distance + MIN_B * Math.pow(distance, 2) + MINTOLERANCE;//interpolate(MinPoints, distance) + 5;
+        MinToMax = -MINTOMAX_A * distance + MINTOMAXSTART;
         TargetVel = MinSpeed + (MaxSpeed - MinSpeed) * MinToMax;
 	}
 
