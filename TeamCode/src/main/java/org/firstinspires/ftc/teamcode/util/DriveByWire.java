@@ -35,16 +35,13 @@ public class DriveByWire {
 
 	private final ComponentShell comps;
     public static double CloseKF = 0;
-	public static double CloseKP = 0;
+	public static double CloseKP = 1.8;
 	public static double CloseKI = 0;
-	public static double CloseKD = 0;
+	public static double CloseKD = 0.1;
 	public static double PosKP = 0;
 	public static double PosKI = 0;
 	public static double PosKD = 0;
 	public static double offsetX = 1.5748;
-    public static double brakeVelScaler = 0;
-    public static double brakeDistScaler = 0;
-	public static double stickOrientation = 0;
     public static double startClosePID = 0;
     public static double levelClosePID = 0;
 	public PIDFController aimPosPID;
@@ -83,31 +80,22 @@ public class DriveByWire {
 	}
 
 	public void resetAimSystem() {
-		aimPosPID = new PIDFController(new PIDFCoefficients(PosKP, PosKI, PosKD, 0));
+		aimPosPID = new PIDFController(new PIDFCoefficients(PosKP, PosKI, PosKD, CloseKF));
 		aimClosePID = new PIDFController(new PIDFCoefficients(CloseKP, CloseKI, CloseKD, CloseKF));
 	}
 
 	public double getSteeringValue(double angle) {
+		comps.telemetryM.addData("111a", angle);
 		double headingError = angleWrap(angle - comps.follower.getHeading());
+		comps.telemetryM.addData("111h", headingError);
 		aimClosePID.updateError(headingError);
 		aimPosPID.updateError(headingError);
-        double closeMult = Math.max(Math.abs(headingError) - startClosePID, 0);
-		return aimPosPID.run() + aimClosePID.run();
+        double closeMult = Math.min(Math.max((Math.abs(headingError) - startClosePID) / (startClosePID - levelClosePID), 0), 1);
+		comps.telemetryM.addData("111c", closeMult);
+
+		return aimPosPID.run() * (1 - closeMult) + aimClosePID.run() * closeMult;
 	}
 
-    public double[] bindToTriangle(double x, double y, double yaw) {
-        double[] translationInputs = {x, y, yaw};
-        double leftBrakeDist  = Math.max(0, comps.follower.getVelocity().projectOnto(new Vector(new Pose(-1, -1))).getMagnitude());
-        double rightBrakeDist = Math.max(0, comps.follower.getVelocity().projectOnto(new Vector(new Pose(1, -1))).getMagnitude());
-        double leftDist  = Math.abs(-72 * comps.follower.getPose().getX() - 72 * comps.follower.getPose().getY() + 10.368) / Math.sqrt(-72 * -72 + -72 * -72);
-        double rightDist = Math.abs(-72 * comps.follower.getPose().getX() + 72 * comps.follower.getPose().getY()) / Math.sqrt(-72 * -72 + -72 * -72);
-        double leftMagnitude  = (leftDist  * brakeDistScaler) * (brakeVelScaler / leftBrakeDist );
-        double rightMagnitude = (rightDist * brakeDistScaler) * (brakeVelScaler / rightBrakeDist);
-        Vector stickVector = new Vector(new Pose(x, y)).plus(new Vector(new Pose(1,1)).times(leftMagnitude)).plus(new Vector(new Pose(-1,1)).times(rightMagnitude));
-        translationInputs[0] = stickVector.getXComponent();
-        translationInputs[1] = stickVector.getYComponent();
-        return translationInputs;
-    }
 
 	public double[] adjustInputs(double x, double y, double yaw, Gamepad gamepad1) {
 		double[] driveInputs = scaledInput(x, y, yaw);
@@ -117,18 +105,14 @@ public class DriveByWire {
 		}
 		double beta = 0;
 
-		if (gamepad1.right_bumper || gamepad1.right_trigger > 0.2 || gamepad1.left_bumper) {
+		if (gamepad1.right_bumper) {
+			comps.telemetryM.addData("111", "39");
 			double dy = comps.shooter.ShootTo.getY() - (comps.follower.getPose().getY() - Math.cos(comps.follower.getHeading()) * offsetX);
 			double dx = comps.shooter.ShootTo.getX() - (comps.follower.getPose().getX() + Math.sin(comps.follower.getHeading()) * offsetX);
 			double alpha = Math.atan2(dy, dx);
 			beta = angleWrap(alpha - Math.PI);
 
-			if (gamepad1.left_bumper) {
-				if (new Vector(new Pose(gamepad1.right_stick_x, gamepad1.right_stick_y)).getMagnitude() > 0.1) {
-					stickOrientation = new Vector(new Pose(gamepad1.right_stick_x, gamepad1.right_stick_y)).getTheta();
-				}
-				beta = stickOrientation;
-			}
+
 
 			if (angularVelocityTimer.seconds() >= 0) {
 				driveInputs[2] = getSteeringValue(beta);
@@ -136,29 +120,11 @@ public class DriveByWire {
 				angularVelocity = 0;
 				driveInputs[2] = getSteeringValue(beta);
 			}
+			comps.telemetryM.addData("111 fokiskd", "beta");
 			lastAimAngle = angleWrap(beta);
 			angularVelocityTimer.reset();
 		}
 		lastAngularVelocity = comps.follower.getAngularVelocity();
-
-        if (gamepad1.right_trigger > 0.2) {
-            if (comps.follower.getPose().getX() < 72) {
-                if (72 - comps.follower.getPose().getX() < comps.follower.getPose().getY() - 72) {
-                    driveInputs = bindToTriangle(driveInputs[0], driveInputs[1], driveInputs[2]);
-                }
-            } else {
-                if (comps.follower.getPose().getX() < comps.follower.getPose().getY()) {
-                    driveInputs = bindToTriangle(driveInputs[0], driveInputs[1], driveInputs[2]);
-                }
-            }
-        }
-
-		if (gamepad1.left_bumper) {
-			if (new Vector(new Pose(gamepad1.right_stick_x, gamepad1.right_stick_y)).getMagnitude() > 0.1) {
-				stickOrientation = new Vector(new Pose(gamepad1.right_stick_x, gamepad1.right_stick_y)).getMagnitude();
-				beta = stickOrientation;
-			}
-		}
 
 
 		comps.telemetryM.addData("heading", comps.follower.getHeading());
