@@ -26,16 +26,22 @@ public class Intake {
 
     public void TakeIn(ComponentShell Comps) {
         if (Comps.detector.fourthDetecting) {
-            intake.setPower(outtakePower);
+            if (intake.getPower() != outtakePower) {
+                intake.setPower(outtakePower);
+            }
             state = Intake.IntakeState.OUTTAKE;
             return;
         }
 		if (Comps.pusher.state == Pusher.PushState.WAITING || Comps.pusher.state == Pusher.PushState.RELOADING) {
 			state = IntakeState.INTAKE;
 			if (Comps.floodgate.floodgateCurrent > 18) {
-				intake.setPower(intakePowerOverCurrent);
+                if (intake.getPower() != intakePowerOverCurrent) {
+                    intake.setPower(intakePowerOverCurrent);
+                }
 			} else {
-				intake.setPower(intakePower);
+                if (intake.getPower() != intakePower) {
+                    intake.setPower(intakePower);
+                }
 			}
         }
         else {
@@ -44,22 +50,23 @@ public class Intake {
     }
 
     public void TakeOut(ComponentShell Comps) {
-        if (Comps.detector.fourthDetecting) {
-            intake.setPower(outtakePower);
-            state = Intake.IntakeState.OUTTAKE;
-            return;
-        }
         state = Intake.IntakeState.OUTTAKE;
-        intake.setPower(outtakePower);
+        if (intake.getPower() != outtakePower) {
+            intake.setPower(outtakePower);
+        }
     }
     public void StaticIntake(ComponentShell Comps) {
         if (Comps.detector.fourthDetecting) {
-            intake.setPower(outtakePower);
+            if (intake.getPower() != outtakePower) {
+                intake.setPower(outtakePower);
+            }
             state = Intake.IntakeState.OUTTAKE;
             return;
         }
         state = Intake.IntakeState.OFF;
-        intake.setPower(staticPower);
+        if (intake.getPower() != staticPower) {
+            intake.setPower(staticPower);
+        }
     }
 
 }

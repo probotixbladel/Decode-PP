@@ -13,7 +13,7 @@ public class Through {
     public static double outPower = 1;
     public static double staticPower = 0.4;
     public static double loosenPower = 0;
-    public ThroughState state = ThroughState.OFF;
+    private ThroughState state = ThroughState.OFF;
     public enum ThroughState {
         IN_THROUGH,
         OUT_THROUGH,
@@ -28,9 +28,11 @@ public class Through {
 
     public void OutThrough() {
         state = ThroughState.OUT_THROUGH;
+        Through.setPower(outPower);
     }
 
     public void StaticThrough() {
+        Through.setPower(staticPower);
         state = ThroughState.OFF;
     }
 
@@ -46,20 +48,16 @@ public class Through {
         switch (state) {
             case IN_THROUGH:
                 if (Comps.pusher.state == Pusher.PushState.WAITING || Comps.pusher.state == Pusher.PushState.RELOADING) {
-                    Through.setPower(inPower);
+                    if (Through.getPower() != inPower) {Through.setPower(inPower);}
 					if (Comps.floodgate.floodgateCurrent < 18) {
-						Through.setPower(inPowerOverCurrent);
+                        if (Through.getPower() != inPowerOverCurrent) {Through.setPower(inPowerOverCurrent);}
 					}
                 }
                 else {
-                    Through.setPower(loosenPower);
+                    if (Through.getPower() != loosenPower) {Through.setPower(loosenPower);};
                 }
                 break;
-            case OUT_THROUGH:
-                Through.setPower(outPower);
-                break;
             case OFF:
-                Through.setPower(staticPower);
                 break;
 		}
     }

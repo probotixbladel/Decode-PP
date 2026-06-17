@@ -84,23 +84,25 @@ public class ArtifactDetector {
         */
 
 		comps.telemetryM.debug(
-				"secondArtifact: R, G, B, A, Distance",
-				secondArtifactSensor.red(),
-				secondArtifactSensor.green(),
-				secondArtifactSensor.blue(),
-                secondArtifactSensor.alpha(),
+				"secondArtifact:",
+				//secondArtifactSensor.red(),
+				//secondArtifactSensor.green(),
+				//secondArtifactSensor.blue(),
+                //secondArtifactSensor.alpha(),
                 secondArtifactSensor.getDistance(DistanceUnit.MM)
 
 		);
+        /*
         comps.telemetryM.debug("thirdArtifact: R, G, B, A, Distance, rawOptical",
-				thirdArtifactSensor.red(),
-				thirdArtifactSensor.green(),
-				thirdArtifactSensor.blue(),
-				thirdArtifactSensor.alpha(),
+				//thirdArtifactSensor.red(),
+				//thirdArtifactSensor.green(),
+				//thirdArtifactSensor.blue(),
+				//thirdArtifactSensor.alpha(),
                 thirdArtifactSensor.getDistance(DistanceUnit.MM),
                 thirdArtifactSensor.rawOptical()
 
 		);
+         */
 
         comps.telemetryM.debug("fourthArtifact: Distance",
                 fourthArtifactSensor.getDistance(DistanceUnit.MM)

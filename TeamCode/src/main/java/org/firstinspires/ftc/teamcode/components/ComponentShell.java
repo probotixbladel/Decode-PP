@@ -53,7 +53,6 @@ public class ComponentShell {
 	@SuppressLint("SuspiciousIndentation")
     public void update() {
 		floodgate.update();
-		limePos = limeLight.update(telemetryM, Math.toDegrees(follower.getHeading()));
         detector.update(this);
         blinky.update(this);
         shooter.update(this);
@@ -61,9 +60,12 @@ public class ComponentShell {
         through.update(this);
 
 
-		if (limePos.getX() != 72 & limePos.getY() != 72 & useCam) {
-            follower.setX(limePos.getY() * camCertanty + follower.getPose().getX() * (1 - camCertanty));
-			follower.setY(limePos.getX() * camCertanty + follower.getPose().getY() * (1 - camCertanty));
+		if (useCam) {
+            limePos = limeLight.update(telemetryM, Math.toDegrees(follower.getHeading()));
+            if (limePos.getX() != 72 & limePos.getY() != 72) {
+                follower.setX(limePos.getY() * camCertanty + follower.getPose().getX() * (1 - camCertanty));
+                follower.setY(limePos.getX() * camCertanty + follower.getPose().getY() * (1 - camCertanty));
+            }
 		}
 
         telemetryM.debug("aimpos", shooter.ShootTo);
@@ -78,7 +80,6 @@ public class ComponentShell {
 
 
         telemetryM.debug("Number of shots left", shootNum);
-        telemetryM.debug("through state: ", through.state);
         telemetryM.debug("Vel: ", shooter.CurrentVel, Shooter.TargetVel);
         telemetryM.debug("MinToMax: ", shooter.MinToMax);
         telemetryM.debug("shooter state: ", shooter.state);

@@ -68,20 +68,26 @@ public class Pusher {
             case SHOOTING:
                 // PusherAngle > 100 is to avoid detecting overflows
                 if (lastShot.seconds() > shootTime || (pusherAngle < arriveAngle && pusherAngle > 100)) {
-                    pusher.setPosition(wait);
+                    if (pusher.getPosition() != wait) {
+                        pusher.setPosition(wait);
+                    }
                     state = PushState.RETURNING;
                     lastShot.reset();
                 }
                 break;
             case RETURNING:
-                pusher.setPosition(wait);
+                if (pusher.getPosition() != wait) {
+                    pusher.setPosition(wait);
+                }
                 if (lastShot.seconds() > returnTime || pusherAngle > restAngle) {
                     state = PushState.RELOADING;
                     lastShot.reset();
                 }
                 break;
             case RELOADING:
-                pusher.setPosition(wait);
+                if (pusher.getPosition() != wait) {
+                    pusher.setPosition(wait);
+                }
                 if(lastShot.seconds() > waitTime || Comps.detector.firstDetecting) {
                     state = PushState.WAITING;
                 }

@@ -94,6 +94,7 @@ public class DriveByWire {
 	public double[] adjustInputs(double x, double y, double yaw, Gamepad gamepad1) {
 		double[] driveInputs = scaledInput(x, y, yaw);
 
+        /*
 		if (gamepad1.right_bumper) {
 			translationGear = 0.5;
 			rotationGear = 0.5;
@@ -101,6 +102,7 @@ public class DriveByWire {
 			translationGear = 1;
 			rotationGear = 1;
 		}
+         */
 		double beta = 0;
 		if (gamepad1.rightBumperWasPressed()) {
 			resetAimSystem();
@@ -119,7 +121,6 @@ public class DriveByWire {
 
 			driveInputs[2] = getSteeringValue(beta);
 
-			comps.telemetryM.addData("111 fokiskd", "beta");
 			lastAimAngle = angleWrap(beta);
 			angularVelocityTimer.reset();
 		}
