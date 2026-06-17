@@ -36,6 +36,12 @@ public class Pusher {
         pusherEnc = hwm.get(AnalogInput.class, "PusherEnc");
     }
 
+    public void forcePush() {
+        pusher.setPosition(push);
+        lastShot.reset();
+        state = PushState.SHOOTING;
+    }
+
     public synchronized boolean AttemptPush(ComponentShell Comps) {
         Pose goal = new Pose();
         switch (Comps.alliance) {

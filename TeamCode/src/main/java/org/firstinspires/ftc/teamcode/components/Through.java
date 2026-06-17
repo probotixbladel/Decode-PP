@@ -48,9 +48,13 @@ public class Through {
         switch (state) {
             case IN_THROUGH:
                 if (Comps.pusher.state == Pusher.PushState.WAITING || Comps.pusher.state == Pusher.PushState.RELOADING) {
-                    if (Through.getPower() != inPower) {Through.setPower(inPower);}
-					if (Comps.floodgate.floodgateCurrent < 18) {
-                        if (Through.getPower() != inPowerOverCurrent) {Through.setPower(inPowerOverCurrent);}
+                    if (Through.getPower() != inPower) {
+                        Through.setPower(inPower);
+                    }
+                    if (Comps.floodgate.floodgateCurrent < 18) {
+                        if (Through.getPower() != inPowerOverCurrent) {
+                            Through.setPower(inPowerOverCurrent);
+                        }
 					}
                 }
                 else {

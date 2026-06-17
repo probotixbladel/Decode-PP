@@ -25,6 +25,7 @@ public class ComponentShell {
     public Pose limePos = new Pose();
     public Alliance alliance;
     public boolean SinglePlayer;
+    public boolean forcePush = false;
     public int shootNum;
     public static boolean useCam = false;
     public static double camCertanty = 0.10;
@@ -79,11 +80,11 @@ public class ComponentShell {
         telemetryM.debug("follower pos: ", follower.getPose());
 
 
-        telemetryM.debug("Number of shots left", shootNum);
+        //telemetryM.debug("Number of shots left", shootNum);
         telemetryM.debug("Vel: ", shooter.CurrentVel, Shooter.TargetVel);
         telemetryM.debug("MinToMax: ", shooter.MinToMax);
         telemetryM.debug("shooter state: ", shooter.state);
-        telemetryM.debug("FloodgateCurrent", floodgate.floodgateCurrent);
+        //telemetryM.debug("FloodgateCurrent", floodgate.floodgateCurrent);
 
     }
 
@@ -114,31 +115,33 @@ public class ComponentShell {
             }
 
         } else {
-            if (gamepad2.a) {
-                pusher.AttemptPush(this);
+            if (gamepad2.dpadDownWasPressed()) {
+                forcePush = !forcePush;
             }
-            if (gamepad2.right_trigger > 0.2) {
-                intake.TakeIn(this);
-            } else if (gamepad2.left_trigger > 0.2) {
+
+            if (gamepad2.x & gamepad2.y)
+            if (gamepad2.left_trigger_pressed) {
                 intake.TakeOut(this);
+                through.InThrough();
+            } else if (gamepad1.right_trigger_pressed) {
+                if (forcePush) {
+                    pusher.forcePush();
+                } else {
+                    pusher.AttemptPush(this);
+                }
+                intake.TakeIn(this);
+                through.InThrough();
+            } else if (gamepad2.x) {
+                intake.TakeIn(this);
+                through.InThrough();
             } else {
+                through.StaticThrough();
                 intake.StaticIntake(this);
             }
 
-            if (gamepad2.x) {
-                intake.TakeIn(this);
-                through.InThrough();
-            //} else if (gamepad2.left_bumper) {    //zorgt voor aflopende belt
-                //through.OutThrough();
-            } else {
-                through.StaticThrough();
-            }
+            useCam = gamepad2.dpad_up;
 
-            if (gamepad2.left_bumper) {
-                pusher.state = Pusher.PushState.SHOOTING;
-                pusher.pusher.setPosition(pusher.push);
-                pusher.lastShot.reset();
-            }
+
         }
     }
 
