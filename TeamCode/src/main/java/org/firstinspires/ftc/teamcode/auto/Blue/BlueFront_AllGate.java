@@ -115,6 +115,7 @@ public class BlueFront_AllGate extends OpMode {
             case 0:
                 follower.followPath(scorePreloadStart);
                 comps.through.InThrough();
+                comps.intake.TakeIn(comps);
                 comps.shooter.PreTargetTo(scorePoseStart);
                 nextPathState();
                 break;
@@ -130,7 +131,6 @@ public class BlueFront_AllGate extends OpMode {
             case 2:
                 comps.AutoShooterStart();
                 if(!follower.isBusy() && comps.FinishedShooting(3)){
-                    comps.intake.TakeIn(comps);
                     follower.followPath(grabPickup2Part1);
                     nextPathState();
 
@@ -139,7 +139,6 @@ public class BlueFront_AllGate extends OpMode {
 
             case 3:
                 if(!follower.isBusy()){
-                    comps.intake.TakeIn(comps);
                     follower.followPath(grabPickup2Part2, 0.6, false);
                     nextPathState();
 
@@ -160,7 +159,6 @@ public class BlueFront_AllGate extends OpMode {
                     comps.AutoShooterStart();
                     follower.holdPoint(scorePose);
                     if(comps.FinishedShooting(3) && comps.pusher.state == Pusher.PushState.RETURNING){
-                        comps.intake.TakeIn(comps);
                         actionTimer.resetTimer();
                         follower.followPath(grabGate, 1, true);
                         nextPathState();
@@ -170,14 +168,12 @@ public class BlueFront_AllGate extends OpMode {
                 break;
 
             case 6:
-                comps.intake.TakeIn(comps);
                 /*
                 if (actionTimer.getElapsedTimeSeconds() > 5) {
                         follower.holdPoint(pickupGatePoseAlt);
                 }
                 */
                 if (comps.detector.thirdDetecting || actionTimer.getElapsedTimeSeconds() > gateTime){
-                    comps.intake.StaticIntake(comps);
                     follower.followPath(scoreGate,false);
                     comps.ResetShootNum();
                     nextPathState();
@@ -191,7 +187,6 @@ public class BlueFront_AllGate extends OpMode {
                     if(comps.FinishedShooting(3) && comps.pusher.state == Pusher.PushState.RETURNING) {
                         follower.followPath(grabPickup1);
                         nextPathState();
-                        setPathState(-1);
                     }
                 }
                 break;
@@ -199,13 +194,15 @@ public class BlueFront_AllGate extends OpMode {
             case 8:
                 if(!follower.isBusy()) {
                     follower.followPath(scorePickup1);
+                    comps.ResetShootNum();
                     nextPathState();
                 }
                 break;
 
-            case 9:
+            case 10:
                 if(!follower.isBusy()){
-                    follower.followPath(leave);
+                    comps.AutoShooterStart();
+                    follower.followPath(leave, shootigDrivePower,true);
                     setPathState(-1);
                 }
                 break;
