@@ -1,0 +1,28 @@
+
+import com.qualcomm.hardware.lynx.LynxModule;
+import java.util.List;
+
+List<LynxModule> allHubs;
+
+init:
+        allHubs = hardwareMap.getAll(LynxModule.class);
+
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
+
+loop:
+        for (LynxModule hub : allHubs) {
+            hub.clearBulkCache();
+        }
+
+gate:
+grabGate = follower.pathBuilder()
+                .addPath(new BezierCurve(scorePose, pickupGateControlpoint, pickupGatePose))
+                .setHeadingInterpolation(HeadingInterpolator.piecewise(
+                        new HeadingInterpolator.PiecewiseNode(0, 0.5, HeadingInterpolator.linear(scorePose.getHeading(), pickupGatePose.getHeading())),
+                        new HeadingInterpolator.PiecewiseNode(0.5, 1, HeadingInterpolator.constant(pickupGatePose.getHeading()))))
+                .build();
+
+
+    public static double shootigDrivePower = 0.4;

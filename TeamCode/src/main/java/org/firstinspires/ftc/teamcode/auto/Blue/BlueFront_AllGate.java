@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto.Blue;
 
 import com.bylazar.telemetry.PanelsTelemetry;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
@@ -20,9 +21,13 @@ import org.firstinspires.ftc.teamcode.components.ComponentShell;
 import org.firstinspires.ftc.teamcode.components.Pusher;
 import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
+import java.util.List;
+
 @Configurable
 @Autonomous(name = "BlueFront_AllGate")
 public class BlueFront_AllGate extends OpMode {
+    List<LynxModule> allHubs;
     private Follower follower;
     public ElapsedTime Timer = new ElapsedTime();
     private Timer pathTimer, actionTimer, opmodeTimer;
@@ -157,7 +162,7 @@ public class BlueFront_AllGate extends OpMode {
             case 5:
                 if(!follower.isBusy()){
                     comps.AutoShooterStart();
-                    follower.holdPoint(scorePose);
+                    follower.holdPoint(scorePose.withHeading(comps.shooter.shootInDirection(comps)));
                     if(comps.FinishedShooting(3) && comps.pusher.state == Pusher.PushState.RETURNING){
                         actionTimer.resetTimer();
                         follower.followPath(grabGate, 1, true);
@@ -183,7 +188,7 @@ public class BlueFront_AllGate extends OpMode {
             case 7:
                 if(!follower.isBusy()){
                     comps.AutoShooterStart();
-                    follower.holdPoint(scorePose);
+                    follower.holdPoint(scorePose.withHeading(comps.shooter.shootInDirection(comps)));
                     if(comps.FinishedShooting(3) && comps.pusher.state == Pusher.PushState.RETURNING) {
                         follower.followPath(grabPickup1);
                         nextPathState();
@@ -212,6 +217,11 @@ public class BlueFront_AllGate extends OpMode {
 
     @Override
     public void init() {
+        allHubs = hardwareMap.getAll(LynxModule.class);
+
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
         pathTimer = new Timer();
         actionTimer = new Timer();
         opmodeTimer = new Timer();
@@ -237,6 +247,9 @@ public class BlueFront_AllGate extends OpMode {
 
     @Override
     public void loop() {
+        for (LynxModule hub : allHubs) {
+            hub.clearBulkCache();
+        }
         follower.update();
         autonomousPathUpdate();
         telemetryM.debug("Shots", Shots);

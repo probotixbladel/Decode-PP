@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.auto.Red;
 
 import com.bylazar.telemetry.PanelsTelemetry;
+import com.qualcomm.hardware.lynx.LynxModule;
+import java.util.List;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -14,25 +17,29 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.components.ComponentShell;
+import org.firstinspires.ftc.teamcode.components.Pusher;
 import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Configurable
 @Autonomous(name = "RedBack_AllHp_With3")
 public class RedBack_AllHp_With3 extends OpMode {
     private Follower follower;
+    List<LynxModule> allHubs;
     public ElapsedTime Timer = new ElapsedTime();
     private Timer pathTimer, actionTimer, opmodeTimer;
-    public static double gateTime = 2;
+    public static double HpTime = 6;
     private int pathState;
-    private final Pose startPose = new Pose(88.55, 8.28, Math.toRadians(90));
-    private final Pose scorePose = new Pose(84.35, 16.65, Math.toRadians(-111));
-    private final Pose pickupHpPose = new Pose(123.27, 36.36, Math.toRadians(0));
-    private final Pose pickupHpControlpoint = new Pose(79.72, 38.66);
-    private final Pose pickup3Pose = new Pose(135.62, 8.12, Math.toRadians(0));
-    private final Pose pickup3Controlpoint = new Pose(60.40, 12.68);
-    private final Pose leavePose = new Pose(83.38, 58.97, Math.toRadians(90));
+    public static double fieldLength = 141.5;
+    private final Pose startPose = new Pose(55.45, 8.28, Math.toRadians(-90)).mirror(fieldLength);
+    private final Pose scorePose = new Pose(59.65, 16.65, Math.toRadians(-66)).mirror(fieldLength);
+    private final Pose pickup3Pose = new Pose(20.73, 38.36, Math.toRadians(-180)).mirror(fieldLength);
+    private final Pose pickup3Controlpoint = new Pose(5, 56).mirror(fieldLength);
+    private final Pose pickup3PoseHalfway = new Pose(45, 38.36, Math.toRadians(-180)).mirror(fieldLength);
+    private final Pose pickupHpPose = new Pose(8.38, 8.12, Math.toRadians(-100)).mirror(fieldLength);
+    private final Pose pickupHpControlpoint = new Pose(64.28, 38.66).mirror(fieldLength);
+    private final Pose leavePose = new Pose(60.62, 58.97, Math.toRadians(-90)).mirror(fieldLength);
     public ComponentShell comps;
-    public PathChain scorePreload, leave, grabPickup3, scorePickup3, grabPickupHp, scorePickupHp;
+    public PathChain scorePreload, leave, grabPickup3Part1, grabPickup3Part2, scorePickup3, grabPickupHp, scorePickupHp;
     public int Shots = 0;
     private TelemetryManager telemetryM;
 
@@ -47,7 +54,9 @@ public class RedBack_AllHp_With3 extends OpMode {
 
         grabPickupHp = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose, pickupHpControlpoint, pickupHpPose))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), pickupHpPose.getHeading())
+                .setHeadingInterpolation(HeadingInterpolator.piecewise(
+                        new HeadingInterpolator.PiecewiseNode(0, 0.4, HeadingInterpolator.linear(scorePose.getHeading(), pickupHpPose.getHeading())),
+                        new HeadingInterpolator.PiecewiseNode(0.4, 1, HeadingInterpolator.constant(pickupHpPose.getHeading()))))
                 .build();
 
         scorePickupHp = follower.pathBuilder()
@@ -55,9 +64,14 @@ public class RedBack_AllHp_With3 extends OpMode {
                 .setLinearHeadingInterpolation(pickupHpPose.getHeading(), scorePose.getHeading())
                 .build();
 
-        grabPickup3 = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose, pickup3Controlpoint, pickup3Pose))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), pickup3Pose.getHeading())
+        grabPickup3Part1 = follower.pathBuilder()
+                .addPath(new BezierCurve(scorePose, pickup3Controlpoint, pickup3PoseHalfway))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), pickup3PoseHalfway.getHeading())
+                .build();
+
+        grabPickup3Part2 = follower.pathBuilder()
+                .addPath(new BezierLine(pickup3PoseHalfway, pickup3Pose))
+                .setConstantHeadingInterpolation(pickup3Pose.getHeading())
                 .build();
 
         scorePickup3 = follower.pathBuilder()
@@ -76,54 +90,80 @@ public class RedBack_AllHp_With3 extends OpMode {
 
         switch (pathState) {
             case 0:
-                follower.followPath(scorePreload);
+                comps.intake.TakeIn(comps);
+                follower.followPath(scorePreload,1, true);
                 comps.through.InThrough();
-                comps.shooter.PreTargetTo(scorePose);
+                comps.ResetShootNum();
                 nextPathState();
                 break;
+
             case 1:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if (!follower.isBusy()) {
-                    follower.followPath(grabPickupHp);
-                    nextPathState();
+                if(!follower.isBusy()){
+                    comps.AutoShooterStart();
+                    follower.holdPoint(scorePose.withHeading(comps.shooter.shootInDirection(comps)));
+                    if(comps.FinishedShooting(3) && comps.pusher.state == Pusher.PushState.RETURNING) {
+                        follower.followPath(grabPickup3Part1, 0.6, false);
+                        nextPathState();
+                    }
                 }
                 break;
 
             case 2:
                 if(!follower.isBusy()){
-                    follower.followPath(scorePickupHp);
+                    follower.followPath(grabPickup3Part2, 1, false);
                     nextPathState();
                 }
                 break;
 
             case 3:
                 if(!follower.isBusy()){
-                    follower.followPath(grabPickup3,true);
+                    follower.followPath(scorePickup3,true);
+                    comps.ResetShootNum();
                     nextPathState();
                 }
                 break;
 
             case 4:
                 if(!follower.isBusy()){
-                    comps.intake.TakeIn(comps);
-                    follower.followPath(scorePickup3, 1, true);
-                    nextPathState();
+                    comps.AutoShooterStart();
+                    follower.holdPoint(scorePose.withHeading(comps.shooter.shootInDirection(comps)));
+                    if(comps.FinishedShooting(3) && comps.pusher.state == Pusher.PushState.RETURNING){
+                        follower.followPath(grabPickupHp);
+                        actionTimer.resetTimer();
+                        nextPathState();
+                    }
                 }
                 break;
 
             case 5:
-                if(!follower.isBusy()){
-                    comps.intake.StaticIntake(comps);
-                    follower.followPath(leave,true);
-                    setPathState(-1);
+                if(!follower.isBusy() || actionTimer.getElapsedTimeSeconds() > HpTime){
+                    follower.followPath(scorePickupHp,true);
+                    comps.ResetShootNum();
+                    nextPathState();
                 }
                 break;
+
+            case 6:
+                if(!follower.isBusy()){
+                    comps.AutoShooterStart();
+                    follower.holdPoint(scorePose.withHeading(comps.shooter.shootInDirection(comps)));
+                    if(comps.FinishedShooting(3) && comps.pusher.state == Pusher.PushState.RETURNING){
+                        follower.followPath(leave);
+                        setPathState(-1);
+                    }
+                }
 
         }
     }
 
     @Override
     public void init() {
+        allHubs = hardwareMap.getAll(LynxModule.class);
+
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
         pathTimer = new Timer();
         actionTimer = new Timer();
         opmodeTimer = new Timer();
@@ -133,7 +173,7 @@ public class RedBack_AllHp_With3 extends OpMode {
         buildPaths();
         follower.setStartingPose(startPose);
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
-        comps = new ComponentShell(hardwareMap, follower, telemetryM, ComponentShell.Alliance.BLUE, true);
+        comps = new ComponentShell(hardwareMap, follower, telemetryM, ComponentShell.Alliance.RED, true);
     }
 
     public void setPathState(int pState) {
@@ -148,6 +188,9 @@ public class RedBack_AllHp_With3 extends OpMode {
 
     @Override
     public void loop() {
+        for (LynxModule hub : allHubs) {
+            hub.clearBulkCache();
+        }
         follower.update();
         autonomousPathUpdate();
         telemetryM.debug("Shots", Shots);
@@ -175,6 +218,6 @@ public class RedBack_AllHp_With3 extends OpMode {
 
     @Override
     public void stop() {
-        Storage.write(ComponentShell.Alliance.BLUE, follower.getPose());
+        Storage.write(ComponentShell.Alliance.RED, follower.getPose());
     }
 }
