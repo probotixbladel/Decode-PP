@@ -99,6 +99,7 @@ public class Shooter {
     public static double MIN_B = 3.67e-3;
     public static double MINTOMAXSTART = 0.945;
     public static double MINTOMAX_A = -5.05e-4;
+    public static double offsetX = 1.5748;
     public static double D = 0.0;
     public static double F = 14.0;
     private double lP = P;
@@ -153,6 +154,14 @@ public class Shooter {
 
         // Linear interpolation
         return y0 + (x - x0) * (y1 - y0) / (x1 - x0);
+    }
+
+    public double shootInDirection(ComponentShell comps) {
+        double dy = comps.shooter.ShootTo.getY() - (comps.follower.getPose().getY() - Math.cos(comps.follower.getHeading()) * offsetX);
+        double dx = comps.shooter.ShootTo.getX() - (comps.follower.getPose().getX() + Math.sin(comps.follower.getHeading()) * offsetX);
+        double alpha = Math.atan2(dy, dx);
+        double beta = alpha - Math.PI;
+        return beta;
     }
 
 	public void updateShootTo(ComponentShell comps) {
