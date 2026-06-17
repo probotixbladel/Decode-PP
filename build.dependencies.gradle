@@ -4,6 +4,8 @@ repositories {
     maven { url = 'https://maven.pedropathing.com' }
     maven { url = "https://mymaven.bylazar.com/releases" }
     maven { url = "https://mymaven.bylazar.com/releases" }
+    maven { url 'https://jitpack.io' }
+
 }
 
 dependencies {
@@ -20,5 +22,8 @@ dependencies {
     implementation 'com.pedropathing:ftc:2.1.2'
     implementation 'com.pedropathing:telemetry:1.0.0'
     implementation 'com.bylazar:fullpanels:1.0.12'
+    implementation 'com.bylazar:fullpanels:1.0.0'
+
+    implementation 'com.github.Thermal-Equilibrium:homeostasis-FTC:1.0.8'
 }
 

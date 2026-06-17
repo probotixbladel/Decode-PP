@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive;
 
+import android.annotation.SuppressLint;
+
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
@@ -15,6 +17,7 @@ import android.annotation.SuppressLint;
 import org.firstinspires.ftc.teamcode.components.ComponentShell;
 import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.util.DriveByWire;
 
 @Configurable
 @TeleOp(name="PedroTeleop", group="Linear OpMode")
@@ -25,52 +28,10 @@ public class PedroTeleop extends OpMode {
     public static ComponentShell.Alliance alliance;
     private boolean robotCentric = false;
     private TelemetryManager telemetryM;
-    private final PedroInputScaler scaler = new PedroInputScaler();
+    private DriveByWire driveByWire;
     private ComponentShell Comps;
-    public PIDFController GoalPID = new PIDFController(new PIDFCoefficients(0,0,0,0));
-	public static double offsetX = 1.5748;
-	//public static double blueAngleOffset = -0.03;
-	//public static double redAngleOffset = -0.015;
     private volatile boolean started = false;
-    static public double kp = 1;
-    static public double kd = 0.08;
-    static public double kf = 1;
-    static class PedroInputScaler {
-        // TODO: Tune these values for your application
-        // This does NOT create any mechanical advantage, it is purely for control
-        private final double[] translationGears = { 0.3, 0.6, 0.8, 1.0 };
-        private final double[] rotationGears = { 0.3, 0.4, 0.6, 0.75 };
 
-        public int gear = 3; // the index of the gear in use
-
-
-        // Curves exponents
-        // higher: more control when slow, less control at speed
-        // lower : less control when slow, more control at speed
-        // n < 1 or n > 3: not recommended
-        // n = 1: linear
-        // 1 < n < 3: recommended
-        // TODO: experiment to find your optimal value
-        private static final double translationCurveExponent = 2.0;
-        private static final double rotationCurveExponent = 1.2;
-
-        // Applies a signed exponential curve to controller input.
-        // This preserves the input direction while adjusting sensitivity.
-        private double applyInputCurve(double input, double exponent) {
-            return Math.pow(Math.abs(input), exponent) * Math.signum(input);
-        }
-
-        // Applies both gearing and input curves to translation & rotation input
-        public double[] getScaledInput(double x, double y, double yaw) {
-            double length = Math.sqrt((x * x + y * y));
-            double scale = applyInputCurve(length, translationCurveExponent) * translationGears[gear];
-            yaw = applyInputCurve(yaw, rotationCurveExponent) * rotationGears[gear];
-            x *= scale;
-            y *= scale;
-            return new double[] {x, y, yaw};
-
-        }
-    }
 
     @SuppressLint("SuspiciousIndentation")
     @Override
@@ -80,9 +41,11 @@ public class PedroTeleop extends OpMode {
         startingPose = data.storedPose;
         follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
         follower.update();
+		follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         alliance = data.storedAlliance;
         Comps = new ComponentShell(hardwareMap, follower, telemetryM, alliance, singlePlayer);
+		driveByWire = new DriveByWire(Comps);
     }
 
     @Override
@@ -90,6 +53,7 @@ public class PedroTeleop extends OpMode {
         follower.startTeleopDrive();
     }
 
+	@SuppressLint("SuspiciousIndentation")
 	@Override
     public void loop() {
         if (gamepad2.xWasPressed() || (gamepad1.x & singlePlayer)) {
@@ -101,20 +65,17 @@ public class PedroTeleop extends OpMode {
             return;
         }
 
-        if (gamepad1.rightBumperWasPressed()) {
-			GoalPID = new PIDFController(new PIDFCoefficients(kp, 0, kd, kf));
-		}
 		if (singlePlayer) {
 			if (gamepad1.left_stick_button) {
-				scaler.gear = 1;
+				driveByWire.gear = 1;
 			} else {
-				scaler.gear = 3;
+				driveByWire.gear = 3;
 			}
             } else {
 			if (gamepad1.a) {
-				scaler.gear = 3;
+				driveByWire.gear = 3;
 			} else if (gamepad1.b) {
-				scaler.gear = 0;
+				driveByWire.gear = 0;
 			}
 		}
 
@@ -122,33 +83,16 @@ public class PedroTeleop extends OpMode {
             robotCentric = !robotCentric;
         }
 
-        double[] driveInputs = scaler.getScaledInput(
-            -gamepad1.left_stick_x,
-            -gamepad1.left_stick_y,
-            -gamepad1.right_stick_x
-        );
+		double[] driveInputs = driveByWire.adjustInputs(
+				-gamepad1.left_stick_x,
+				-gamepad1.left_stick_y,
+				-gamepad1.right_stick_x,
+				gamepad1
+		);
 
-        if(gamepad1.right_bumper) {
-            double dy = Comps.shooter.ShootTo.getY() - (follower.getPose().getY() - Math.cos(follower.getHeading()) * offsetX);
-            double dx = Comps.shooter.ShootTo.getX() - (follower.getPose().getX() + Math.sin(follower.getHeading()) * offsetX);
-            double alpha = Math.atan2(dy, dx);
-            double beta = alpha - Math.PI;
+		telemetryM.debug("drive inputs", driveInputs[0], driveInputs[1], driveInputs[2]);
 
-			/* if (follower.getPose().getY() < 48) {
-				if (alliance == ComponentShell.Alliance.BLUE) {
-					GoalPID.setTargetPosition(beta + blueAngleOffset);
-				} else {
-					GoalPID.setTargetPosition(beta + redAngleOffset);
-				}
-			} else {
-				GoalPID.setTargetPosition(beta);
-			} */
-			GoalPID.setTargetPosition(beta);
-            GoalPID.updatePosition(follower.getHeading());
-            driveInputs[2] = Math.min(Math.max(GoalPID.run(),-1),1);
-        }
-
-        if (robotCentric) {
+		if (robotCentric) {
             follower.setTeleOpDrive(
                 -driveInputs[1],
                 -driveInputs[0],
@@ -189,7 +133,6 @@ public class PedroTeleop extends OpMode {
 
 		follower.update();
 		telemetryM.update();
-		telemetryM.debug("heading error", GoalPID.getError());
     }
 
     @Override

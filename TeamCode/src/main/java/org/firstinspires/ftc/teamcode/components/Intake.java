@@ -9,10 +9,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Intake {
 	public DcMotorEx intake;
 	public static double intakePower = 0.8;
-    public static double outTakeTime = 100;
 	public static double intakePowerOverCurrent = 0.6;
-    public static double outtakePower = -0.3;
-    public static double staticPower = 0.4;
+    public static double outtakePower = -0.6;
+    public static double staticPower = 0.3;
     public IntakeState state = IntakeState.OFF;
     public enum IntakeState {
         INTAKE,
