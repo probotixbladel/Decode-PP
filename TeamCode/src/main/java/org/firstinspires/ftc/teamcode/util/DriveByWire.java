@@ -14,12 +14,10 @@ import org.firstinspires.ftc.teamcode.components.ComponentShell;
 public class DriveByWire {
 	// TODO: Tune these values for your application
 	// This does NOT create any mechanical advantage, it is purely for control
-	private final double[] translationGears = { 0.3, 0.6, 0.8, 1.0 };
-	private final double[] rotationGears = { 0.3, 0.4, 0.6, 0.75 };
+	private double translationGear = 1;
+	private double rotationGear = 1;
 
-	public int gear = 3; // the index of the gear in use
 	public double lastAimAngle = 0;
-	public double angularVelocity = 0;
 	public ElapsedTime angularVelocityTimer = new ElapsedTime();
 	public double lastAngularVelocity = 0;
 
@@ -35,7 +33,7 @@ public class DriveByWire {
 
 	private final ComponentShell comps;
     public static double CloseKF = 0;
-	public static double CloseKP = 1.8;
+	public static double CloseKP = 1.0;
 	public static double CloseKI = 0;
 	public static double CloseKD = 0.1;
 	public static double PosKP = 0;
@@ -61,8 +59,8 @@ public class DriveByWire {
 	// Applies both gearing and input curves to translation & rotation input
 	public double[] scaledInput(double x, double y, double yaw) {
 		double length = Math.sqrt((x * x + y * y));
-		double scale = applyInputCurve(length, translationCurveExponent) * translationGears[gear];
-		yaw = applyInputCurve(yaw, rotationCurveExponent) * rotationGears[gear];
+		double scale = applyInputCurve(length, translationCurveExponent) * translationGear;
+		yaw = applyInputCurve(yaw, rotationCurveExponent) * rotationGear;
 		x *= scale;
 		y *= scale;
 		return new double[] {x, y, yaw};
@@ -85,14 +83,10 @@ public class DriveByWire {
 	}
 
 	public double getSteeringValue(double angle) {
-		comps.telemetryM.addData("111a", angle);
 		double headingError = angleWrap(angle - comps.follower.getHeading());
-		comps.telemetryM.addData("111h", headingError);
 		aimClosePID.updateError(headingError);
 		aimPosPID.updateError(headingError);
         double closeMult = Math.min(Math.max((Math.abs(headingError) - startClosePID) / (startClosePID - levelClosePID), 0), 1);
-		comps.telemetryM.addData("111c", closeMult);
-
 		return aimPosPID.run() * (1 - closeMult) + aimClosePID.run() * closeMult;
 	}
 
@@ -100,26 +94,31 @@ public class DriveByWire {
 	public double[] adjustInputs(double x, double y, double yaw, Gamepad gamepad1) {
 		double[] driveInputs = scaledInput(x, y, yaw);
 
-		if (gamepad1.rightBumperWasPressed()) {
-			resetAimSystem();
+		if (gamepad1.right_bumper) {
+			translationGear = 0.5;
+			rotationGear = 0.5;
+		} else {
+			translationGear = 1;
+			rotationGear = 1;
 		}
 		double beta = 0;
-
-		if (gamepad1.right_bumper) {
-			comps.telemetryM.addData("111", "39");
+		if (gamepad1.rightBumperWasPressed()) {
+			resetAimSystem();
 			double dy = comps.shooter.ShootTo.getY() - (comps.follower.getPose().getY() - Math.cos(comps.follower.getHeading()) * offsetX);
 			double dx = comps.shooter.ShootTo.getX() - (comps.follower.getPose().getX() + Math.sin(comps.follower.getHeading()) * offsetX);
 			double alpha = Math.atan2(dy, dx);
 			beta = angleWrap(alpha - Math.PI);
 
+			getSteeringValue(beta);
 
+		} else if (gamepad1.right_bumper) {
+			double dy = comps.shooter.ShootTo.getY() - (comps.follower.getPose().getY() - Math.cos(comps.follower.getHeading()) * offsetX);
+			double dx = comps.shooter.ShootTo.getX() - (comps.follower.getPose().getX() + Math.sin(comps.follower.getHeading()) * offsetX);
+			double alpha = Math.atan2(dy, dx);
+			beta = angleWrap(alpha - Math.PI);
 
-			if (angularVelocityTimer.seconds() >= 0) {
-				driveInputs[2] = getSteeringValue(beta);
-			} else {
-				angularVelocity = 0;
-				driveInputs[2] = getSteeringValue(beta);
-			}
+			driveInputs[2] = getSteeringValue(beta);
+
 			comps.telemetryM.addData("111 fokiskd", "beta");
 			lastAimAngle = angleWrap(beta);
 			angularVelocityTimer.reset();
@@ -130,7 +129,6 @@ public class DriveByWire {
 		comps.telemetryM.addData("heading", comps.follower.getHeading());
 		comps.telemetryM.addData("target angle", beta);
 		comps.telemetryM.addData("angular velocity", comps.follower.getAngularVelocity());
-		comps.telemetryM.addData("target angular velocity", angularVelocity);
 
 		return driveInputs;
 	}

@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.components;
 import com.bylazar.configurables.annotations.Configurable;
 //import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -18,7 +19,7 @@ public class ArtifactDetector {
 	public OpticalDistanceSensor firstArtifactSensor2;  // Hardware Device Object
     public ColorRangeSensor secondArtifactSensor;
     public RevColorSensorV3 thirdArtifactSensor;
-    public RevColorSensorV3 fourthArtifactSensor;
+    public Rev2mDistanceSensor fourthArtifactSensor;
 	public double firstDistance = 0;
 	public double firstDistance2 = 0;
     private final double[] distanceBuffer = new double[instances];
@@ -42,7 +43,7 @@ public class ArtifactDetector {
     public ArtifactDetector(HardwareMap hwm) {
 		this.secondArtifactSensor = hwm.get(ColorRangeSensor.class, "ColThrough");
         this.thirdArtifactSensor  = hwm.get(RevColorSensorV3.class, "ColIn");
-        //this.fourthArtifactSensor = hwm.get(RevColorSensorV3.class, "RangeIn");
+        this.fourthArtifactSensor = hwm.get(Rev2mDistanceSensor.class, "RangeIn");
 		this.firstArtifactSensor1 = hwm.get(OpticalDistanceSensor.class, "DistSens");
 		this.firstArtifactSensor2 = hwm.get(OpticalDistanceSensor.class, "DistSens2");
         timer = new ElapsedTime();
@@ -100,19 +101,11 @@ public class ArtifactDetector {
                 thirdArtifactSensor.rawOptical()
 
 		);
-        /*
 
-        comps.telemetryM.debug("fourthkkArtifact: R, G, B, A, Distance, rawOptical",
-                fourthArtifactSensor.red(),
-                fourthArtifactSensor.green(),
-                fourthArtifactSensor.blue(),
-                fourthArtifactSensor.alpha(),
-                fourthArtifactSensor.getDistance(DistanceUnit.MM),
-                fourthArtifactSensor.rawOptical()
+        comps.telemetryM.debug("fourthArtifact: Distance",
+                fourthArtifactSensor.getDistance(DistanceUnit.MM)
         );
 
-
-		*/
         comps.telemetryM.debug("detecting: first, second, third, fourth", firstDetecting, secondDetecting, thirdDetecting, fourthDetecting);
 
     }

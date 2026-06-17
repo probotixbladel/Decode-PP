@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.drive;
 import android.annotation.SuppressLint;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.control.PIDFCoefficients;
@@ -19,6 +20,8 @@ import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.util.DriveByWire;
 
+import java.util.List;
+
 @Configurable
 @TeleOp(name="PedroTeleop", group="Linear OpMode")
 public class PedroTeleop extends OpMode {
@@ -30,12 +33,19 @@ public class PedroTeleop extends OpMode {
     private TelemetryManager telemetryM;
     private DriveByWire driveByWire;
     private ComponentShell Comps;
+    List<LynxModule> allHubs;
     private volatile boolean started = false;
 
 
     @SuppressLint("SuspiciousIndentation")
     @Override
     public void init() {
+        allHubs = hardwareMap.getAll(LynxModule.class);
+
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
+
         follower = Constants.createFollower(hardwareMap);
         Storage.Data data = Storage.read();
         startingPose = data.storedPose;
@@ -56,6 +66,9 @@ public class PedroTeleop extends OpMode {
 	@SuppressLint("SuspiciousIndentation")
 	@Override
     public void loop() {
+        for (LynxModule hub : allHubs) {
+            hub.clearBulkCache();
+        }
         if (gamepad2.xWasPressed() || (gamepad1.x & singlePlayer)) {
             started = true;
         }
@@ -65,19 +78,6 @@ public class PedroTeleop extends OpMode {
             return;
         }
 
-		if (singlePlayer) {
-			if (gamepad1.left_stick_button) {
-				driveByWire.gear = 1;
-			} else {
-				driveByWire.gear = 3;
-			}
-            } else {
-			if (gamepad1.a) {
-				driveByWire.gear = 3;
-			} else if (gamepad1.b) {
-				driveByWire.gear = 0;
-			}
-		}
 
 		if (gamepad1.dpadDownWasPressed()) {
             robotCentric = !robotCentric;

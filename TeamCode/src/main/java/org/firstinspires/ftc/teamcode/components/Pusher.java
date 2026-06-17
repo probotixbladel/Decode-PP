@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 public class Pusher {
 	public Servo pusher;
     public static double wait = 0.02;
-    public static double push = 0.21;
+    public static double push = 0.23;
     public ElapsedTime lastShot = new ElapsedTime();
     public PushState state = PushState.RETURNING;
     public static double shootTime = 0.5;
