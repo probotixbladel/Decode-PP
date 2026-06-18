@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.pedropathing.control.PIDFCoefficients;
+import com.pedropathing.control.PIDFController;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
 
@@ -109,6 +111,7 @@ public class Shooter {
     private double lF = F;
     public static double MinToMax = 0.9; //percentage min-max
     public Pose ShootTo;
+    public PIDFController shootPID;
 	private ComponentShell.Alliance alliance;
     public enum ShooterState {
         READY,
@@ -119,9 +122,10 @@ public class Shooter {
     public Shooter(HardwareMap hwm, ComponentShell.Alliance al) {
         FlyWheel = hwm.get(DcMotorEx.class, "flyWheel");
         FlyWheel.setDirection(DcMotorSimple.Direction.REVERSE);
-        FlyWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FlyWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FlyWheel.setVelocityPIDFCoefficients(P, 0, D, F);
+        FlyWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //FlyWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //FlyWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //FlyWheel.setVelocityPIDFCoefficients(P, 0, D, F);
 
         AntiBackspin = hwm.get(DcMotorEx.class, "antiBackspin");
         AntiBackspin.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -129,6 +133,8 @@ public class Shooter {
         //AntiBackspin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //AntiBackspin.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //AntiBackspin.setVelocityPIDFCoefficients(P, 0, D, F);
+        shootPID = new PIDFController(new PIDFCoefficients(P, 0, D, F));
+
 		alliance = al;
         switch (al) {
             case RED:
@@ -215,16 +221,22 @@ public class Shooter {
     public void update(ComponentShell Comps){
 		this.updateShootTo(Comps);
         if (P != lP | D != lD | F != lF){
-            FlyWheel.setVelocityPIDFCoefficients( P, 0, D, F);
+            //FlyWheel.setVelocityPIDFCoefficients( P, 0, D, F);
             //AntiBackspin.setVelocityPIDFCoefficients( P, 0, D, F);
+            shootPID.setCoefficients(new PIDFCoefficients(P, 0, D, F));
+
             lP = P;
             lD = D;
             lF = F;
         }
 
-        FlyWheel.setVelocity(TargetVel);
-        AntiBackspin.setPower(FlyWheel.getPower());
+        shootPID.setTargetPosition(TargetVel);
+        double power = shootPID.run();
+        //FlyWheel.setVelocity(TargetVel);
+        //AntiBackspin.setPower(FlyWheel.getPower());
         //AntiBackspin.setVelocity(TargetVel);
+        FlyWheel.setPower(power);
+        AntiBackspin.setPower(power);
         CurrentVel = FlyWheel.getVelocity();
         if (CurrentVel < MinSpeed) {
             state = ShooterState.LOW;

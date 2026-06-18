@@ -84,7 +84,7 @@ public class ArtifactDetector {
             fourthDetecting = false;
         }
 
-
+        /*
 		comps.telemetryM.debug(
 				"secondArtifact:",
 				//secondArtifactSensor.red(),
@@ -110,6 +110,8 @@ public class ArtifactDetector {
                 fourthArtifactSensor.getDistance(DistanceUnit.MM)
         );
 
+
+         */
         comps.telemetryM.debug("detecting: first, second, third, fourth", firstDetecting, secondDetecting, thirdDetecting, fourthDetecting);
 
     }
