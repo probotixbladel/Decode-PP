@@ -10,13 +10,12 @@ public class Intake {
 	public DcMotorEx intake;
 	public static double intakePower = 0.8;
 	public static double intakePowerOverCurrent = 0.6;
-    public static double outtakePower = -0.6;
+    public static double outtakePower = -0.4;
     public static double staticPower = 0.3;
-    public IntakeState state = IntakeState.OFF;
+    public Intake.IntakeState state = IntakeState.INTAKE;
     public enum IntakeState {
         INTAKE,
-        OUTTAKE,
-        OFF
+        OUTTAKE
     }
 
     public Intake(HardwareMap hwm) {
@@ -24,12 +23,46 @@ public class Intake {
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
+    public void update(ComponentShell Comps){
+        switch(state){
+            case INTAKE:
+                if (Comps.detector.fourthDetecting) {
+                    if (intake.getPower() != outtakePower) {
+                        intake.setPower(outtakePower);
+                    }
+                    return;
+                }
+
+
+                if (Comps.pusher.state == Pusher.PushState.WAITING || Comps.pusher.state == Pusher.PushState.RELOADING) {
+                    if (Comps.floodgate.floodgateCurrent > 18) {
+                        if (intake.getPower() != intakePowerOverCurrent) {
+                            intake.setPower(intakePowerOverCurrent);
+                        }
+                    } else {
+                        if (intake.getPower() != intakePower) {
+                            intake.setPower(intakePower);
+                        }
+                    }
+                } else {
+                    intake.setPower(0);
+                }
+                break;
+
+            case OUTTAKE:
+                if (intake.getPower() != outtakePower) {
+                    intake.setPower(outtakePower);
+                }
+                break;
+        }
+    }
+
     public void forceIntake() {
         intake.setPower(intakePower);
         state = IntakeState.INTAKE;
     }
 
-    public void TakeIn(ComponentShell Comps) {
+    /*public void TakeIn(ComponentShell Comps) {
         if (Comps.detector.fourthDetecting) {
             if (intake.getPower() != outtakePower) {
                 intake.setPower(outtakePower);
@@ -69,10 +102,6 @@ public class Intake {
             state = Intake.IntakeState.OUTTAKE;
             return;
         }
-        state = Intake.IntakeState.OFF;
-        if (intake.getPower() != staticPower) {
-            intake.setPower(staticPower);
-        }
-    }
+    }*/
 
 }

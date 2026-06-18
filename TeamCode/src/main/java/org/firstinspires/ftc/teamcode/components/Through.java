@@ -11,12 +11,11 @@ public class Through {
     public static double inPower = 1.0;
 	public static double inPowerOverCurrent = 0.6;
     public static double outPower = 1;
-    public static double staticPower = 0.4;
+    public static double staticPower = 0.7;
     public static double loosenPower = 0;
-    private ThroughState state = ThroughState.OFF;
+    public Through.ThroughState state = ThroughState.OFF;
     public enum ThroughState {
         IN_THROUGH,
-        OUT_THROUGH,
         OFF
     }
 
@@ -26,7 +25,7 @@ public class Through {
         Through.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void OutThrough() {
+    /*public void OutThrough() {
         state = ThroughState.OUT_THROUGH;
         Through.setPower(outPower);
     }
@@ -38,7 +37,7 @@ public class Through {
 
 	public void InThrough() {
 		state = ThroughState.IN_THROUGH;
-	}
+	}*/
 
 	public void update(ComponentShell Comps) {
         if (Comps.intake.state == Intake.IntakeState.OUTTAKE) {
@@ -62,6 +61,7 @@ public class Through {
                 }
                 break;
             case OFF:
+                Through.setPower(staticPower);
                 break;
 		}
     }

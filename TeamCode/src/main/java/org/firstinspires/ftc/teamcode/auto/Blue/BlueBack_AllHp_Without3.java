@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.components.ComponentShell;
 import org.firstinspires.ftc.teamcode.components.Storage;
+import org.firstinspires.ftc.teamcode.components.Through;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Configurable
 @Autonomous(name = "BlueBack_AllHp_Without3")
@@ -65,7 +66,7 @@ public class BlueBack_AllHp_Without3 extends OpMode {
         switch (pathState) {
             case 0:
                 follower.followPath(scorePreload);
-                comps.through.InThrough();
+                comps.through.state = Through.ThroughState.OFF;
                 comps.shooter.PreTargetTo(scorePose);
                 nextPathState();
                 break;
@@ -86,7 +87,6 @@ public class BlueBack_AllHp_Without3 extends OpMode {
 
             case 5:
                 if(!follower.isBusy()){
-                    comps.intake.StaticIntake(comps);
                     follower.followPath(leave,true);
                     setPathState(-1);
                 }

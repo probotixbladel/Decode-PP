@@ -18,8 +18,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.auto.SOTMInterpolator;
 import org.firstinspires.ftc.teamcode.components.ComponentShell;
+import org.firstinspires.ftc.teamcode.components.Intake;
 import org.firstinspires.ftc.teamcode.components.Pusher;
 import org.firstinspires.ftc.teamcode.components.Storage;
+import org.firstinspires.ftc.teamcode.components.Through;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.List;
@@ -31,26 +33,30 @@ public class BlueFront_AllGate extends OpMode {
     private Follower follower;
     public ElapsedTime Timer = new ElapsedTime();
     private Timer pathTimer, actionTimer, opmodeTimer;
-    public static double gateTime = 7;
+    public static double gateTime = 3;
+    public static double gatePickupTime = 2;
     public static double shootigDrivePower = 0.4;
     private int pathState;
     private final Pose startPose = new Pose(17.4, 120.4, Math.toRadians(-36));
     private final Pose scorePoseStart = new Pose(37.1, 107.0, Math.toRadians(-44));
     private final Pose scorePoseFinal = new Pose(57.8, 86.0, Math.toRadians(-46));
     private final Pose pickup2PoseHalfWay = new Pose(45, 59.9, Math.toRadians(180));
-    private final Pose pickup2Pose = new Pose(16.8, 58.9, Math.toRadians(180));
+    private final Pose pickup2Pose = new Pose(15, 57.9, Math.toRadians(180));
     private final Pose pickup2Controlpoint = new Pose(65.7, 43.1);
     private final Pose scorePose = new Pose(47.4, 95.5, Math.toRadians(-46));
-    private final Pose scoreControlpoint = new Pose(59.6, 73.0);
-    private final Pose pickupGatePose = new Pose(12, 57, Math.toRadians(140));
-    private final Pose pickupGatePoseAlt = new Pose(10, 50, Math.toRadians(90));
+    private final Pose scoreControlpoint = new Pose(59.6, 70);
+    private final Pose pickupGatePose = new Pose(12, 63, Math.toRadians(180));
+    private final Pose pickupGatePoseAlt = new Pose(10, 40, Math.toRadians(147));
+
+    private final Pose pickupGatePoseAltPart2 = new Pose(10, 55.5, Math.toRadians(147));
     private final Pose pickupGateControlpoint = new Pose(57.4, 59.7);
-    private final Pose pickup1Pose = new Pose(17.1, 83.6, Math.toRadians(180));
-    private final Pose pickup1Controlpoint = new Pose(69.5, 86.7);
-    private final Pose leavePose = new Pose(58.3, 53.0, Math.toRadians(-50));
-    private final Pose leaveControlpose = new Pose(77.1, 79.1);
+    private final Pose pickup1Pose = new Pose(20, 83.6, Math.toRadians(180));
+    private final Pose pickup1Controlpoint = new Pose(75, 86.7);
+
+    private final Pose pickup1PoseHalfway = new Pose(45, 83.6, Math.toRadians(180));
+    private final Pose leavePose = new Pose(47.4, 53.0, Math.toRadians(-50));
     public ComponentShell comps;
-    public PathChain scorePreloadStart, scorePreloadFinal, grabGate, scoreGate, grabPickup1, scorePickup1, scorePickup2, leave, grabPickup2Part1, grabPickup2Part2;
+    public PathChain scorePreloadStart, scorePreloadFinal, openGate, grabGate, scoreGate, grabPickup1Part1, grabPickup1Part2, scorePickup1, scorePickup2, leave, grabPickup2Part1, grabPickup2Part2;
     public int Shots = 0;
     private TelemetryManager telemetryM;
 
@@ -85,11 +91,18 @@ public class BlueFront_AllGate extends OpMode {
                 .setLinearHeadingInterpolation(pickup2Pose.getHeading(), scorePose.getHeading())
                 .build();
 
-        grabGate = follower.pathBuilder()
+        openGate = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose, pickupGateControlpoint, pickupGatePose))
                 .setHeadingInterpolation(HeadingInterpolator.piecewise(
                         new HeadingInterpolator.PiecewiseNode(0, 0.5, HeadingInterpolator.linear(scorePose.getHeading(), pickupGatePose.getHeading())),
                         new HeadingInterpolator.PiecewiseNode(0.5, 1, HeadingInterpolator.constant(pickupGatePose.getHeading()))))
+                .build();
+
+        grabGate = follower.pathBuilder()
+                .addPath(new BezierLine(pickupGatePose, pickupGatePoseAlt))
+                .setLinearHeadingInterpolation(pickupGatePose.getHeading(), pickupGatePoseAlt.getHeading())
+                .addPath(new BezierLine(pickupGatePoseAlt, pickupGatePoseAltPart2))
+                .setConstantHeadingInterpolation(pickupGatePoseAltPart2.getHeading())
                 .build();
 
         scoreGate = follower.pathBuilder()
@@ -97,9 +110,14 @@ public class BlueFront_AllGate extends OpMode {
                 .setLinearHeadingInterpolation(pickupGatePose.getHeading(), scorePose.getHeading())
                 .build();
 
-        grabPickup1 = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose, pickup1Controlpoint, pickup1Pose))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Pose.getHeading())
+        grabPickup1Part1 = follower.pathBuilder()
+                .addPath(new BezierCurve(scorePose, pickup1Controlpoint, pickup1PoseHalfway))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), pickup1PoseHalfway.getHeading())
+                .build();
+
+        grabPickup1Part2 = follower.pathBuilder()
+                .addPath(new BezierLine(pickup1PoseHalfway, pickup1Pose))
+                .setConstantHeadingInterpolation(pickup1Pose.getHeading())
                 .build();
 
         scorePickup1 = follower.pathBuilder()
@@ -108,7 +126,7 @@ public class BlueFront_AllGate extends OpMode {
                 .build();
 
         leave = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose, leaveControlpose, leavePose))
+                .addPath(new BezierLine(scorePose, leavePose))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), leavePose.getHeading())
                 .build();
     }
@@ -119,8 +137,8 @@ public class BlueFront_AllGate extends OpMode {
         switch (pathState) {
             case 0:
                 follower.followPath(scorePreloadStart);
-                comps.through.InThrough();
-                comps.intake.TakeIn(comps);
+                comps.through.state = Through.ThroughState.OFF;
+                comps.intake.state = Intake.IntakeState.INTAKE;
                 comps.shooter.PreTargetTo(scorePoseStart);
                 nextPathState();
                 break;
@@ -165,7 +183,7 @@ public class BlueFront_AllGate extends OpMode {
                     follower.holdPoint(scorePose.withHeading(comps.shooter.shootInDirection(comps)));
                     if(comps.FinishedShooting(3) && comps.pusher.state == Pusher.PushState.RETURNING){
                         actionTimer.resetTimer();
-                        follower.followPath(grabGate, 1, true);
+                        follower.followPath(openGate, 1, true);
                         nextPathState();
 
                     }
@@ -173,30 +191,45 @@ public class BlueFront_AllGate extends OpMode {
                 break;
 
             case 6:
+                if(actionTimer.getElapsedTimeSeconds() > gateTime){
+                    follower.followPath(grabGate, true);
+                    actionTimer.resetTimer();
+                    nextPathState();
+                }
+                break;
+
+            case 7:
                 /*
                 if (actionTimer.getElapsedTimeSeconds() > 5) {
                         follower.holdPoint(pickupGatePoseAlt);
                 }
                 */
-                if (comps.detector.thirdDetecting || actionTimer.getElapsedTimeSeconds() > gateTime){
+                if (comps.detector.thirdDetecting || actionTimer.getElapsedTimeSeconds() > gatePickupTime){
                     follower.followPath(scoreGate,false);
                     comps.ResetShootNum();
                     nextPathState();
                 }
                 break;
 
-            case 7:
+            case 8:
                 if(!follower.isBusy()){
                     comps.AutoShooterStart();
                     follower.holdPoint(scorePose.withHeading(comps.shooter.shootInDirection(comps)));
                     if(comps.FinishedShooting(3) && comps.pusher.state == Pusher.PushState.RETURNING) {
-                        follower.followPath(grabPickup1);
+                        follower.followPath(grabPickup1Part1, 1, false);
                         nextPathState();
                     }
                 }
                 break;
 
-            case 8:
+            case 9:
+                if(!follower.isBusy()){
+                    follower.followPath(grabPickup1Part2, 0.6, false);
+                    nextPathState();
+                }
+                break;
+
+            case 10:
                 if(!follower.isBusy()) {
                     follower.followPath(scorePickup1);
                     comps.ResetShootNum();
@@ -204,11 +237,13 @@ public class BlueFront_AllGate extends OpMode {
                 }
                 break;
 
-            case 10:
+            case 11:
                 if(!follower.isBusy()){
                     comps.AutoShooterStart();
-                    follower.followPath(leave, shootigDrivePower,true);
-                    setPathState(-1);
+                    if(comps.FinishedShooting(3) && comps.pusher.state == Pusher.PushState.RETURNING){
+                        follower.followPath(leave, 1,true);
+                        setPathState(-1);
+                    }
                 }
                 break;
 

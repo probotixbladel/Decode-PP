@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto.Blue;
+package org.firstinspires.ftc.teamcode.auto.Red;
 
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -23,24 +23,23 @@ import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.components.Through;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Configurable
-@Autonomous(name = "BlueBack_AllHp_With3")
-public class BlueBack_AllHp_With3 extends OpMode {
+@Autonomous(name = "RedBack_Only3")
+public class RedBack_Only3 extends OpMode {
     private Follower follower;
     List<LynxModule> allHubs;
     public ElapsedTime Timer = new ElapsedTime();
     private Timer pathTimer, actionTimer, opmodeTimer;
-    public static double HpTime = 8;
+    public static double HpTime = 6;
     private int pathState;
-    private final Pose startPose = new Pose(55.45, 8.28, Math.toRadians(-90));
-    private final Pose scorePose = new Pose(59.65, 16.65, Math.toRadians(-66));
-    private final Pose pickup3Pose = new Pose(15, 35, Math.toRadians(-180));
-    private final Pose pickup3Controlpoint = new Pose(75, 35);
-    private final Pose pickup3PoseHalfway = new Pose(45, 35, Math.toRadians(-180));
-    private final Pose pickupHpPose = new Pose(9, 9, Math.toRadians(-133));
-    private final Pose pickupHpControlpoint = new Pose(27, 55);
-    private final Pose leavePose = new Pose(60.62, 35, Math.toRadians(-90));
+    public static double fieldLength = 141.5;
+    private final Pose startPose = new Pose(55.45, 8.28, Math.toRadians(-90)).mirror(fieldLength);
+    private final Pose scorePose = new Pose(59.65, 16.65, Math.toRadians(-66)).mirror(fieldLength);
+    private final Pose pickup3Pose = new Pose(20.73, 38.36, Math.toRadians(-180)).mirror(fieldLength);
+    private final Pose pickup3Controlpoint = new Pose(5, 56).mirror(fieldLength);
+    private final Pose pickup3PoseHalfway = new Pose(45,38.36, Math.toRadians(-180)).mirror(fieldLength);
+    private final Pose leavePose = new Pose(60.62, 58.97, Math.toRadians(-90)).mirror(fieldLength);
     public ComponentShell comps;
-    public PathChain scorePreload, leave, grabPickup3Part1, grabPickup3Part2, scorePickup3, grabPickupHp, scorePickupHp;
+    public PathChain scorePreload, leave, grabPickup3Part1, grabPickup3Part2, scorePickup3;
     public int Shots = 0;
     private TelemetryManager telemetryM;
 
@@ -51,18 +50,6 @@ public class BlueBack_AllHp_With3 extends OpMode {
         scorePreload = follower.pathBuilder()
                 .addPath(new BezierLine(startPose, scorePose))
                 .setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading())
-                .build();
-
-        grabPickupHp = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose, pickupHpControlpoint, pickupHpPose))
-                .setHeadingInterpolation(HeadingInterpolator.piecewise(
-                        new HeadingInterpolator.PiecewiseNode(0, 0.4, HeadingInterpolator.linear(scorePose.getHeading(), pickupHpPose.getHeading())),
-                        new HeadingInterpolator.PiecewiseNode(0.4, 1, HeadingInterpolator.constant(pickupHpPose.getHeading()))))
-                .build();
-
-        scorePickupHp = follower.pathBuilder()
-                .addPath(new BezierLine(pickupHpPose, scorePose))
-                .setLinearHeadingInterpolation(pickupHpPose.getHeading(), scorePose.getHeading())
                 .build();
 
         grabPickup3Part1 = follower.pathBuilder()
@@ -92,7 +79,7 @@ public class BlueBack_AllHp_With3 extends OpMode {
         switch (pathState) {
             case 0:
                 comps.intake.state = Intake.IntakeState.INTAKE;
-                follower.followPath(scorePreload,1, true);
+                follower.followPath(scorePreload,1, false);
                 comps.through.state = Through.ThroughState.OFF;
                 comps.ResetShootNum();
                 nextPathState();
@@ -104,7 +91,7 @@ public class BlueBack_AllHp_With3 extends OpMode {
                     comps.AutoShooterStart();
                     follower.holdPoint(scorePose.withHeading(comps.shooter.shootInDirection(comps)));
                     if(comps.FinishedShooting(3) && comps.pusher.state == Pusher.PushState.RETURNING) {
-                        follower.followPath(grabPickup3Part1, 1, false);
+                        follower.followPath(grabPickup3Part1, 0.6, false);
                         nextPathState();
                     }
                 }
@@ -112,7 +99,7 @@ public class BlueBack_AllHp_With3 extends OpMode {
 
             case 2:
                 if(!follower.isBusy()){
-                    follower.followPath(grabPickup3Part2, 0.6, false);
+                    follower.followPath(grabPickup3Part2, 1, false);
                     nextPathState();
                 }
                 break;
@@ -120,26 +107,6 @@ public class BlueBack_AllHp_With3 extends OpMode {
             case 3:
                 if(!follower.isBusy()){
                     follower.followPath(scorePickup3,true);
-                    comps.ResetShootNum();
-                    nextPathState();
-                }
-                break;
-
-            case 4:
-                if(!follower.isBusy()){
-                    comps.AutoShooterStart();
-                    follower.holdPoint(scorePose.withHeading(comps.shooter.shootInDirection(comps)));
-                    if(comps.FinishedShooting(3) && comps.pusher.state == Pusher.PushState.RETURNING){
-                        follower.followPath(grabPickupHp);
-                        actionTimer.resetTimer();
-                        nextPathState();
-                    }
-                }
-                break;
-
-            case 5:
-                if(!follower.isBusy() || actionTimer.getElapsedTimeSeconds() > HpTime){
-                    follower.followPath(scorePickupHp,true);
                     comps.ResetShootNum();
                     nextPathState();
                 }
@@ -174,7 +141,7 @@ public class BlueBack_AllHp_With3 extends OpMode {
         buildPaths();
         follower.setStartingPose(startPose);
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
-        comps = new ComponentShell(hardwareMap, follower, telemetryM, ComponentShell.Alliance.BLUE, true);
+        comps = new ComponentShell(hardwareMap, follower, telemetryM, ComponentShell.Alliance.RED, true);
     }
 
     public void setPathState(int pState) {
@@ -219,6 +186,6 @@ public class BlueBack_AllHp_With3 extends OpMode {
 
     @Override
     public void stop() {
-        Storage.write(ComponentShell.Alliance.BLUE, follower.getPose());
+        Storage.write(ComponentShell.Alliance.RED, follower.getPose());
     }
 }

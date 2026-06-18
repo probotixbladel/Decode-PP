@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.components.ComponentShell;
 import org.firstinspires.ftc.teamcode.components.Storage;
+import org.firstinspires.ftc.teamcode.components.Through;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Configurable
 @Autonomous(name = "RedBack_Ego")
@@ -100,7 +101,7 @@ public class RedBack_Ego extends OpMode {
         switch (pathState) {
             case 0:
                 follower.followPath(scorePreload);
-                comps.through.InThrough();
+                comps.through.state = Through.ThroughState.OFF;
                 comps.shooter.PreTargetTo(scorePose);
                 nextPathState();
                 break;
@@ -121,7 +122,6 @@ public class RedBack_Ego extends OpMode {
 
             case 3:
                 if(!follower.isBusy()){
-                    comps.intake.TakeIn(comps);
                     follower.followPath(grabPickup2, 1, true);
                     nextPathState();
                 }
@@ -129,7 +129,6 @@ public class RedBack_Ego extends OpMode {
 
             case 4:
                 if(!follower.isBusy()){
-                    comps.intake.StaticIntake(comps);
                     follower.followPath(scorePickup2,true);
                     nextPathState();
                 }

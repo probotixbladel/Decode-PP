@@ -23,6 +23,7 @@ public class Pusher {
     public static double arriveAngle = 275; // make higher
     public static double closeAngleTolerance = 30;
     public static double farAngleTolerance = 6;
+    public static boolean useAngleTolerance = false;
     AnalogInput pusherEnc;
     public enum PushState {
         WAITING,
@@ -58,9 +59,9 @@ public class Pusher {
         )) * 2.54;
         double a = (farAngleTolerance /2 - closeAngleTolerance /2) / (35 - 150);
         double b = closeAngleTolerance /2 - a * 150;
-        double angleTolerance = a * pusherAngle + b;
-
-		if (state == PushState.WAITING && Comps.shooter.state == Shooter.ShooterState.READY) {
+        double angleTol = a * distance + b;
+        Comps.telemetryM.debug("angle tol", angleTol, Math.abs(Comps.follower.getHeading()) - Comps.shooter.shootInDirection(Comps));
+		if (state == PushState.WAITING && Comps.shooter.state == Shooter.ShooterState.READY && (!useAngleTolerance || angleTol > Math.abs(Comps.follower.getHeading()) - Comps.shooter.shootInDirection(Comps))) {
             pusher.setPosition(push);
             lastShot.reset();
 			state = PushState.SHOOTING;

@@ -16,9 +16,12 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.auto.SOTMInterpolator;
 import org.firstinspires.ftc.teamcode.components.ComponentShell;
+import org.firstinspires.ftc.teamcode.components.Intake;
 import org.firstinspires.ftc.teamcode.components.Pusher;
 import org.firstinspires.ftc.teamcode.components.Storage;
+import org.firstinspires.ftc.teamcode.components.Through;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Configurable
 @Autonomous(name = "RedFront_Ego")
@@ -126,7 +129,8 @@ public class RedFront_Ego extends OpMode {
 
         leave = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose, leaveControlpose, leavePose))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), leavePose.getHeading())
+                //.setLinearHeadingInterpolation(scorePose.getHeading(), leavePose.getHeading())
+                .setHeadingInterpolation(new SOTMInterpolator().giveInfo(follower, comps))
                 .build();
     }
 
@@ -136,8 +140,8 @@ public class RedFront_Ego extends OpMode {
         switch (pathState) {
             case 0:
                 follower.followPath(scorePreloadStart);
-                comps.through.InThrough();
-                comps.intake.TakeIn(comps);
+                comps.through.state = Through.ThroughState.OFF;
+                comps.intake.state = Intake.IntakeState.INTAKE;
                 comps.shooter.PreTargetTo(scorePoseStart);
                 nextPathState();
                 break;

@@ -17,8 +17,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.components.ComponentShell;
+import org.firstinspires.ftc.teamcode.components.Intake;
 import org.firstinspires.ftc.teamcode.components.Pusher;
 import org.firstinspires.ftc.teamcode.components.Storage;
+import org.firstinspires.ftc.teamcode.components.Through;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Configurable
 @Autonomous(name = "RedBack_AllHp_With3")
@@ -34,7 +36,8 @@ public class RedBack_AllHp_With3 extends OpMode {
     private final Pose scorePose = new Pose(59.65, 16.65, Math.toRadians(-66)).mirror(fieldLength);
     private final Pose pickup3Pose = new Pose(20.73, 38.36, Math.toRadians(-180)).mirror(fieldLength);
     private final Pose pickup3Controlpoint = new Pose(5, 56).mirror(fieldLength);
-    private final Pose pickup3PoseHalfway = new Pose(45, 38.36, Math.toRadians(-180)).mirror(fieldLength);
+    private final Pose pickup3PoseHalfway = new Pose(45,
+            38.36, Math.toRadians(-180)).mirror(fieldLength);
     private final Pose pickupHpPose = new Pose(8.38, 8.12, Math.toRadians(-100)).mirror(fieldLength);
     private final Pose pickupHpControlpoint = new Pose(64.28, 38.66).mirror(fieldLength);
     private final Pose leavePose = new Pose(60.62, 58.97, Math.toRadians(-90)).mirror(fieldLength);
@@ -90,9 +93,9 @@ public class RedBack_AllHp_With3 extends OpMode {
 
         switch (pathState) {
             case 0:
-                comps.intake.TakeIn(comps);
+                comps.intake.state = Intake.IntakeState.INTAKE;
                 follower.followPath(scorePreload,1, true);
-                comps.through.InThrough();
+                comps.through.state = Through.ThroughState.OFF;
                 comps.ResetShootNum();
                 nextPathState();
                 break;

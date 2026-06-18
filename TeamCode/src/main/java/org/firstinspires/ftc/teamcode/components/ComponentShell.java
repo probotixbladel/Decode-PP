@@ -11,6 +11,13 @@ import com.bylazar.telemetry.TelemetryManager;
 
 @Configurable
 public class ComponentShell {
+    public boolean takeOut = false;
+    public boolean takeStatic = false;
+    public boolean holdSpeed = false;
+    public static Pose startingPoseBackBlue = new Pose(56, 9, Math.toRadians(270));
+    public static Pose startingPoseBackRed = new Pose(87.0, 9, Math.toRadians(270));
+    public static Pose startingPoseGoalBlue = new Pose(17, 121, Math.toRadians(143));
+    public static Pose startingPoseGoalRed = new Pose(127, 121, Math.toRadians(37));
     public HardwareMap hardwareMap;
     public final Intake intake;
     public final Shooter shooter;
@@ -21,7 +28,7 @@ public class ComponentShell {
     public ArtifactDetector detector;
     public Follower follower;
     public TelemetryManager telemetryM;
-    public LimeLight limeLight;
+    //public LimeLight limeLight;
     public Pose limePos = new Pose();
     public Alliance alliance;
     public boolean SinglePlayer;
@@ -43,7 +50,7 @@ public class ComponentShell {
         this.shooter = new Shooter(hardwareMap, alliance);
         this.pusher = new Pusher(hardwareMap);
         this.through = new Through(hardwareMap);
-        this.limeLight = new LimeLight(hardwareMap, alliance);
+        //this.limeLight = new LimeLight(hardwareMap, alliance);
         this.blinky = new Blinky(hardwareMap);
         this.follower = flw;
         this.telemetryM = Tm;
@@ -59,8 +66,9 @@ public class ComponentShell {
         shooter.update(this);
         pusher.update(this);
         through.update(this);
+        intake.update(this);
 
-
+        /*
 		if (useCam) {
             limePos = limeLight.update(telemetryM, Math.toDegrees(follower.getHeading()));
             if (limePos.getX() != 72 & limePos.getY() != 72) {
@@ -68,6 +76,7 @@ public class ComponentShell {
                 follower.setY(limePos.getX() * camCertanty + follower.getPose().getY() * (1 - camCertanty));
             }
 		}
+         */
 
         telemetryM.debug("aimpos", shooter.ShootTo);
 		telemetryM.debug("alliance: ", alliance);
@@ -81,6 +90,7 @@ public class ComponentShell {
 
 
         //telemetryM.debug("Number of shots left", shootNum);
+        telemetryM.debug("intake:", intake.state);
         telemetryM.debug("Vel: ", shooter.CurrentVel, Shooter.TargetVel);
         telemetryM.debug("MinToMax: ", shooter.MinToMax);
         telemetryM.debug("shooter state: ", shooter.state);
@@ -91,55 +101,88 @@ public class ComponentShell {
     public void updateTeleop(Gamepad gamepad1, Gamepad gamepad2) {
         this.update();
         if (SinglePlayer){
-            if (gamepad1.a) {
-                pusher.AttemptPush(this);
-            }
-            if (gamepad1.right_trigger > 0.2) {
-                intake.TakeIn(this);
-            } else if (gamepad1.left_trigger > 0.2) {
-                intake.TakeOut(this);
-            } else {
-                intake.StaticIntake(this);
-            }
-
-            if (gamepad1.x) {
-                through.InThrough();
-                intake.TakeIn(this);
-            } else {
-                through.StaticThrough();
-            }
-            if (gamepad2.y) {
-                pusher.state = Pusher.PushState.SHOOTING;
-                pusher.pusher.setPosition(pusher.push);
-                pusher.lastShot.reset();
-            }
-
-        } else {
+            //DEBUG
             if (gamepad2.dpadDownWasPressed()) {
                 forcePush = !forcePush;
             }
 
-            if (gamepad2.x & gamepad2.y)
-            if (gamepad2.left_trigger_pressed) {
-                intake.TakeOut(this);
-                through.InThrough();
+            if(gamepad2.back && gamepad2.a) {
+                follower.setPose(startingPoseBackBlue);
+            }
+            else if(gamepad2.back && gamepad2.b){
+                follower.setPose(startingPoseBackRed);
+            }
+            else if(gamepad2.back && gamepad2.x){
+                follower.setPose(startingPoseGoalBlue);
+            }
+            else if(gamepad2.back && gamepad2.y){
+                follower.setPose(startingPoseGoalRed);
+            }
+            else if(gamepad2.back && gamepad2.dpad_up){
+                follower.setHeading(-90);
+            }
+
+            holdSpeed = gamepad2.left_trigger_pressed && gamepad2.right_trigger_pressed;
+
+
+            //CONTROLS
+            if (gamepad1.left_trigger_pressed) {
+                intake.state = Intake.IntakeState.OUTTAKE;
+                through.state = Through.ThroughState.IN_THROUGH;
             } else if (gamepad1.right_trigger_pressed) {
                 if (forcePush) {
                     pusher.forcePush();
                 } else {
                     pusher.AttemptPush(this);
                 }
-                intake.TakeIn(this);
-                through.InThrough();
-            } else if (gamepad2.x) {
-                intake.TakeIn(this);
-                through.InThrough();
+                through.state = Through.ThroughState.IN_THROUGH;
+                intake.state = Intake.IntakeState.INTAKE;
             } else {
-                through.StaticThrough();
-                intake.StaticIntake(this);
+                through.state = Through.ThroughState.OFF;
+                intake.state = Intake.IntakeState.INTAKE;
             }
 
-            useCam = gamepad2.dpad_up;
+        } else {
+            //DEBUG
+            if (gamepad2.dpadDownWasPressed()) {
+                forcePush = !forcePush;
+            }
+
+            if(gamepad2.back && gamepad2.a) {
+                follower.setPose(startingPoseBackBlue);
+            }
+            else if(gamepad2.back && gamepad2.b){
+                follower.setPose(startingPoseBackRed);
+            }
+            else if(gamepad2.back && gamepad2.x){
+                follower.setPose(startingPoseGoalBlue);
+            }
+            else if(gamepad2.back && gamepad2.y){
+                follower.setPose(startingPoseGoalRed);
+            }
+            else if(gamepad2.back && gamepad2.dpad_up){
+                follower.setHeading(-90);
+            }
+
+            holdSpeed = gamepad2.left_trigger_pressed && gamepad2.right_trigger_pressed;
+
+
+            //CONTROLS
+            if (gamepad2.left_trigger_pressed) {
+                intake.state = Intake.IntakeState.OUTTAKE;
+                through.state = Through.ThroughState.IN_THROUGH;
+            } else if (gamepad1.right_trigger_pressed) {
+                if (forcePush) {
+                    pusher.forcePush();
+                } else {
+                    pusher.AttemptPush(this);
+                }
+                through.state = Through.ThroughState.IN_THROUGH;
+                intake.state = Intake.IntakeState.INTAKE;
+            } else {
+                through.state = Through.ThroughState.OFF;
+                intake.state = Intake.IntakeState.INTAKE;
+            }
 
 
         }
@@ -150,15 +193,15 @@ public class ComponentShell {
 	}
 
     public void AutoShooterStart(){
+        through.state = Through.ThroughState.IN_THROUGH;
         if(pusher.AttemptPush(this)) {
             shootNum += 1;
         }
-        intake.TakeIn(this);
     }
 
     public boolean FinishedShooting(int num){
         if(shootNum >= num){
-            intake.StaticIntake(this);
+            through.state = Through.ThroughState.OFF;
             return true;
         }
         return false;

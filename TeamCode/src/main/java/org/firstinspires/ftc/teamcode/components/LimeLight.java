@@ -18,7 +18,7 @@ public class LimeLight {
     public static double xMul = 39.37;
     public static double yMul = 39.37;
     public LimeLight(HardwareMap hwm, ComponentShell.Alliance al) {
-		limeLight = hwm.get(Limelight3A.class, "limelight");
+		//limeLight = hwm.get(Limelight3A.class, "limelight");
         switch (al){
             case BLUE:
                 limeLight.pipelineSwitch(0);

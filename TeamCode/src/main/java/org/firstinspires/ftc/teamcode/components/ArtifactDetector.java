@@ -31,9 +31,9 @@ public class ArtifactDetector {
     static public double firstMinThreshold2 = 0.04;
     static public double firstMaxThreshold2 = 1.5;
     public ElapsedTime timer;
-    public static double secondDistance = 330;
-    public static double thirdDistance = 85;
-    public static double fourthDistance = 70;
+    public static double secondDistance = 85;
+    public static double thirdDistance = 70;
+    public static double fourthDistance = 95;
     public boolean firstDetecting = false;
     public boolean secondDetecting = false;
     public boolean thirdDetecting = false;
@@ -76,12 +76,14 @@ public class ArtifactDetector {
         /*
 		if (fourthArtifactSensor.getDistance(DistanceUnit.MM) < 1 || fourthArtifactSensor.getDistance(DistanceUnit.MM) == 255) {
 			fourthDetecting = false;
-		} if (fourthArtifactSensor.getDistance(DistanceUnit.MM) < fourthDistance & thirdDetecting ) {
+
+		*/
+        if (fourthArtifactSensor.getDistance(DistanceUnit.MM) < fourthDistance & thirdDetecting ) {
             fourthDetecting = true;
         } else {
             fourthDetecting = false;
         }
-        */
+
 
 		comps.telemetryM.debug(
 				"secondArtifact:",
@@ -92,7 +94,7 @@ public class ArtifactDetector {
                 secondArtifactSensor.getDistance(DistanceUnit.MM)
 
 		);
-        /*
+
         comps.telemetryM.debug("thirdArtifact: R, G, B, A, Distance, rawOptical",
 				//thirdArtifactSensor.red(),
 				//thirdArtifactSensor.green(),
@@ -102,7 +104,7 @@ public class ArtifactDetector {
                 thirdArtifactSensor.rawOptical()
 
 		);
-         */
+
 
         comps.telemetryM.debug("fourthArtifact: Distance",
                 fourthArtifactSensor.getDistance(DistanceUnit.MM)

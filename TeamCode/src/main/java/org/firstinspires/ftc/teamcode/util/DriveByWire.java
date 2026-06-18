@@ -33,9 +33,9 @@ public class DriveByWire {
 
 	private final ComponentShell comps;
     public static double CloseKF = 0;
-	public static double CloseKP = 1.0;
+	public static double CloseKP = 1.2;
 	public static double CloseKI = 0;
-	public static double CloseKD = 0.1;
+	public static double CloseKD = 0.13;
 	public static double PosKP = 0;
 	public static double PosKI = 0;
 	public static double PosKD = 0;
@@ -118,7 +118,6 @@ public class DriveByWire {
 			double dx = comps.shooter.ShootTo.getX() - (comps.follower.getPose().getX() + Math.sin(comps.follower.getHeading()) * offsetX);
 			double alpha = Math.atan2(dy, dx);
 			beta = angleWrap(alpha - Math.PI);
-
 			driveInputs[2] = getSteeringValue(beta);
 
 			lastAimAngle = angleWrap(beta);
