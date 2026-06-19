@@ -23,26 +23,30 @@ import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.components.Through;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Configurable
-@Autonomous(name = "RedBack_AllHp_With3")
+@Autonomous(name = "RedBack")
 public class RedBack_AllHp_With3 extends OpMode {
     private Follower follower;
     List<LynxModule> allHubs;
     public ElapsedTime Timer = new ElapsedTime();
     private Timer pathTimer, actionTimer, opmodeTimer;
-    public static double HpTime = 6;
+    public static double HpTime = 3;
+    public static double wiggleTime = 2;
+    public static double maxPathTime = 4;
+    private int cycles = 0;
     private int pathState;
     public static double fieldLength = 141.5;
-    private final Pose startPose = new Pose(55.45, 8.28, Math.toRadians(-90)).mirror(fieldLength);
+    public static Pose startPose = new Pose(87.0, 9, Math.toRadians(270));
     private final Pose scorePose = new Pose(59.65, 16.65, Math.toRadians(-66)).mirror(fieldLength);
-    private final Pose pickup3Pose = new Pose(20.73, 38.36, Math.toRadians(-180)).mirror(fieldLength);
-    private final Pose pickup3Controlpoint = new Pose(5, 56).mirror(fieldLength);
-    private final Pose pickup3PoseHalfway = new Pose(45,
-            38.36, Math.toRadians(-180)).mirror(fieldLength);
-    private final Pose pickupHpPose = new Pose(8.38, 8.12, Math.toRadians(-100)).mirror(fieldLength);
-    private final Pose pickupHpControlpoint = new Pose(64.28, 38.66).mirror(fieldLength);
-    private final Pose leavePose = new Pose(60.62, 58.97, Math.toRadians(-90)).mirror(fieldLength);
+    private final Pose pickup3Pose = new Pose(14, 32, Math.toRadians(-180)).mirror(fieldLength);
+    private final Pose pickup3Controlpoint = new Pose(75, 31).mirror(fieldLength);
+    private final Pose pickup3PoseHalfway = new Pose(45, 33, Math.toRadians(-180)).mirror(fieldLength);
+    private final Pose pickupHpPose = new Pose(9, 20, Math.toRadians(260)).mirror(fieldLength);
+    private final Pose pickupHpControlpoint = new Pose(7, 65).mirror(fieldLength);
+    private final Pose wigglePose = new Pose(9, 8).mirror(fieldLength);
+    private final Pose hpScoreHelp = new Pose(37, 9, Math.toRadians(-20)).mirror(fieldLength);
+    private final Pose leavePose = new Pose(60.62, 35, Math.toRadians(-90)).mirror(fieldLength);
     public ComponentShell comps;
-    public PathChain scorePreload, leave, grabPickup3Part1, grabPickup3Part2, scorePickup3, grabPickupHp, scorePickupHp;
+    public PathChain scorePreload, leave, grabPickup3Part1, grabPickup3Part2, scorePickup3, grabPickupHp, scorePickupHp, wiggle;
     public int Shots = 0;
     private TelemetryManager telemetryM;
 
@@ -62,9 +66,19 @@ public class RedBack_AllHp_With3 extends OpMode {
                         new HeadingInterpolator.PiecewiseNode(0.4, 1, HeadingInterpolator.constant(pickupHpPose.getHeading()))))
                 .build();
 
+        wiggle = follower.pathBuilder()
+                .addPath(new BezierLine(pickupHpPose, wigglePose))
+                .setLinearHeadingInterpolation(pickupHpPose.getHeading(), wigglePose.getHeading())
+                .build();
+
+        /*halfHpScore = follower.pathBuilder()
+                .addPath(new BezierLine(wigglePose, hpScoreHelp))
+                .setLinearHeadingInterpolation(wigglePose.getHeading(), hpScoreHelp.getHeading())
+                .build();*/
+
         scorePickupHp = follower.pathBuilder()
-                .addPath(new BezierLine(pickupHpPose, scorePose))
-                .setLinearHeadingInterpolation(pickupHpPose.getHeading(), scorePose.getHeading())
+                .addPath(new BezierLine(wigglePose, scorePose))
+                .setLinearHeadingInterpolation(wigglePose.getHeading(), scorePose.getHeading())
                 .build();
 
         grabPickup3Part1 = follower.pathBuilder()
@@ -93,6 +107,7 @@ public class RedBack_AllHp_With3 extends OpMode {
 
         switch (pathState) {
             case 0:
+                actionTimer.resetTimer();
                 comps.intake.state = Intake.IntakeState.INTAKE;
                 follower.followPath(scorePreload,1, true);
                 comps.through.state = Through.ThroughState.OFF;
@@ -102,56 +117,74 @@ public class RedBack_AllHp_With3 extends OpMode {
 
             case 1:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if(!follower.isBusy()){
+                if(!follower.isBusy() || actionTimer.getElapsedTimeSeconds() > 1){
                     comps.AutoShooterStart();
                     follower.holdPoint(scorePose.withHeading(comps.shooter.shootInDirection(comps)));
                     if(comps.FinishedShooting(3) && comps.pusher.state == Pusher.PushState.RETURNING) {
-                        follower.followPath(grabPickup3Part1, 0.6, false);
+                        follower.followPath(grabPickup3Part1, 1, false);
                         nextPathState();
                     }
                 }
                 break;
 
             case 2:
-                if(!follower.isBusy()){
-                    follower.followPath(grabPickup3Part2, 1, false);
+                if(!follower.isBusy() || pathTimer.getElapsedTimeSeconds() > maxPathTime){
+                    follower.followPath(grabPickup3Part2, 0.6, false);
                     nextPathState();
                 }
                 break;
 
             case 3:
-                if(!follower.isBusy()){
+                if(!follower.isBusy() || pathTimer.getElapsedTimeSeconds() > maxPathTime){
                     follower.followPath(scorePickup3,true);
+                    cycles = 0;
                     comps.ResetShootNum();
+                    actionTimer.resetTimer();
                     nextPathState();
                 }
                 break;
 
             case 4:
-                if(!follower.isBusy()){
+                if(!follower.isBusy() || actionTimer.getElapsedTimeSeconds() > 4){
                     comps.AutoShooterStart();
                     follower.holdPoint(scorePose.withHeading(comps.shooter.shootInDirection(comps)));
-                    if(comps.FinishedShooting(3) && comps.pusher.state == Pusher.PushState.RETURNING){
-                        follower.followPath(grabPickupHp);
+                    if(comps.FinishedShooting(2) && comps.pusher.state == Pusher.PushState.RETURNING){
+                        follower.followPath(grabPickupHp, false);
                         actionTimer.resetTimer();
+                        cycles ++;
                         nextPathState();
                     }
                 }
                 break;
 
             case 5:
-                if(!follower.isBusy() || actionTimer.getElapsedTimeSeconds() > HpTime){
-                    follower.followPath(scorePickupHp,true);
-                    comps.ResetShootNum();
+                if(actionTimer.getElapsedTimeSeconds() > HpTime){
+                    follower.followPath(wiggle, false);
+                    actionTimer.resetTimer();
                     nextPathState();
                 }
                 break;
 
             case 6:
-                if(!follower.isBusy()){
+                if(!follower.isBusy() || actionTimer.getElapsedTimeSeconds() > wiggleTime){
+                    follower.followPath(scorePickupHp);
+                    comps.ResetShootNum();
+                    if(cycles >= 2){
+                        actionTimer.resetTimer();
+                        nextPathState();
+                    }
+                    else{
+                        actionTimer.resetTimer();
+                        setPathState(4);
+                    }
+                }
+                break;
+
+            case 7:
+                if(!follower.isBusy() || actionTimer.getElapsedTimeSeconds() > 4){
                     comps.AutoShooterStart();
                     follower.holdPoint(scorePose.withHeading(comps.shooter.shootInDirection(comps)));
-                    if(comps.FinishedShooting(3) && comps.pusher.state == Pusher.PushState.RETURNING){
+                    if(comps.FinishedShooting(2) && comps.pusher.state == Pusher.PushState.RETURNING){
                         follower.followPath(leave);
                         setPathState(-1);
                     }

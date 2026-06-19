@@ -13,6 +13,7 @@ import com.pedropathing.paths.PathPoint;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -27,7 +28,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import java.util.List;
 
 @Configurable
-@Autonomous(name = "BlueFront_AllGate")
+@Autonomous(name = "BlueFront")
 public class BlueFront_AllGate extends OpMode {
     List<LynxModule> allHubs;
     private Follower follower;

@@ -148,6 +148,13 @@ public class ComponentShell {
                 forcePush = !forcePush;
             }
 
+            if (gamepad2.back && gamepad2.startWasPressed()) {
+                if (alliance == Alliance.BLUE) {
+                    alliance = Alliance.RED;
+                } else {
+                    alliance = Alliance.BLUE;
+                }
+            }
             if(gamepad2.back && gamepad2.a) {
                 follower.setPose(startingPoseBackBlue);
             }

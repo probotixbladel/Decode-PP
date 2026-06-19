@@ -23,23 +23,24 @@ import org.firstinspires.ftc.teamcode.components.Storage;
 import org.firstinspires.ftc.teamcode.components.Through;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Configurable
-@Autonomous(name = "BlueBack_AllHp_With3")
+@Autonomous(name = "BlueBack")
 public class BlueBack_AllHp_With3 extends OpMode {
     private Follower follower;
     List<LynxModule> allHubs;
     public ElapsedTime Timer = new ElapsedTime();
     private Timer pathTimer, actionTimer, opmodeTimer;
     public static double HpTime = 3;
-    public static double wiggleTime = 0.5;
+    public static double wiggleTime = 2;
+    private int cycles = 0;
     private int pathState;
     private final Pose startPose = new Pose(55.45, 8.28, Math.toRadians(-90));
     private final Pose scorePose = new Pose(59.65, 16.65, Math.toRadians(-66));
-    private final Pose pickup3Pose = new Pose(15, 37, Math.toRadians(-180));
+    private final Pose pickup3Pose = new Pose(14, 36, Math.toRadians(-180));
     private final Pose pickup3Controlpoint = new Pose(75, 35);
     private final Pose pickup3PoseHalfway = new Pose(45, 37, Math.toRadians(-180));
     private final Pose pickupHpPose = new Pose(9, 19, Math.toRadians(260));
     private final Pose pickupHpControlpoint = new Pose(7, 65);
-    private final Pose wigglePose = new Pose(9, 8.7);
+    private final Pose wigglePose = new Pose(9, 8);
     private final Pose hpScoreHelp = new Pose(37, 9, Math.toRadians(-20));
     private final Pose leavePose = new Pose(60.62, 35, Math.toRadians(-90));
     public ComponentShell comps;
@@ -68,14 +69,14 @@ public class BlueBack_AllHp_With3 extends OpMode {
                 .setLinearHeadingInterpolation(pickupHpPose.getHeading(), wigglePose.getHeading())
                 .build();
 
-        halfHpScore = follower.pathBuilder()
+        /*halfHpScore = follower.pathBuilder()
                 .addPath(new BezierLine(wigglePose, hpScoreHelp))
                 .setLinearHeadingInterpolation(wigglePose.getHeading(), hpScoreHelp.getHeading())
-                .build();
+                .build();*/
 
         scorePickupHp = follower.pathBuilder()
-                .addPath(new BezierLine(hpScoreHelp, scorePose))
-                .setLinearHeadingInterpolation(hpScoreHelp.getHeading(), scorePose.getHeading())
+                .addPath(new BezierLine(wigglePose, scorePose))
+                .setLinearHeadingInterpolation(wigglePose.getHeading(), scorePose.getHeading())
                 .build();
 
         grabPickup3Part1 = follower.pathBuilder()
@@ -104,6 +105,7 @@ public class BlueBack_AllHp_With3 extends OpMode {
 
         switch (pathState) {
             case 0:
+                actionTimer.resetTimer();
                 comps.intake.state = Intake.IntakeState.INTAKE;
                 follower.followPath(scorePreload,1, true);
                 comps.through.state = Through.ThroughState.OFF;
@@ -113,7 +115,7 @@ public class BlueBack_AllHp_With3 extends OpMode {
 
             case 1:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if(!follower.isBusy()){
+                if(!follower.isBusy() || actionTimer.getElapsedTimeSeconds() > 1){
                     comps.AutoShooterStart();
                     follower.holdPoint(scorePose.withHeading(comps.shooter.shootInDirection(comps)));
                     if(comps.FinishedShooting(3) && comps.pusher.state == Pusher.PushState.RETURNING) {
@@ -133,25 +135,28 @@ public class BlueBack_AllHp_With3 extends OpMode {
             case 3:
                 if(!follower.isBusy()){
                     follower.followPath(scorePickup3,true);
+                    cycles = 0;
                     comps.ResetShootNum();
+                    actionTimer.resetTimer();
                     nextPathState();
                 }
                 break;
 
             case 4:
-                if(!follower.isBusy()){
+                if(!follower.isBusy() || actionTimer.getElapsedTimeSeconds() > 4){
                     comps.AutoShooterStart();
                     follower.holdPoint(scorePose.withHeading(comps.shooter.shootInDirection(comps)));
                     if(comps.FinishedShooting(3) && comps.pusher.state == Pusher.PushState.RETURNING){
                         follower.followPath(grabPickupHp, false);
                         actionTimer.resetTimer();
+                        cycles += 1;
                         nextPathState();
                     }
                 }
                 break;
 
             case 5:
-                if(!follower.isBusy() || actionTimer.getElapsedTimeSeconds() > HpTime){
+                if(actionTimer.getElapsedTimeSeconds() > HpTime){
                     follower.followPath(wiggle, false);
                     actionTimer.resetTimer();
                     nextPathState();
@@ -160,21 +165,21 @@ public class BlueBack_AllHp_With3 extends OpMode {
 
             case 6:
                 if(!follower.isBusy() || actionTimer.getElapsedTimeSeconds() > wiggleTime){
-                    follower.followPath(halfHpScore, false);
-                    nextPathState();
+                    follower.followPath(scorePickupHp);
+                    comps.ResetShootNum();
+                    if(cycles >= 2){
+                        actionTimer.resetTimer();
+                        nextPathState();
+                    }
+                    else{
+                        actionTimer.resetTimer();
+                        setPathState(4);
+                    }
                 }
                 break;
 
             case 7:
-                if(!follower.isBusy()){
-                    follower.followPath(scorePickupHp,true);
-                    comps.ResetShootNum();
-                    nextPathState();
-                }
-                break;
-
-            case 8:
-                if(!follower.isBusy()){
+                if(!follower.isBusy() || actionTimer.getElapsedTimeSeconds() > 4){
                     comps.AutoShooterStart();
                     follower.holdPoint(scorePose.withHeading(comps.shooter.shootInDirection(comps)));
                     if(comps.FinishedShooting(3) && comps.pusher.state == Pusher.PushState.RETURNING){

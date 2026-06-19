@@ -25,6 +25,11 @@ public class Shooter {
     public static double MinSpeed = 1200;
     public double CurrentVel = 0;
     public boolean PreTargeting = false;
+    public static double blueGoalX = 11;
+    public static double blueGoalY = 135;
+    public static double redGoalX = 138;
+    public static double redGoalY = 144;
+
     public static double[][] MinPoints = {  // data min speed
             {60,670},
             {70,670},
@@ -122,10 +127,10 @@ public class Shooter {
     public Shooter(HardwareMap hwm, ComponentShell.Alliance al) {
         FlyWheel = hwm.get(DcMotorEx.class, "flyWheel");
         FlyWheel.setDirection(DcMotorSimple.Direction.REVERSE);
-        FlyWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //FlyWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //FlyWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //FlyWheel.setVelocityPIDFCoefficients(P, 0, D, F);
+        //FlyWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        FlyWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FlyWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FlyWheel.setVelocityPIDFCoefficients(P, 0, D, F);
 
         AntiBackspin = hwm.get(DcMotorEx.class, "antiBackspin");
         AntiBackspin.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -133,15 +138,15 @@ public class Shooter {
         //AntiBackspin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //AntiBackspin.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //AntiBackspin.setVelocityPIDFCoefficients(P, 0, D, F);
-        shootPID = new PIDFController(new PIDFCoefficients(P, 0, D, F));
+        //shootPID = new PIDFController(new PIDFCoefficients(P, 0, D, F));
 
 		alliance = al;
         switch (al) {
             case RED:
-                ShootTo = new Pose(140,135);
+                ShootTo = new Pose(blueGoalX, blueGoalY);
                 break;
             case BLUE:
-                ShootTo = new Pose(11,135);
+                ShootTo = new Pose(redGoalX, redGoalY);
                 break;
         }
     }
@@ -175,12 +180,12 @@ public class Shooter {
 
 	public void updateShootTo(ComponentShell comps) {
 		Pose goal = new Pose();
-		switch (alliance) {
+		switch (comps.alliance) {
 			case RED:
-				goal = new Pose(138,130);
+				goal = new Pose(138,129);
 				break;
 			case BLUE:
-				goal = new Pose(15,131);
+				goal = new Pose(14,131);
 				break;
 		}
 
@@ -221,23 +226,26 @@ public class Shooter {
     public void update(ComponentShell Comps){
 		this.updateShootTo(Comps);
         if (P != lP | D != lD | F != lF){
-            //FlyWheel.setVelocityPIDFCoefficients( P, 0, D, F);
-            //AntiBackspin.setVelocityPIDFCoefficients( P, 0, D, F);
-            shootPID.setCoefficients(new PIDFCoefficients(P, 0, D, F));
+            FlyWheel.setVelocityPIDFCoefficients( P, 0, D, F);
+            AntiBackspin.setVelocityPIDFCoefficients( P, 0, D, F);
+            //shootPID.setCoefficients(new PIDFCoefficients(P, 0, D, F));
 
             lP = P;
             lD = D;
             lF = F;
         }
-
-        shootPID.setTargetPosition(TargetVel);
-        double power = shootPID.run();
-        //FlyWheel.setVelocity(TargetVel);
-        //AntiBackspin.setPower(FlyWheel.getPower());
-        //AntiBackspin.setVelocity(TargetVel);
-        FlyWheel.setPower(power);
-        AntiBackspin.setPower(power);
+        
         CurrentVel = FlyWheel.getVelocity();
+        //shootPID.setTargetPosition(TargetVel);
+        //shootPID.updatePosition(CurrentVel);
+        //double power = shootPID.run();
+        FlyWheel.setVelocity(TargetVel);
+        AntiBackspin.setPower(FlyWheel.getPower());
+        AntiBackspin.setVelocity(TargetVel);
+        //FlyWheel.setPower(power);
+        //AntiBackspin.setPower(power);
+
+        //Comps.telemetryM.debug("powa", power);
         if (CurrentVel < MinSpeed) {
             state = ShooterState.LOW;
             //state = ShooterState.READY;

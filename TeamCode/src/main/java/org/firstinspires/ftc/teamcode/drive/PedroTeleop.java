@@ -27,6 +27,8 @@ import java.util.List;
 public class PedroTeleop extends OpMode {
     public static boolean singlePlayer = false;
     private Follower follower;
+    private double oldHeading;
+    private double biggestHeadingDiff = 0;
     public static Pose startingPose;
     public static ComponentShell.Alliance alliance;
     private boolean robotCentric = false;
@@ -56,6 +58,8 @@ public class PedroTeleop extends OpMode {
         alliance = data.storedAlliance;
         Comps = new ComponentShell(hardwareMap, follower, telemetryM, alliance, singlePlayer);
 		driveByWire = new DriveByWire(Comps);
+
+        oldHeading = follower.getHeading();
     }
 
     @Override
@@ -119,6 +123,18 @@ public class PedroTeleop extends OpMode {
 					break;
 			}
         }
+
+        double diff = follower.getHeading() - oldHeading;
+        diff = driveByWire.angleWrap(Math.abs(diff));
+
+
+        if(Math.abs(diff) > biggestHeadingDiff){
+            biggestHeadingDiff = Math.abs(diff);
+        }
+
+        telemetryM.debug("Delta Heading:", Math.toDegrees(Math.abs(diff)));
+        telemetryM.debug("Biggest Heading Diff:", Math.toDegrees(biggestHeadingDiff));
+        oldHeading = follower.getHeading();
 
 		Comps.updateTeleop(gamepad1, gamepad2);
 
