@@ -9,6 +9,7 @@ import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.control.PIDFController;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @Configurable
@@ -25,10 +26,10 @@ public class Shooter {
     public static double MinSpeed = 1200;
     public double CurrentVel = 0;
     public boolean PreTargeting = false;
-    public static double blueGoalX = 11;
-    public static double blueGoalY = 135;
+    public static double blueGoalX = 14;
+    public static double blueGoalY = 134;
     public static double redGoalX = 138;
-    public static double redGoalY = 144;
+    public static double redGoalY = 132;
 
     public static double[][] MinPoints = {  // data min speed
             {60,670},
@@ -97,7 +98,7 @@ public class Shooter {
             {350,1090},
             {360,1120}
     };
-    public static double P = 1200.0;
+    public static double P = 1500;
     public static double MAXTOLERANCE = 10;
     public static double MINTOLERANCE = 25;
     public static double MAXSTART = 705;
@@ -109,8 +110,8 @@ public class Shooter {
     //public static double MINTOMAXSTART = 0.945;
     //public static double MINTOMAX_A = -5.05e-4;
     public static double offsetX = 2.5748;
-    public static double D = 0;
-    public static double F = 15.0;
+    public static double D = 30;
+    public static double F = 14.0;
     private double lP = P;
     private double lD = D;
     private double lF = F;
@@ -118,6 +119,10 @@ public class Shooter {
     public Pose ShootTo;
     public PIDFController shootPID;
 	private ComponentShell.Alliance alliance;
+    private ElapsedTime timer;
+    private double lastTime = 0;
+    private double lastTicks = 0;
+    private double[] lastSpeeds = {};
     public enum ShooterState {
         READY,
         HIGH,
@@ -131,6 +136,8 @@ public class Shooter {
         FlyWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FlyWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         FlyWheel.setVelocityPIDFCoefficients(P, 0, D, F);
+
+        timer = new ElapsedTime();
 
         AntiBackspin = hwm.get(DcMotorEx.class, "antiBackspin");
         AntiBackspin.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -180,14 +187,14 @@ public class Shooter {
 
 	public void updateShootTo(ComponentShell comps) {
 		Pose goal = new Pose();
-		switch (comps.alliance) {
-			case RED:
-				goal = new Pose(138,129);
-				break;
-			case BLUE:
-				goal = new Pose(14,131);
-				break;
-		}
+        switch (comps.alliance) {
+            case RED:
+                goal = new Pose(redGoalX, redGoalY);
+                break;
+            case BLUE:
+                goal = new Pose(blueGoalX, blueGoalY);
+                break;
+        }
 
 		Vector goalVec = new Vector(goal);
 		double airTime;
@@ -227,7 +234,7 @@ public class Shooter {
 		this.updateShootTo(Comps);
         if (P != lP | D != lD | F != lF){
             FlyWheel.setVelocityPIDFCoefficients( P, 0, D, F);
-            AntiBackspin.setVelocityPIDFCoefficients( P, 0, D, F);
+            //AntiBackspin.setVelocityPIDFCoefficients( P, 0, D, F);
             //shootPID.setCoefficients(new PIDFCoefficients(P, 0, D, F));
 
             lP = P;
@@ -235,13 +242,15 @@ public class Shooter {
             lF = F;
         }
         
-        CurrentVel = FlyWheel.getVelocity();
+        CurrentVel = FlyWheel.getVelocity();//(FlyWheel.getCurrentPosition() - lastTicks) / (timer.seconds() - lastTime);
+        //lastTime = timer.seconds();
+        //lastTicks = FlyWheel.getCurrentPosition();
         //shootPID.setTargetPosition(TargetVel);
         //shootPID.updatePosition(CurrentVel);
-        //double power = shootPID.run();
+        //double power = (TargetVel - CurrentVel) * P;
         FlyWheel.setVelocity(TargetVel);
         AntiBackspin.setPower(FlyWheel.getPower());
-        AntiBackspin.setVelocity(TargetVel);
+        //AntiBackspin.setVelocity(TargetVel);
         //FlyWheel.setPower(power);
         //AntiBackspin.setPower(power);
 
